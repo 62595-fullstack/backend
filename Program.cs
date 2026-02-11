@@ -8,20 +8,24 @@ public class Program
     {
         Users user = new Users
         {
-            Id = 1,
             Email = "test@test.com",
             Password = "password",
             FirstName = "test",
             Username = "tester",
             Age = 23
-
         };
 
 
         DataUser dataUser = new DataUser();
 
 
-        bool v = dataUser.setUsers(user);
+        bool IsUserMade = dataUser.setUsers(user);
+
+        if (!IsUserMade)
+        {
+            System.Console.WriteLine("User was not made.");
+        }
+
 
 
 
