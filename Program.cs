@@ -2,17 +2,24 @@
 // docker run --name BookFace -e POSTGRES_PASSWORD=facebook -d -p 5432:5432 postgres
 // dotnet ef database update
 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Npgsql;
 using System;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 
+IConfigurationRoot config = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
 
-var connString = "Host=localhost;Username=facebook;Password=1234;Database=testdb";
+var connString = $@"Host={config["host"]};
+                 Username={config["username"]};
+                 Password={config["password"]};
+                 Database={config["database"]}";
 
-await using var conn = new DatabaseContext(connString);
+await using var conn = new NpgsqlConnection(connString);
 await conn.OpenAsync();
 
-// // Insert some data
 // await using (var cmd = new NpgsqlCommand("INSERT INTO data (some_field) VALUES (@p)", conn))
 // {
 //     cmd.Parameters.AddWithValue("p", "Hello world");
