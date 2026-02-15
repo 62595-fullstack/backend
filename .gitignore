@@ -2,3 +2,4 @@ obj/
 bin/
 backend.sln
 /.vs
+appsettings.json
