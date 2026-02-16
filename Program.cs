@@ -30,6 +30,7 @@ using (var db = new DatabaseContext())
 		Username = "Frog",
 		Age = 2,
 	});
+	await db.SaveChangesAsync();
 
 	db.User.Add(new Users
 	{
@@ -40,28 +41,7 @@ using (var db = new DatabaseContext())
 		Username = "Benson",
 		Age = 2,
 	});
-
-	db.Post.Add(new Posts
-	{
-		Title = "Fist Event Post",
-		CreatedDate = DateTime.UtcNow,
-		UserId = 1000,
-		OrganizationEventId = 1000
-	});
-
-	db.Post.Add(new Posts
-	{
-		Title = "Hello World",
-		CreatedDate = DateTime.UtcNow,
-		UserId = 1000,
-		OrganizationEventId = 1000,
-	});
-
-	db.Organization.Add(new Organizations
-	{
-		Name = "HoneyFactory",
-		CreatedDate = DateTime.UtcNow,
-	});
+	await db.SaveChangesAsync();
 
 	db.Organization.Add(new Organizations
 	{
@@ -69,12 +49,21 @@ using (var db = new DatabaseContext())
 		Name = "NetCompany",
 		CreatedDate = DateTime.UtcNow,
 	});
+	await db.SaveChangesAsync();
+
+	db.Organization.Add(new Organizations
+	{
+		Name = "HoneyFactory",
+		CreatedDate = DateTime.UtcNow,
+	});
+	await db.SaveChangesAsync();
 
 	db.Role.Add(new Roles
 	{
 		Id = 1000,
 		Name = "Admin",
 	});
+	await db.SaveChangesAsync();
 
 	db.UserOrganizationBinding.Add(new UserOrganizationBindings
 	{
@@ -86,21 +75,40 @@ using (var db = new DatabaseContext())
 
 	db.OrganizationEvent.Add(new OrganizationEvents
 	{
+		Id = 1000,
 		OrganizationId = 1000,
 		CreatedDate = DateTime.UtcNow,
 		StateDate = DateTime.UtcNow,
-		AgeLimit = 12,
+		AgeLimit = 18,
 		UserOrganizationBindingId = 1000,
+	});
+	await db.SaveChangesAsync();
+
+	db.UserEventBinding.Add(new UserEventBindings
+	{
+		Id = 1000,
+		UserId = 1000,
+		OrganizationEventsId = 1000,
 	});
 
 	db.Post.Add(new Posts
 	{
+		Title = "Fist Event Post",
+		CreatedDate = DateTime.UtcNow,
+		UserId = 1000,
+		OrganizationEventId = 1000
+	});
+	await db.SaveChangesAsync();
+
+	db.Post.Add(new Posts
+	{
 		Id = 1000,
-		Title = "Bee Movie Trailer Night",
+		Title = "Hello World",
 		CreatedDate = DateTime.UtcNow,
 		UserId = 1000,
 		OrganizationEventId = 1000,
 	});
+	await db.SaveChangesAsync();
 
 	db.OrganizationPost.Add(new OrganizationPosts
 	{
@@ -108,6 +116,14 @@ using (var db = new DatabaseContext())
 		OrganizationId = 1000,
 		PostId = 1000,
 	});
+	await db.SaveChangesAsync();
 
+	db.Post.Add(new Posts
+	{
+		Title = "Bee Movie Trailer Night",
+		CreatedDate = DateTime.UtcNow,
+		UserId = 1000,
+		OrganizationEventId = 1000,
+	});
 	await db.SaveChangesAsync();
 }
