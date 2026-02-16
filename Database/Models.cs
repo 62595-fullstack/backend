@@ -29,5 +29,5 @@ public class DatabaseContext : DbContext
 
 
 
-// dotnet ef migrations add InitialCreate
+// dotnet ef migrations add [nameofmigrations]
 // dotnet ef database update
