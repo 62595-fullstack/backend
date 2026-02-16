@@ -48,12 +48,12 @@ namespace backend.getdata
             }
         }
 
-        public Users? getUserByUserName(string email)
+        public Users? getUserByUserName(string userName)
         {
             try
             {
                 DatabaseContext db = new DatabaseContext();
-                Users? user = db.User.FirstOrDefault(u => u.Username == email);
+                Users? user = db.User.FirstOrDefault(u => u.Username == userName);
 
                 if (user != null)
                 {
@@ -71,10 +71,7 @@ namespace backend.getdata
             }
         }
 
-
-
-
-        public List<Users>? getAllUsers()
+        public List<Users>? GetAllUsers()
         {
             try
             {
@@ -88,10 +85,5 @@ namespace backend.getdata
                 return null;
             }
         }
-
-
-
-
-
     }
 }
