@@ -1,36 +1,54 @@
-﻿// TODO run the database please use 
+﻿// TODO: To run the database please use:
 // docker run --name BookFace -e POSTGRES_PASSWORD=facebook -d -p 5432:5432 postgres
 // dotnet ef database update
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Npgsql;
-using System;
-using System.Linq;
+using Models.Post;
+using Models.User;
+using Models.Organization;
 
-IConfigurationRoot config = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json")
-    .Build();
-
-var connString = $@"Host={config["host"]};
-                 Username={config["username"]};
-                 Password={config["password"]};
-                 Database={config["database"]}";
-
-await using var conn = new NpgsqlConnection(connString);
-await conn.OpenAsync();
-// using var context = new DatabaseContext();
-
-await using (var cmd = new NpgsqlCommand("INSERT INTO data (some_field) VALUES (@p)", conn))
+using (var db = new DatabaseContext())
 {
-    cmd.Parameters.AddWithValue("p", "Hello world");
-    await cmd.ExecuteNonQueryAsync();
-}
+    db.User.RemoveRange(db.User);
+    db.Post.RemoveRange(db.Post);
+    db.Organization.RemoveRange(db.Organization);
 
-// Retrieve all rows
-await using (var cmd = new NpgsqlCommand("SELECT some_field FROM data", conn))
-await using (var reader = await cmd.ExecuteReaderAsync())
-{
-while (await reader.ReadAsync())
-    Console.WriteLine(reader.GetString(0));
+    // await db.User.AddAsync(new Users
+    db.User.Add(new Users
+    {
+        Id = 1,
+        Email = "bbbenson@hotmail.com",
+        Password = "flowers_mmm",
+        FirstName = "Berry B.",
+        Username = "Benson",
+        Age = 2,
+    });
+
+    // await db.Organization.AddAsync(new Organizations
+    db.Organization.Add(new Organizations
+    {
+        Id = 1,
+        Name = "HoneyFactory",
+        CreatedDate = DateTime.UtcNow,
+    });
+
+    db.Post.Add(new Posts
+    {
+        Id = 1,
+        Title = "Fist Event Post",
+        CreatedDate = DateTime.UtcNow,
+        UserId = 1,
+        OrganizationEventId = 1
+    });
+
+    db.Post.Add(new Posts
+    {
+        Id = 2,
+        Title = "Hello World",
+        CreatedDate = DateTime.UtcNow,
+        UserId = 1,
+        OrganizationEventId = 1
+    });
+
+    await db.SaveChangesAsync();
 }

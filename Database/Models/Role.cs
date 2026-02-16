@@ -1,13 +1,11 @@
-﻿
-
-using Models.UserOrganizationBinding;
+﻿using Models.UserOrganizationBinding;
 
 namespace Models.Role
 {
     public class Roles
     {
         public int Id { get; set; }
-        
+
         public required string Name { get; set; }
 
 

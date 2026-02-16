@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Models.Organization;
 using Models.OrganizationEvent;
 using Models.OrganizationPost;
@@ -29,8 +30,18 @@ public class DatabaseContext : DbContext
 
 
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql(@"Host=localhost;Username=postgres;Password=facebook;Database=BookFace");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+        IConfigurationRoot config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+        var connString = $@"Host={config["host"]};
+                         Username={config["username"]};
+                         Password={config["password"]};
+                         Database={config["database"]}";
+
+        optionsBuilder.UseNpgsql(connString);
+    }
 }
 
 

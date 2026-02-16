@@ -100,8 +100,7 @@ namespace backend.Migrations
 
                     b.HasIndex("OrganizationsId");
 
-                    b.HasIndex("PostId")
-                        .IsUnique();
+                    b.HasIndex("PostId");
 
                     b.ToTable("OrganizationPost");
                 });
@@ -135,10 +134,6 @@ namespace backend.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OrganizationEventId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Post");
                 });
@@ -263,31 +258,12 @@ namespace backend.Migrations
                         .HasForeignKey("OrganizationsId");
 
                     b.HasOne("Models.Post.Posts", "Post")
-                        .WithOne("PostId")
-                        .HasForeignKey("Models.OrganizationPost.OrganizationPosts", "PostId")
+                        .WithMany()
+                        .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Post");
-                });
-
-            modelBuilder.Entity("Models.Post.Posts", b =>
-                {
-                    b.HasOne("Models.OrganizationEvent.OrganizationEvents", "OrganizationEvent")
-                        .WithMany()
-                        .HasForeignKey("OrganizationEventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.User.Users", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OrganizationEvent");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Models.UserEventBinding.UserEventBindings", b =>
@@ -344,12 +320,6 @@ namespace backend.Migrations
             modelBuilder.Entity("Models.OrganizationEvent.OrganizationEvents", b =>
                 {
                     b.Navigation("UserEventBinding");
-                });
-
-            modelBuilder.Entity("Models.Post.Posts", b =>
-                {
-                    b.Navigation("PostId")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Models.Role.Roles", b =>

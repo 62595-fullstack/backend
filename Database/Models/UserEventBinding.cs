@@ -1,5 +1,4 @@
-﻿
-using Models.OrganizationEvent;
+﻿using Models.OrganizationEvent;
 using Models.User;
 
 namespace Models.UserEventBinding
@@ -7,9 +6,9 @@ namespace Models.UserEventBinding
     public class UserEventBindings
     {
         public int Id { get; set; }
-        
+
         public required int UserId { get; set; }
-        
+
         public required int OrganizationEventsId { get; set; }
 
 
