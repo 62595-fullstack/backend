@@ -100,8 +100,6 @@ namespace backend.Migrations
 
                     b.HasIndex("OrganizationsId");
 
-                    b.HasIndex("PostId");
-
                     b.ToTable("OrganizationPost");
                 });
 
@@ -256,14 +254,6 @@ namespace backend.Migrations
                     b.HasOne("Models.Organization.Organizations", null)
                         .WithMany("OrganizationPost")
                         .HasForeignKey("OrganizationsId");
-
-                    b.HasOne("Models.Post.Posts", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Models.UserEventBinding.UserEventBindings", b =>
