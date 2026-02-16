@@ -1,6 +1,7 @@
 using Models.UserEventBinding;
 using Models.UserOrganizationBinding;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Models.User;
 
@@ -21,5 +22,4 @@ public class Users
     public ICollection<UserOrganizationBindings> UserOrganizationBindings { get; set; } = new List<UserOrganizationBindings>();
 
     public ICollection<UserEventBindings> UserEventBindings { get; set; } = new List<UserEventBindings>();
-
 }

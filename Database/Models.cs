@@ -9,7 +9,6 @@ using Models.User;
 using Models.UserEventBinding;
 using Models.UserOrganizationBinding;
 
-
 public class DatabaseContext : DbContext
 {
 
@@ -22,15 +21,11 @@ public class DatabaseContext : DbContext
     public DbSet<UserEventBindings> UserEventBinding { get; set; }
     public DbSet<UserOrganizationBindings> UserOrganizationBinding { get; set; }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+        => modelBuilder.UseIdentityByDefaultColumns();
 
-
-
-
-
-
-
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
         IConfigurationRoot config = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
             .Build();
@@ -43,11 +38,6 @@ public class DatabaseContext : DbContext
         optionsBuilder.UseNpgsql(connString);
     }
 }
-
-
-
-
-
 
 // dotnet ef migrations add InitialCreate
 // dotnet ef database update
