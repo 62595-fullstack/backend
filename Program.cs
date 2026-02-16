@@ -36,4 +36,4 @@ public class Program
 
 // TODO run the database please use 
 // docker run --name BookFace -e POSTGRES_PASSWORD=facebook -d -p 5432:5432 postgres
-// dotnet ef datrabase update
+// dotnet ef database update
