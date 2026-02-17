@@ -1,7 +1,3 @@
-﻿// TODO run the database please use 
-// docker run --name BookFace -e POSTGRES_PASSWORD=facebook -d -p 5432:5432 postgres
-// dotnet ef datrabase update
-
 using Models.Post;
 using Models.User;
 using Models.Role;
@@ -25,7 +21,7 @@ using (var db = new DatabaseContext())
 	db.User.Add(new Users
 	{
 		Email = "crazyfrog@hotmail.com",
-		Password = "bingbingeling",
+		Password = "bingbing",
 		FirstName = "Crazy",
 		Username = "Frog",
 		Age = 2,
@@ -36,7 +32,7 @@ using (var db = new DatabaseContext())
 	{
 		Id = 1000,
 		Email = "bbbenson@hotmail.com",
-		Password = "flowers_mmm",
+		Password = "1234",
 		FirstName = "Berry B.",
 		Username = "Benson",
 		Age = 2,
@@ -53,7 +49,7 @@ using (var db = new DatabaseContext())
 
 	db.Organization.Add(new Organizations
 	{
-		Name = "HoneyFactory",
+		Name = "HollyWood",
 		CreatedDate = DateTime.UtcNow,
 	});
 	await db.SaveChangesAsync();
@@ -62,6 +58,13 @@ using (var db = new DatabaseContext())
 	{
 		Id = 1000,
 		Name = "Admin",
+	});
+	await db.SaveChangesAsync();
+
+	db.Role.Add(new Roles
+	{
+		Id = 1000,
+		Name = "Employee",
 	});
 	await db.SaveChangesAsync();
 

@@ -9,7 +9,6 @@ using Models.User;
 using Models.UserEventBinding;
 using Models.UserOrganizationBinding;
 
-
 public class DatabaseContext : DbContext
 {
 
@@ -21,14 +20,6 @@ public class DatabaseContext : DbContext
     public DbSet<Roles> Role { get; set; }
     public DbSet<UserEventBindings> UserEventBinding { get; set; }
     public DbSet<UserOrganizationBindings> UserOrganizationBinding { get; set; }
-
-
-
-
-
-
-
-
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
