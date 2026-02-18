@@ -1,17 +1,18 @@
-﻿using Models.User;
+﻿using Microsoft.EntityFrameworkCore;
+using Models.User;
 
 namespace backend.getdata
 {
     public class DataUser
     {
-        public bool setUsers(Users user)
+        public async Task<bool> setUsers(Users user)
         {
             try
             {
                 DatabaseContext db = new DatabaseContext();
-                db.User.Add(user);
+                await db.User.AddAsync(user);
 
-                db.SaveChanges();
+                await db.SaveChangesAsync();
 
                 return true;
             }
@@ -22,12 +23,12 @@ namespace backend.getdata
             }
         }
 
-        public Users? getUserByEmail(string email)
+        public async Task<Users?> getUserByEmail(string email)
         {
             try
             {
                 DatabaseContext db = new DatabaseContext();
-                Users? user = db.User.FirstOrDefault(u => u.Email == email);
+                Users? user = await db.User.FirstOrDefaultAsync(u => u.Email == email);
 
                 if (user != null)
                 {
@@ -45,12 +46,12 @@ namespace backend.getdata
             }
         }
 
-        public Users? getUserByUserName(string userName)
+        public async Task<Users?> getUserByUserName(string userName)
         {
             try
             {
                 DatabaseContext db = new DatabaseContext();
-                Users? user = db.User.FirstOrDefault(u => u.Username == userName);
+                Users? user = await db.User.FirstOrDefaultAsync(u => u.Username == userName);
 
                 if (user != null)
                 {
@@ -68,12 +69,12 @@ namespace backend.getdata
             }
         }
 
-        public List<Users>? GetAllUsers()
+        public async Task<List<Users>?> GetAllUsers()
         {
             try
             {
                 DatabaseContext db = new DatabaseContext();
-                List<Users> users = db.User.ToList();
+                List<Users> users = await db.User.ToListAsync();
                 return users;
             }
             catch (Exception ex)
