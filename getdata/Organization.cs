@@ -1,21 +1,22 @@
+using Microsoft.EntityFrameworkCore;
 using Models.Organization;
 
 namespace backend.getdata
 {
     public class DataOrganization
     {
-        public Organizations CreateOrganization(Organizations organizations)
+        public async Task<Organizations> CreateOrganization(Organizations organizations)
         {
             try
             {
                 DatabaseContext db = new DatabaseContext();
                 
-                db.Add(organizations);
+                await db.AddAsync(organizations);
 
-                db.SaveChanges();
+                await db.SaveChangesAsync();
 
 
-                return organizations;
+                return await db.Organization.Where(o => o.Id == organizations.Id).FirstAsync();
             }
             catch (Exception ex)
             {
@@ -25,17 +26,17 @@ namespace backend.getdata
         }
 
 
-        public Organizations? GetOrganizationByName(string OrganizationName)
+        public async Task<Organizations?> GetOrganizationByName(string OrganizationName)
         {
             try
             {
                 DatabaseContext db = new DatabaseContext();
                 
-                db.Add(OrganizationName);
+                await db.AddAsync(OrganizationName);
 
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 
-                return db.Organization.TakeLast(1).First();
+                return await db.Organization.TakeLast(1).FirstAsync();
             }
             catch (Exception ex)
             {
