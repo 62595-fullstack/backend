@@ -9,12 +9,21 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/posts", () =>
+app.MapGet("/posts", (x) =>
 {
-	using (var db = new DatabaseContext())
+	try
 	{
-		var posts = db.Post.ToListAsync();
-		string jsonString = JsonSerializer.Serialize(posts);
+		using (DatabaseContext db = new DatabaseContext())
+		{
+			var posts = db.Post.ToListAsync();
+			string jsonString = JsonSerializer.Serialize(posts);
+			return posts;
+		}
+	}
+	catch (Exception ex)
+	{
+		Console.WriteLine(ex.Message);
+		return null;
 	}
 })
 .WithName("GetPosts");
