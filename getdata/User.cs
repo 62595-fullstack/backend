@@ -2,7 +2,6 @@
 
 namespace backend.getdata
 {
-
     public class DataUser
     {
         public bool setUsers(Users user)
@@ -20,10 +19,8 @@ namespace backend.getdata
             {
                 Console.WriteLine(ex.Message);
                 return false;
-
             }
         }
-
 
         public Users? getUserByEmail(string email)
         {
@@ -31,12 +28,12 @@ namespace backend.getdata
             {
                 DatabaseContext db = new DatabaseContext();
                 Users? user = db.User.FirstOrDefault(u => u.Email == email);
-                
-                
-                if(user != null)
+
+                if (user != null)
                 {
                     return user;
-                } else
+                }
+                else
                 {
                     throw new Exception("No User with Email");
                 }
