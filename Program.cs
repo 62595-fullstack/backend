@@ -1,5 +1,7 @@
 using System.Text.Json;
+using backend.getdata;
 using Microsoft.EntityFrameworkCore;
+using Models.Organization;
 using Models.Post;
 
 DummyData.Initialize();
@@ -9,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+
+
+#region  posts
 
 app.MapGet("/posts", string () =>
 {
@@ -27,5 +32,48 @@ app.MapGet("/posts", string () =>
 	}
 })
 .WithName("GetPosts");
+
+#endregion
+
+
+
+#region organizations
+
+	app.MapGet("/organizations", async Task<string> () =>
+	{
+		try
+		{
+			using (DatabaseContext db = new DatabaseContext())
+			{
+
+				DataOrganization organizationData = new DataOrganization();
+				List<Organizations>? allOrganizations = await organizationData.GetAllOrganization();
+				return JsonSerializer.Serialize(allOrganizations);
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			return "{}";
+		}
+	})
+	.WithName("GetPosts");
+
+
+#endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.Run();

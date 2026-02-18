@@ -32,11 +32,22 @@ namespace backend.getdata
             {
                 DatabaseContext db = new DatabaseContext();
                 
-                await db.AddAsync(OrganizationName);
+                return await db.Organization.Where(o=> o.Name == OrganizationName).FirstAsync();;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
 
-                await db.SaveChangesAsync();
+        public async Task<List<Organizations>?> GetAllOrganization()
+        {
+            try
+            {
+                DatabaseContext db = new DatabaseContext();
                 
-                return await db.Organization.TakeLast(1).FirstAsync();
+                return await db.Organization.ToListAsync();
             }
             catch (Exception ex)
             {
