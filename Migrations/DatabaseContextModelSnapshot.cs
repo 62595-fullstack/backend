@@ -45,7 +45,7 @@ namespace backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Organization");
+                    b.ToTable("Organization", (string)null);
                 });
 
             modelBuilder.Entity("Models.OrganizationEvent.OrganizationEvents", b =>
@@ -76,7 +76,7 @@ namespace backend.Migrations
                     b.HasIndex("OrganizationId")
                         .IsUnique();
 
-                    b.ToTable("OrganizationEvent");
+                    b.ToTable("OrganizationEvent", (string)null);
                 });
 
             modelBuilder.Entity("Models.OrganizationPost.OrganizationPosts", b =>
@@ -103,7 +103,7 @@ namespace backend.Migrations
                     b.HasIndex("PostId")
                         .IsUnique();
 
-                    b.ToTable("OrganizationPost");
+                    b.ToTable("OrganizationPost", (string)null);
                 });
 
             modelBuilder.Entity("Models.Post.Posts", b =>
@@ -140,7 +140,7 @@ namespace backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Post");
+                    b.ToTable("Post", (string)null);
                 });
 
             modelBuilder.Entity("Models.Role.Roles", b =>
@@ -157,7 +157,7 @@ namespace backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Role");
+                    b.ToTable("Role", (string)null);
                 });
 
             modelBuilder.Entity("Models.User.Users", b =>
@@ -189,7 +189,7 @@ namespace backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
                 });
 
             modelBuilder.Entity("Models.UserEventBinding.UserEventBindings", b =>
@@ -213,7 +213,7 @@ namespace backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserEventBinding");
+                    b.ToTable("UserEventBinding", (string)null);
                 });
 
             modelBuilder.Entity("Models.UserOrganizationBinding.UserOrganizationBindings", b =>
@@ -242,7 +242,7 @@ namespace backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserOrganizationBinding");
+                    b.ToTable("UserOrganizationBinding", (string)null);
                 });
 
             modelBuilder.Entity("Models.OrganizationEvent.OrganizationEvents", b =>
