@@ -8,6 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
+builder.Services.AddOpenApi();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+	app.MapOpenApi();
+}
+
 app.UseHttpsRedirection();
 
 app.MapGet("/posts", string () =>
