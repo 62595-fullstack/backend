@@ -63,7 +63,6 @@ using (var db = new DatabaseContext())
 
 	db.Role.Add(new Roles
 	{
-		Id = 1000,
 		Name = "Employee",
 	});
 	await db.SaveChangesAsync();
