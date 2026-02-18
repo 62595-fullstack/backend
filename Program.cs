@@ -59,6 +59,48 @@ app.MapGet("/posts", string () =>
 	})
 	.WithName("GetPosts");
 
+	app.MapGet("/organizations/{id}", async Task<string> (int id) =>
+	{
+		try
+		{
+			using (DatabaseContext db = new DatabaseContext())
+			{
+
+				DataOrganization organizationData = new DataOrganization();
+				Organizations? allOrganizations = await organizationData.GetOrganizationById(id);
+				return JsonSerializer.Serialize(allOrganizations);
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			return "{}";
+		} 
+	})
+	.WithName("GetPostsById");
+
+	app.MapDelete("/organizations/{id}", async Task<string> (int id) =>
+	{
+		try
+		{
+			using (DatabaseContext db = new DatabaseContext())
+			{
+
+				DataOrganization organizationData = new DataOrganization();
+				bool allOrganizations = await organizationData.DeleteOrganization(id);
+				return JsonSerializer.Serialize(allOrganizations);
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			return "{}";
+		}
+	})
+	.WithName("GetPostsById");
+
+
+
 
 #endregion
 

@@ -55,5 +55,42 @@ namespace backend.getdata
                 return null;
             }
         }
+
+        public async Task<Organizations?> GetOrganizationById(int OrganizationId)
+        {
+            try
+            {
+                DatabaseContext db = new DatabaseContext();
+                
+                return await db.Organization.Where(o=> o.Id == OrganizationId).FirstAsync();;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
+
+        public async Task<bool> DeleteOrganization(int id)
+        {
+            try
+            {
+                DatabaseContext db = new DatabaseContext();
+                
+                Organizations organizations= await db.Organization.Where(o => o.Id == id).FirstAsync();
+
+                db.Organization.Remove(organizations);
+
+                await db.SaveChangesAsync();
+                
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
     }
 }
