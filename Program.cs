@@ -57,7 +57,7 @@ app.MapGet("/posts", string () =>
 			return "{}";
 		}
 	})
-	.WithName("GetPosts");
+	.WithName("Getorganizations");
 
 	app.MapGet("/organizations/{id}", async Task<string> (int id) =>
 	{
@@ -77,7 +77,7 @@ app.MapGet("/posts", string () =>
 			return "{}";
 		} 
 	})
-	.WithName("GetPostsById");
+	.WithName("GetOrganizationsById");
 
 	app.MapDelete("/organizations/{id}", async Task<string> (int id) =>
 	{
@@ -97,7 +97,7 @@ app.MapGet("/posts", string () =>
 			return "{}";
 		}
 	})
-	.WithName("GetPostsById");
+	.WithName("DeleteOrganizationsById");
 
 
 
