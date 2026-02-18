@@ -25,7 +25,7 @@ namespace backend.getdata
         }
 
 
-        public Organizations GetOrganizationByName(string OrganizationName)
+        public Organizations? GetOrganizationByName(string OrganizationName)
         {
             try
             {
