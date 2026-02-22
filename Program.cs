@@ -6,14 +6,21 @@ DummyData.Initialize();
 
 var builder = WebApplication.CreateBuilder(args);
 
-var app = builder.Build();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-builder.Services.AddOpenApi();
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.MapOpenApi();
+	app.UseSwagger();
+	// SwaggerUI can be viewed at http://localhost:{port}
+	app.UseSwaggerUI(options =>
+	{
+		options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+		options.RoutePrefix = string.Empty;
+	});
 }
 
 app.UseHttpsRedirection();
