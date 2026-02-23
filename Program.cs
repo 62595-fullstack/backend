@@ -1,8 +1,8 @@
-using System.Text.Json;
-using backend.getdata;
 using Microsoft.EntityFrameworkCore;
-using Models.Organization;
 using Models.Post;
+using Models.Organization;
+using Newtonsoft.Json;
+using backend.getdata;
 
 DummyData.Initialize();
 
@@ -36,7 +36,7 @@ app.MapGet("/posts", string () =>
 		using (DatabaseContext db = new DatabaseContext())
 		{
 			Task<List<Posts>> posts = db.Post.ToListAsync();
-			return JsonSerializer.Serialize(posts);
+			return JsonConvert.SerializeObject(posts);
 		}
 	}
 	catch (Exception ex)
@@ -54,7 +54,7 @@ app.MapGet("/posts/{organizationsId}", string (int organizationsId) =>
 		using (DatabaseContext db = new DatabaseContext())
 		{
 			Task<List<Posts>> posts = db.Post.ToListAsync();
-			return JsonSerializer.Serialize(posts);
+			return JsonConvert.SerializeObject(posts);
 		}
 	}
 	catch (Exception ex)
@@ -70,64 +70,64 @@ app.MapGet("/posts/{organizationsId}", string (int organizationsId) =>
 
 
 #region organizations
-	app.MapGet("/organizations", async Task<string> () =>
+app.MapGet("/organizations", async Task<string> () =>
+{
+	try
 	{
-		try
+		using (DatabaseContext db = new DatabaseContext())
 		{
-			using (DatabaseContext db = new DatabaseContext())
-			{
-				DataOrganization organizationData = new DataOrganization();
-				List<Organizations>? allOrganizations = await organizationData.GetAllOrganization();
-				return JsonSerializer.Serialize(allOrganizations);
-			}
+			DataOrganization organizationData = new DataOrganization();
+			List<Organizations>? allOrganizations = await organizationData.GetAllOrganization();
+			return JsonConvert.SerializeObject(allOrganizations);
 		}
-		catch (Exception ex)
-		{
-			Console.WriteLine(ex.Message);
-			return "{}";
-		}
-	})
-	.WithName("Getorganizations");
-
-	app.MapGet("/organizations/{id}", async Task<string> (int id) =>
+	}
+	catch (Exception ex)
 	{
-		try
-		{
-			using (DatabaseContext db = new DatabaseContext())
-			{
+		Console.WriteLine(ex.Message);
+		return "{}";
+	}
+})
+.WithName("Getorganizations");
 
-				DataOrganization organizationData = new DataOrganization();
-				Organizations? allOrganizations = await organizationData.GetOrganizationById(id);
-				return JsonSerializer.Serialize(allOrganizations);
-			}
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine(ex.Message);
-			return "{}";
-		} 
-	})
-	.WithName("GetOrganizationsById");
-
-	app.MapDelete("/organizations/{id}", async Task<string> (int id) =>
+app.MapGet("/organizations/{id}", async Task<string> (int id) =>
+{
+	try
 	{
-		try
+		using (DatabaseContext db = new DatabaseContext())
 		{
-			using (DatabaseContext db = new DatabaseContext())
-			{
 
-				DataOrganization organizationData = new DataOrganization();
-				bool allOrganizations = await organizationData.DeleteOrganization(id);
-				return JsonSerializer.Serialize(allOrganizations);
-			}
+			DataOrganization organizationData = new DataOrganization();
+			Organizations? allOrganizations = await organizationData.GetOrganizationById(id);
+			return JsonConvert.SerializeObject(allOrganizations);
 		}
-		catch (Exception ex)
+	}
+	catch (Exception ex)
+	{
+		Console.WriteLine(ex.Message);
+		return "{}";
+	}
+})
+.WithName("GetOrganizationsById");
+
+app.MapDelete("/organizations/{id}", async Task<string> (int id) =>
+{
+	try
+	{
+		using (DatabaseContext db = new DatabaseContext())
 		{
-			Console.WriteLine(ex.Message);
-			return "{}";
+
+			DataOrganization organizationData = new DataOrganization();
+			bool allOrganizations = await organizationData.DeleteOrganization(id);
+			return JsonConvert.SerializeObject(allOrganizations);
 		}
-	})
-	.WithName("DeleteOrganizationsById");
+	}
+	catch (Exception ex)
+	{
+		Console.WriteLine(ex.Message);
+		return "{}";
+	}
+})
+.WithName("DeleteOrganizationsById");
 
 
 

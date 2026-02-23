@@ -10,7 +10,7 @@ namespace backend.getdata
             try
             {
                 DatabaseContext db = new DatabaseContext();
-                
+
                 await db.AddAsync(organizations);
 
                 await db.SaveChangesAsync();
@@ -31,8 +31,8 @@ namespace backend.getdata
             try
             {
                 DatabaseContext db = new DatabaseContext();
-                
-                return await db.Organization.Where(o=> o.Name == OrganizationName).FirstAsync();;
+
+                return await db.Organization.Where(o => o.Name == OrganizationName).FirstAsync();
             }
             catch (Exception ex)
             {
@@ -46,7 +46,7 @@ namespace backend.getdata
             try
             {
                 DatabaseContext db = new DatabaseContext();
-                
+
                 return await db.Organization.ToListAsync();
             }
             catch (Exception ex)
@@ -61,8 +61,8 @@ namespace backend.getdata
             try
             {
                 DatabaseContext db = new DatabaseContext();
-                
-                return await db.Organization.Where(o=> o.Id == OrganizationId).FirstAsync();;
+
+                return await db.Organization.Where(o => o.Id == OrganizationId).FirstAsync();
             }
             catch (Exception ex)
             {
@@ -77,13 +77,13 @@ namespace backend.getdata
             try
             {
                 DatabaseContext db = new DatabaseContext();
-                
-                Organizations organizations= await db.Organization.Where(o => o.Id == id).FirstAsync();
+
+                Organizations organizations = await db.Organization.Where(o => o.Id == id).FirstAsync();
 
                 db.Organization.Remove(organizations);
 
                 await db.SaveChangesAsync();
-                
+
                 return true;
             }
             catch (Exception ex)
