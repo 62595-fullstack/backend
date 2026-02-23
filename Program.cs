@@ -14,7 +14,6 @@ app.UseHttpsRedirection();
 
 
 #region  posts
-
 app.MapGet("/posts", string () =>
 {
 	try
@@ -33,19 +32,35 @@ app.MapGet("/posts", string () =>
 })
 .WithName("GetPosts");
 
+app.MapGet("/posts/{organizationsId}", string (int organizationsId) =>
+{
+	try
+	{
+		using (DatabaseContext db = new DatabaseContext())
+		{
+			Task<List<Posts>> posts = db.Post.ToListAsync();
+			return JsonSerializer.Serialize(posts);
+		}
+	}
+	catch (Exception ex)
+	{
+		Console.WriteLine(ex.Message);
+		return "{}";
+	}
+})
+.WithName("GetPostsFromOrganizationsId");
+
 #endregion
 
 
 
 #region organizations
-
 	app.MapGet("/organizations", async Task<string> () =>
 	{
 		try
 		{
 			using (DatabaseContext db = new DatabaseContext())
 			{
-
 				DataOrganization organizationData = new DataOrganization();
 				List<Organizations>? allOrganizations = await organizationData.GetAllOrganization();
 				return JsonSerializer.Serialize(allOrganizations);
@@ -98,6 +113,7 @@ app.MapGet("/posts", string () =>
 		}
 	})
 	.WithName("DeleteOrganizationsById");
+
 
 
 
