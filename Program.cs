@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Models.Post;
 using Models.Organization;
 using Newtonsoft.Json;
+using backend.getdata;
 
 DummyData.Initialize();
 
