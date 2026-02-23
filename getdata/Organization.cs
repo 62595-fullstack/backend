@@ -32,7 +32,7 @@ namespace backend.getdata
             {
                 DatabaseContext db = new DatabaseContext();
 
-                return await db.Organization.Where(o => o.Name == OrganizationName).FirstAsync(); ;
+                return await db.Organization.Where(o => o.Name == OrganizationName).FirstAsync();
             }
             catch (Exception ex)
             {
@@ -62,7 +62,7 @@ namespace backend.getdata
             {
                 DatabaseContext db = new DatabaseContext();
 
-                return await db.Organization.Where(o => o.Id == OrganizationId).FirstAsync(); ;
+                return await db.Organization.Where(o => o.Id == OrganizationId).FirstAsync();
             }
             catch (Exception ex)
             {
