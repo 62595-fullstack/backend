@@ -12,7 +12,7 @@ namespace backend.getdata
             try
             {
                 DatabaseContext db = new DatabaseContext();
-                return await db.UserOrganizationBinding.Where(x => x.OrganizationId == organizationId).ToListAsync();;
+                return await db.UserOrganizationBinding.Where(x => x.OrganizationId == organizationId).ToListAsync();
             }
             catch (Exception ex)
             {

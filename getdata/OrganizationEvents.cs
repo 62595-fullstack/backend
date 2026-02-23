@@ -16,7 +16,7 @@ namespace backend.getdata
                 
 
 
-                return await db.OrganizationEvent.Where(x => x.OrganizationId == organizationId).ToListAsync();;
+                return await db.OrganizationEvent.Where(x => x.OrganizationId == organizationId).ToListAsync();
             }
             catch (Exception ex)
             {
