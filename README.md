@@ -8,3 +8,5 @@ To run in development set the ASPNETCORE_ENVIRONMENT environment variable to Dev
 ```bash
 env ASPNETCORE_ENVIRONMENT=Development dotnet run
 ```
+
+dotnet run -e ASPNETCORE_ENVIRONMENT=development
