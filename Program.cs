@@ -3,6 +3,8 @@ using Models.Post;
 using Models.Organization;
 using Newtonsoft.Json;
 using backend.getdata;
+using Models.UserOrganizationBinding;
+using Models.OrganizationEvent;
 
 DummyData.Initialize();
 
@@ -129,21 +131,55 @@ app.MapDelete("/organizations/{id}", async Task<string> (int id) =>
 })
 .WithName("DeleteOrganizationsById");
 
+#endregion
 
 
-
+#region UserOrganizationBinding
+	
+app.MapGet("/UserOrganizationBinding/{organizationId}", async Task<string> (int organizationId) =>
+{
+	try
+	{
+		using (DatabaseContext db = new DatabaseContext())
+		{
+			DataUserOrganizationBinding organizationData = new DataUserOrganizationBinding();
+			List<UserOrganizationBindings> allOrganizations = await organizationData.getUserOrganizationForOrganization(organizationId);
+			return JsonConvert.SerializeObject(allOrganizations);
+		}
+	}
+	catch (Exception ex)
+	{
+		Console.WriteLine(ex.Message);
+		return "{}";
+	}
+})
+.WithName("getUserOrganizationBinding");
 
 #endregion
 
 
+#region OrganizationEvents
 
+app.MapGet("/OrganizationEvents/{organizationId}", async Task<string> (int organizationId) =>
+{
+	try
+	{
+		using (DatabaseContext db = new DatabaseContext())
+		{
+			DataOrganizationEvents organizationData = new DataOrganizationEvents();
+			List<OrganizationEvents> allOrganizations = await organizationData.getOrganizationEvents(organizationId);
+			return JsonConvert.SerializeObject(allOrganizations);
+		}
+	}
+	catch (Exception ex)
+	{
+		Console.WriteLine(ex.Message);
+		return "{}";
+	}
+})
+.WithName("getUserOrganizationBinding");
 
-
-
-
-
-
-
+#endregion
 
 
 
