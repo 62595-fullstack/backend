@@ -1,8 +1,3 @@
-// using System.Text.Json;
-// using backend.getdata;
-// using Microsoft.EntityFrameworkCore;
-// using Models.Post;
-
 using Microsoft.EntityFrameworkCore;
 using Models.Post;
 using Models.Organization;
@@ -40,7 +35,7 @@ app.MapGet("/posts", string () =>
 		using (DatabaseContext db = new DatabaseContext())
 		{
 			Task<List<Posts>> posts = db.Post.ToListAsync();
-			return JsonSerializer.Serialize(posts);
+			return JsonConvert.SerializeObject(posts);
 		}
 	}
 	catch (Exception ex)
@@ -58,7 +53,7 @@ app.MapGet("/posts/{organizationsId}", string (int organizationsId) =>
 		using (DatabaseContext db = new DatabaseContext())
 		{
 			Task<List<Posts>> posts = db.Post.ToListAsync();
-			return JsonSerializer.Serialize(posts);
+			return JsonConvert.SerializeObject(posts);
 		}
 	}
 	catch (Exception ex)
@@ -82,7 +77,7 @@ app.MapGet("/organizations", async Task<string> () =>
 		{
 			DataOrganization organizationData = new DataOrganization();
 			List<Organizations>? allOrganizations = await organizationData.GetAllOrganization();
-			return JsonSerializer.Serialize(allOrganizations);
+			return JsonConvert.SerializeObject(allOrganizations);
 		}
 	}
 	catch (Exception ex)
@@ -102,7 +97,7 @@ app.MapGet("/organizations/{id}", async Task<string> (int id) =>
 
 			DataOrganization organizationData = new DataOrganization();
 			Organizations? allOrganizations = await organizationData.GetOrganizationById(id);
-			return JsonSerializer.Serialize(allOrganizations);
+			return JsonConvert.SerializeObject(allOrganizations);
 		}
 	}
 	catch (Exception ex)
@@ -122,7 +117,7 @@ app.MapDelete("/organizations/{id}", async Task<string> (int id) =>
 
 			DataOrganization organizationData = new DataOrganization();
 			bool allOrganizations = await organizationData.DeleteOrganization(id);
-			return JsonSerializer.Serialize(allOrganizations);
+			return JsonConvert.SerializeObject(allOrganizations);
 		}
 	}
 	catch (Exception ex)
