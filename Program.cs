@@ -183,6 +183,11 @@ app.MapGet("/OrganizationEvents/{organizationId}", async Task<string> (int organ
 
 
 
+#region GDPR
+	
+#endregion
+
+
 
 
 app.Run();
