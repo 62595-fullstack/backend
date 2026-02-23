@@ -1,6 +1,4 @@
-﻿
-
-using Models.OrganizationEvent;
+﻿using Models.OrganizationEvent;
 using Models.OrganizationPost;
 using Models.User;
 using Models.UserEventBinding;
@@ -11,10 +9,10 @@ namespace Models.Post
     public class Posts
     {
         public int Id { get; set; }
-        
+
         public required string Title { get; set; }
         public string BodyText { get; set; } = "";
-        
+
         public required DateTime CreatedDate { get; set; }
         public DateTime? LastUpdateDate { get; set; } = null;
         public required int UserId { get; set; }
@@ -25,5 +23,12 @@ namespace Models.Post
         public OrganizationEvents? OrganizationEvent { get; set; } = null!;
 
         public OrganizationPosts PostId { get; set; }
+    }
+
+    public class PostsDto
+    {
+        public int Id { get; set; }
+        public required string Title { get; set; }
+        public string BodyText { get; set; } = "";
     }
 }
