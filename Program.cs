@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Models.Post;
 using Models.Organization;
@@ -67,12 +68,49 @@ app.MapGet("/posts/{organizationsId}", string (int organizationsId) =>
 })
 .WithName("GetPostsFromOrganizationsId");
 
-#endregion
+app.MapPost("/posts", string (string post) =>
+{
+	try
+	{
+		using (DatabaseContext db = new DatabaseContext())
+		{
+			Posts p = JsonConvert.DeserializeObject<Posts>(post);
+			db.Post.Add(p);
+			return HttpStatusCode.Found.ToString();
+		}
+	}
+	catch (Exception ex)
+	{
+		Console.WriteLine(ex.Message);
+		return HttpStatusCode.NotFound.ToString();
+	}
+})
+.WithName("PostPosts");
 
+#endregion
 
 
 #region organizations
 app.MapGet("/organizations", async Task<string> () =>
+{
+	try
+	{
+		using (DatabaseContext db = new DatabaseContext())
+		{
+			DataOrganization organizationData = new DataOrganization();
+			List<Organizations>? allOrganizations = await organizationData.GetAllOrganization();
+			return JsonConvert.SerializeObject(allOrganizations);
+		}
+	}
+	catch (Exception ex)
+	{
+		Console.WriteLine(ex.Message);
+		return "{}";
+	}
+})
+.WithName("Getorganizations");
+
+app.MapPost("/organizations", async Task<string> (string organization) =>
 {
 	try
 	{
