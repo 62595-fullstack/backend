@@ -177,7 +177,7 @@ app.MapGet("/OrganizationEvents/{organizationId}", async Task<string> (int organ
 		return "{}";
 	}
 })
-.WithName("getUserOrganizationBinding");
+.WithName("getOrganizationEvents");
 
 #endregion
 
