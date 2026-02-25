@@ -184,6 +184,25 @@ app.MapGet("/OrganizationEvents/{organizationId}", async Task<string> (int organ
 
 
 #region GDPR
+
+app.MapDelete("/GDPR/{userId}", async Task<string> (int userId) =>
+{
+	try
+	{
+		using (DatabaseContext db = new DatabaseContext())
+		{
+			DataOrganizationEvents organizationData = new DataOrganizationEvents();
+			List<OrganizationEvents> allOrganizations = await organizationData.getOrganizationEvents(organizationId);
+			return JsonConvert.SerializeObject(allOrganizations);
+		}
+	}
+	catch (Exception ex)
+	{
+		Console.WriteLine(ex.Message);
+		return "{}";
+	}
+})
+.WithName("getUserOrganizationBinding");
 	
 #endregion
 
