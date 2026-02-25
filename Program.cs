@@ -191,8 +191,8 @@ app.MapDelete("/GDPR/{userId}", async Task<string> (int userId) =>
 	{
 		using (DatabaseContext db = new DatabaseContext())
 		{
-			DataOrganizationEvents organizationData = new DataOrganizationEvents();
-			List<OrganizationEvents> allOrganizations = await organizationData.getOrganizationEvents(organizationId);
+			DataGDPR organizationData = new DataGDPR();
+			int? allOrganizations = await organizationData.DeleteUserAcount(userId);
 			return JsonConvert.SerializeObject(allOrganizations);
 		}
 	}
