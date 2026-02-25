@@ -202,7 +202,7 @@ app.MapDelete("/GDPR/{userId}", async Task<string> (int userId) =>
 		return "{}";
 	}
 })
-.WithName("getUserOrganizationBinding");
+.WithName("DeleteGDPR");
 	
 #endregion
 
