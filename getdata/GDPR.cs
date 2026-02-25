@@ -8,21 +8,21 @@ namespace backend.getdata
 {
     public class DataGDPR
     {
-        public async Task<Users?> DeleteUserAcount(int userId)
+        public async Task<int?> DeleteUserAcount(int userId)
         {
             try
             {
                 DatabaseContext db = new DatabaseContext();
                 
-                var bob = await db.User.Where(x => x.Id == userId).ExecuteDeleteAsync();
+                var user = await db.User.Where(x => x.Id == userId).ExecuteDeleteAsync();
 
 
-                return bob;
+                return user;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return new List<OrganizationEvents>();
+                return null;
             }
         }
 
