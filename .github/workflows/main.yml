@@ -1,0 +1,10 @@
+on:
+  push:
+    branches:
+    - main
+    jobs:
+      my_job:
+        name: deploy to production
+        runs-on: BackendDeployment
+        -run: git pull
+  
