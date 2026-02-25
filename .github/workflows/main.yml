@@ -9,4 +9,5 @@ jobs:
     runs-on: BackendDeployment
     steps:
     - run: git pull
+    - run: dotnet run -e ASPNETCORE_ENVIRONMENT=development
 
