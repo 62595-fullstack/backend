@@ -208,6 +208,4 @@ app.MapDelete("/api/GDPR/{userId}", async Task<string> (int userId) =>
 #endregion
 
 
-
-
 app.Run();
