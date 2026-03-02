@@ -1,5 +1,6 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
+using Models.User;
 using Models.Post;
 using Models.Organization;
 using Newtonsoft.Json;
@@ -68,7 +69,7 @@ app.MapGet("/posts/{organizationsId}", string (int organizationsId) =>
 })
 .WithName("GetPostsFromOrganizationsId");
 
-app.MapPost("/posts", string (string post) =>
+app.MapPost("/posts", async Task<string> (string post) =>
 {
 	try
 	{
@@ -108,26 +109,26 @@ app.MapGet("/organizations", async Task<string> () =>
 		return "{}";
 	}
 })
-.WithName("Getorganizations");
+.WithName("GetOrganizations");
 
-app.MapPost("/organizations", async Task<string> (string organization) =>
+app.MapPost("/organizations", async Task<string> (string organizations) =>
 {
 	try
 	{
 		using (DatabaseContext db = new DatabaseContext())
 		{
-			DataOrganization organizationData = new DataOrganization();
-			List<Organizations>? allOrganizations = await organizationData.GetAllOrganization();
-			return JsonConvert.SerializeObject(allOrganizations);
+			Organizations o = JsonConvert.DeserializeObject<Organizations>(organizations);
+			db.Organization.Add(o);
+			return HttpStatusCode.Found.ToString();
 		}
 	}
 	catch (Exception ex)
 	{
 		Console.WriteLine(ex.Message);
-		return "{}";
+		return HttpStatusCode.NotFound.ToString();
 	}
 })
-.WithName("Getorganizations");
+.WithName("PostOrganizations");
 
 app.MapGet("/organizations/{id}", async Task<string> (int id) =>
 {
@@ -173,7 +174,7 @@ app.MapDelete("/organizations/{id}", async Task<string> (int id) =>
 
 
 #region UserOrganizationBinding
-	
+
 app.MapGet("/UserOrganizationBinding/{organizationId}", async Task<string> (int organizationId) =>
 {
 	try
@@ -241,7 +242,7 @@ app.MapDelete("/GDPR/{userId}", async Task<string> (int userId) =>
 	}
 })
 .WithName("DeleteGDPR");
-	
+
 #endregion
 
 
