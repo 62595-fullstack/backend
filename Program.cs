@@ -75,15 +75,15 @@ app.MapPost("/posts", async Task<string> (string post) =>
 	{
 		using (DatabaseContext db = new DatabaseContext())
 		{
-			Posts p = JsonConvert.DeserializeObject<Posts>(post);
+			Posts? p = JsonConvert.DeserializeObject<Posts>(post);
 			db.Post.Add(p);
-			return HttpStatusCode.Found.ToString();
+			return HttpStatusCode.OK.ToString();
 		}
 	}
 	catch (Exception ex)
 	{
 		Console.WriteLine(ex.Message);
-		return HttpStatusCode.NotFound.ToString();
+		return HttpStatusCode.InternalServerError.ToString();
 	}
 })
 .WithName("PostPosts");
@@ -117,15 +117,15 @@ app.MapPost("/organizations", async Task<string> (string organizations) =>
 	{
 		using (DatabaseContext db = new DatabaseContext())
 		{
-			Organizations o = JsonConvert.DeserializeObject<Organizations>(organizations);
+			Organizations? o = JsonConvert.DeserializeObject<Organizations>(organizations);
 			db.Organization.Add(o);
-			return HttpStatusCode.Found.ToString();
+			return HttpStatusCode.OK.ToString();
 		}
 	}
 	catch (Exception ex)
 	{
 		Console.WriteLine(ex.Message);
-		return HttpStatusCode.NotFound.ToString();
+		return HttpStatusCode.InternalServerError.ToString();
 	}
 })
 .WithName("PostOrganizations");
@@ -156,7 +156,6 @@ app.MapDelete("/organizations/{id}", async Task<string> (int id) =>
 	{
 		using (DatabaseContext db = new DatabaseContext())
 		{
-
 			DataOrganization organizationData = new DataOrganization();
 			bool allOrganizations = await organizationData.DeleteOrganization(id);
 			return JsonConvert.SerializeObject(allOrganizations);
@@ -218,8 +217,26 @@ app.MapGet("/OrganizationEvents/{organizationId}", async Task<string> (int organ
 })
 .WithName("getOrganizationEvents");
 
-#endregion
+app.MapPost("/OrganizationEvents", async Task<string> (string organizationEvent) =>
+{
+	try
+	{
+		using (DatabaseContext db = new DatabaseContext())
+		{
+			OrganizationEvents? oe = JsonConvert.DeserializeObject<OrganizationEvents>(organizationEvent);
+			db.OrganizationEvent.Add(oe);
+			return HttpStatusCode.OK.ToString();
+		}
+	}
+	catch (Exception ex)
+	{
+		Console.WriteLine(ex.Message);
+		return HttpStatusCode.InternalServerError.ToString();
+	}
+})
+.WithName("PostOrganizationEvents");
 
+#endregion
 
 
 #region GDPR
