@@ -215,10 +215,34 @@ app.MapGet("/OrganizationEvents/{organizationId}", async Task<string> (int organ
 		return "{}";
 	}
 })
-.WithName("getUserOrganizationBinding");
+.WithName("getOrganizationEvents");
 
 #endregion
 
+
+
+#region GDPR
+
+app.MapDelete("/GDPR/{userId}", async Task<string> (int userId) =>
+{
+	try
+	{
+		using (DatabaseContext db = new DatabaseContext())
+		{
+			DataGDPR organizationData = new DataGDPR();
+			int? allOrganizations = await organizationData.DeleteUserAcount(userId);
+			return JsonConvert.SerializeObject(allOrganizations);
+		}
+	}
+	catch (Exception ex)
+	{
+		Console.WriteLine(ex.Message);
+		return "{}";
+	}
+})
+.WithName("DeleteGDPR");
+	
+#endregion
 
 
 
