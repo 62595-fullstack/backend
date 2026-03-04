@@ -10,20 +10,21 @@ DummyData.Initialize();
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.UseSwagger();
-	// SwaggerUI can be viewed at http://localhost:{port}
+	app.MapOpenApi("/api/swagger/v1/swagger.json");
+
+	// SwaggerUI can be viewed at http://localhost:{port}/api/
 	app.UseSwaggerUI(options =>
 	{
-		options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-		options.RoutePrefix = string.Empty;
+		options.SwaggerEndpoint("/api/swagger/v1/swagger.json", "v1");
+		options.RoutePrefix = "api";
 	});
 }
 
@@ -31,7 +32,7 @@ app.UseHttpsRedirection();
 
 
 #region  posts
-app.MapGet("/posts", string () =>
+app.MapGet("/api/posts", string () =>
 {
 	try
 	{
@@ -49,7 +50,7 @@ app.MapGet("/posts", string () =>
 })
 .WithName("GetPosts");
 
-app.MapGet("/posts/{organizationsId}", string (int organizationsId) =>
+app.MapGet("/api/posts/{organizationsId}", string (int organizationsId) =>
 {
 	try
 	{
@@ -72,7 +73,7 @@ app.MapGet("/posts/{organizationsId}", string (int organizationsId) =>
 
 
 #region organizations
-app.MapGet("/organizations", async Task<string> () =>
+app.MapGet("/api/organizations", async Task<string> () =>
 {
 	try
 	{
@@ -91,7 +92,7 @@ app.MapGet("/organizations", async Task<string> () =>
 })
 .WithName("Getorganizations");
 
-app.MapGet("/organizations/{id}", async Task<string> (int id) =>
+app.MapGet("/api/organizations/{id}", async Task<string> (int id) =>
 {
 	try
 	{
@@ -111,7 +112,7 @@ app.MapGet("/organizations/{id}", async Task<string> (int id) =>
 })
 .WithName("GetOrganizationsById");
 
-app.MapDelete("/organizations/{id}", async Task<string> (int id) =>
+app.MapDelete("/api/organizations/{id}", async Task<string> (int id) =>
 {
 	try
 	{
@@ -135,8 +136,8 @@ app.MapDelete("/organizations/{id}", async Task<string> (int id) =>
 
 
 #region UserOrganizationBinding
-	
-app.MapGet("/UserOrganizationBinding/{organizationId}", async Task<string> (int organizationId) =>
+
+app.MapGet("/api/UserOrganizationBinding/{organizationId}", async Task<string> (int organizationId) =>
 {
 	try
 	{
@@ -160,7 +161,7 @@ app.MapGet("/UserOrganizationBinding/{organizationId}", async Task<string> (int 
 
 #region OrganizationEvents
 
-app.MapGet("/OrganizationEvents/{organizationId}", async Task<string> (int organizationId) =>
+app.MapGet("/api/OrganizationEvents/{organizationId}", async Task<string> (int organizationId) =>
 {
 	try
 	{
@@ -185,7 +186,7 @@ app.MapGet("/OrganizationEvents/{organizationId}", async Task<string> (int organ
 
 #region GDPR
 
-app.MapDelete("/GDPR/{userId}", async Task<string> (int userId) =>
+app.MapDelete("/api/GDPR/{userId}", async Task<string> (int userId) =>
 {
 	try
 	{
@@ -203,10 +204,8 @@ app.MapDelete("/GDPR/{userId}", async Task<string> (int userId) =>
 	}
 })
 .WithName("DeleteGDPR");
-	
+
 #endregion
-
-
 
 
 app.Run();
