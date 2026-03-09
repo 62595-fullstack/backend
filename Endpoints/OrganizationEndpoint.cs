@@ -1,0 +1,89 @@
+using backend.getdata;
+using Models.Organization;
+using Newtonsoft.Json;
+using System.Net;
+
+namespace Endpoint.OrganizationEndpoint;
+
+public static class OrganizationEndpoint
+{
+	public static void RegisterOrganizationEndpoints(this WebApplication app)
+	{
+		app.MapGet("/organizations", async Task<string> () =>
+		{
+			try
+			{
+				using (DatabaseContext db = new DatabaseContext())
+				{
+					DataOrganization organizationData = new DataOrganization();
+					List<Organizations>? allOrganizations = await organizationData.GetAllOrganization();
+					return JsonConvert.SerializeObject(allOrganizations);
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return "{}";
+			}
+		})
+		.WithName("GetOrganizations");
+
+		app.MapPost("/organizations", async Task<string> (string organizations) =>
+		{
+			try
+			{
+				using (DatabaseContext db = new DatabaseContext())
+				{
+					Organizations? o = JsonConvert.DeserializeObject<Organizations>(organizations);
+					db.Organization.Add(o);
+					return HttpStatusCode.OK.ToString();
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return HttpStatusCode.InternalServerError.ToString();
+			}
+		})
+		.WithName("PostOrganizations");
+
+		app.MapGet("/organizations/{id}", async Task<string> (int id) =>
+		{
+			try
+			{
+				using (DatabaseContext db = new DatabaseContext())
+				{
+
+					DataOrganization organizationData = new DataOrganization();
+					Organizations? allOrganizations = await organizationData.GetOrganizationById(id);
+					return JsonConvert.SerializeObject(allOrganizations);
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return "{}";
+			}
+		})
+		.WithName("GetOrganizationsById");
+
+		app.MapDelete("/organizations/{id}", async Task<string> (int id) =>
+		{
+			try
+			{
+				using (DatabaseContext db = new DatabaseContext())
+				{
+					DataOrganization organizationData = new DataOrganization();
+					bool allOrganizations = await organizationData.DeleteOrganization(id);
+					return JsonConvert.SerializeObject(allOrganizations);
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return "{}";
+			}
+		})
+		.WithName("DeleteOrganizationsById");
+	}
+}
