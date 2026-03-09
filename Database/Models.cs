@@ -24,7 +24,7 @@ public class DatabaseContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
 
-#if DEBUG    
+    
         IConfigurationRoot config = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
             .Build();
@@ -36,7 +36,6 @@ public class DatabaseContext : DbContext
 
         optionsBuilder.UseNpgsql(connString);
         
-        #endif
         
     }
 
