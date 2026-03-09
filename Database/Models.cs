@@ -24,7 +24,9 @@ public class DatabaseContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
 
-    
+        try
+        {
+            
         IConfigurationRoot config = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
             .Build();
@@ -33,8 +35,13 @@ public class DatabaseContext : DbContext
                          Username={config["username"]};
                          Password={config["password"]};
                          Database={config["database"]}";
-
         optionsBuilder.UseNpgsql(connString);
+        }
+        catch
+        {
+            System.Console.WriteLine("No connections");    
+        }
+
         
         
     }
