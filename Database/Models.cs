@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Models.Organization;
@@ -28,7 +29,7 @@ public class DatabaseContext : DbContext
         {
             
         IConfigurationRoot config = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
+            .AddUserSecrets(Assembly.GetExecutingAssembly())
             .Build();
 
         var connString = $@"Host={config["host"]};
