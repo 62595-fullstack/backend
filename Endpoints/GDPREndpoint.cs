@@ -7,7 +7,7 @@ public static class GDPREndpoint
 {
 	public static RouteGroupBuilder MapGDPREndpoints(this RouteGroupBuilder group)
 	{
-		group.MapDelete("/GDPR/{userId}", async Task<string> (int userId) =>
+		group.MapDelete("/{userId}", async Task<string> (int userId) =>
 		{
 			try
 			{

@@ -26,6 +26,7 @@ app.MapGroup("/posts").MapPostEndpoints();
 app.MapGroup("/organizations").MapOrganizationEndpoints();
 app.MapGroup("/UserOrganizationBinding").MapUserOrganizationBindingEndpoints();
 app.MapGroup("/OrganizationEvents").MapOrganizationEventsEndpoints();
+app.MapGroup("/GDPR").MapGDPREndpoints();
 
 app.Run();
 
