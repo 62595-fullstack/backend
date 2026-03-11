@@ -35,7 +35,16 @@ public static class OrganizationEventsEndpoint
 				using (DatabaseContext db = new DatabaseContext())
 				{
 					OrganizationEvents? oe = JsonConvert.DeserializeObject<OrganizationEvents>(organizationEvent);
-					db.OrganizationEvent.Add(oe);
+
+					if (oe != null)
+					{
+						db.OrganizationEvent.Add(oe);
+					}
+					else
+					{
+						return HttpStatusCode.InternalServerError.ToString();
+					}
+
 					return HttpStatusCode.OK.ToString();
 				}
 			}

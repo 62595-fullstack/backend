@@ -52,7 +52,15 @@ public static class PostEndpoint
 				using (DatabaseContext db = new DatabaseContext())
 				{
 					Posts? p = JsonConvert.DeserializeObject<Posts>(post);
-					db.Post.Add(p);
+
+					if (p != null)
+					{
+						db.Post.Add(p);
+					}
+					else
+					{
+						return HttpStatusCode.InternalServerError.ToString();
+					}
 					return HttpStatusCode.OK.ToString();
 				}
 			}

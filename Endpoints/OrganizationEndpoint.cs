@@ -35,7 +35,16 @@ public static class OrganizationEndpoint
 				using (DatabaseContext db = new DatabaseContext())
 				{
 					Organizations? o = JsonConvert.DeserializeObject<Organizations>(organizations);
-					db.Organization.Add(o);
+
+					if (o != null)
+					{
+						db.Organization.Add(o);
+					}
+					else
+					{
+						return HttpStatusCode.InternalServerError.ToString();
+					}
+
 					return HttpStatusCode.OK.ToString();
 				}
 			}
