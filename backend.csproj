@@ -7,6 +7,8 @@
     <Nullable>enable</Nullable>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <UserSecretsId>3496eeae-940b-4e8a-bb98-e2f5f474a538</UserSecretsId>
+    <UserSecretsId>4a9aec7f-57e6-4682-834a-296d3371a526</UserSecretsId>
+    <UserSecretsId>8d17d071-23be-4148-ac05-49a0b8061671</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

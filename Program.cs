@@ -34,28 +34,9 @@ app.UseHttpsRedirection();
 
 app.MapGroup("/posts").MapPostEndpoints();
 app.MapGroup("/organizations").MapOrganizationEndpoints();
+app.MapGroup("/UserOrganizationBinding").MapUserOrganizationBindingEndpoints();
 
 #region UserOrganizationBinding
-
-app.MapGet("/UserOrganizationBinding/{organizationId}", async Task<string> (int organizationId) =>
-{
-	try
-	{
-		using (DatabaseContext db = new DatabaseContext())
-		{
-			DataUserOrganizationBinding organizationData = new DataUserOrganizationBinding();
-			List<UserOrganizationBindings> allOrganizations = await organizationData.getUserOrganizationForOrganization(organizationId);
-			return JsonConvert.SerializeObject(allOrganizations);
-		}
-	}
-	catch (Exception ex)
-	{
-		Console.WriteLine(ex.Message);
-		return "{}";
-	}
-})
-.WithName("getUserOrganizationBinding");
-
 #endregion
 
 
