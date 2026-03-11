@@ -7,9 +7,9 @@ namespace Endpoint.OrganizationEndpoint;
 
 public static class OrganizationEndpoint
 {
-	public static void RegisterOrganizationEndpoints(this WebApplication app)
+	public static RouteGroupBuilder MapOrganizationEndpoints(this RouteGroupBuilder group)
 	{
-		app.MapGet("/organizations", async Task<string> () =>
+		group.MapGet("/", async Task<string> () =>
 		{
 			try
 			{
@@ -28,7 +28,7 @@ public static class OrganizationEndpoint
 		})
 		.WithName("GetOrganizations");
 
-		app.MapPost("/organizations", async Task<string> (string organizations) =>
+		group.MapPost("/", async Task<string> (string organizations) =>
 		{
 			try
 			{
@@ -47,7 +47,7 @@ public static class OrganizationEndpoint
 		})
 		.WithName("PostOrganizations");
 
-		app.MapGet("/organizations/{id}", async Task<string> (int id) =>
+		group.MapGet("/{id}", async Task<string> (int id) =>
 		{
 			try
 			{
@@ -67,7 +67,7 @@ public static class OrganizationEndpoint
 		})
 		.WithName("GetOrganizationsById");
 
-		app.MapDelete("/organizations/{id}", async Task<string> (int id) =>
+		group.MapDelete("/{id}", async Task<string> (int id) =>
 		{
 			try
 			{
@@ -85,5 +85,7 @@ public static class OrganizationEndpoint
 			}
 		})
 		.WithName("DeleteOrganizationsById");
+
+		return group;
 	}
 }

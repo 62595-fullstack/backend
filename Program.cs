@@ -32,8 +32,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// app.MapGroup("/posts")
-app.RegisterOrganizationEndpoints();
+app.MapGroup("/posts").MapPostEndpoints();
+app.MapGroup("/organizations").MapOrganizationEndpoints();
 
 #region UserOrganizationBinding
 
