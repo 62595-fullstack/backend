@@ -1,13 +1,4 @@
-using System.Net;
-using Microsoft.EntityFrameworkCore;
-using Models.User;
-using Models.Organization;
-using Newtonsoft.Json;
-using backend.getdata;
-using Models.UserOrganizationBinding;
-using Models.OrganizationEvent;
-using Endpoint.PostEndpoint;
-using Endpoint.OrganizationEndpoint;
+using Endpoints;
 
 DummyData.Initialize();
 
@@ -35,78 +26,7 @@ app.UseHttpsRedirection();
 app.MapGroup("/posts").MapPostEndpoints();
 app.MapGroup("/organizations").MapOrganizationEndpoints();
 app.MapGroup("/UserOrganizationBinding").MapUserOrganizationBindingEndpoints();
-
-#region UserOrganizationBinding
-#endregion
-
-
-#region OrganizationEvents
-
-app.MapGet("/OrganizationEvents/{organizationId}", async Task<string> (int organizationId) =>
-{
-	try
-	{
-		using (DatabaseContext db = new DatabaseContext())
-		{
-			DataOrganizationEvents organizationData = new DataOrganizationEvents();
-			List<OrganizationEvents> allOrganizations = await organizationData.getOrganizationEvents(organizationId);
-			return JsonConvert.SerializeObject(allOrganizations);
-		}
-	}
-	catch (Exception ex)
-	{
-		Console.WriteLine(ex.Message);
-		return "{}";
-	}
-})
-.WithName("getOrganizationEvents");
-
-app.MapPost("/OrganizationEvents", async Task<string> (string organizationEvent) =>
-{
-	try
-	{
-		using (DatabaseContext db = new DatabaseContext())
-		{
-			OrganizationEvents? oe = JsonConvert.DeserializeObject<OrganizationEvents>(organizationEvent);
-			db.OrganizationEvent.Add(oe);
-			return HttpStatusCode.OK.ToString();
-		}
-	}
-	catch (Exception ex)
-	{
-		Console.WriteLine(ex.Message);
-		return HttpStatusCode.InternalServerError.ToString();
-	}
-})
-.WithName("PostOrganizationEvents");
-
-#endregion
-
-
-#region GDPR
-
-app.MapDelete("/GDPR/{userId}", async Task<string> (int userId) =>
-{
-	try
-	{
-		using (DatabaseContext db = new DatabaseContext())
-		{
-			DataGDPR organizationData = new DataGDPR();
-			int? allOrganizations = await organizationData.DeleteUserAcount(userId);
-			return JsonConvert.SerializeObject(allOrganizations);
-		}
-	}
-	catch (Exception ex)
-	{
-		Console.WriteLine(ex.Message);
-		return "{}";
-	}
-})
-.WithName("DeleteGDPR");
-
-#endregion
-
-
-
+app.MapGroup("/OrganizationEvents").MapOrganizationEventsEndpoints();
 
 app.Run();
+

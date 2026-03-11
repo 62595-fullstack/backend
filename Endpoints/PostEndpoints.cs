@@ -3,7 +3,7 @@ using Models.Post;
 using Newtonsoft.Json;
 using System.Net;
 
-namespace Endpoint.PostEndpoint;
+namespace Endpoints;
 
 public static class PostEndpoint
 {

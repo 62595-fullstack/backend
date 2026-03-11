@@ -1,10 +1,8 @@
 using backend.getdata;
-using Models.Organization;
 using Models.UserOrganizationBinding;
 using Newtonsoft.Json;
-using System.Net;
 
-namespace Endpoint.OrganizationEndpoint;
+namespace Endpoints;
 
 public static class UserOrganizationBinding
 {

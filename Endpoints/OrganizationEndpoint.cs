@@ -3,7 +3,7 @@ using Models.Organization;
 using Newtonsoft.Json;
 using System.Net;
 
-namespace Endpoint.OrganizationEndpoint;
+namespace Endpoints;
 
 public static class OrganizationEndpoint
 {
