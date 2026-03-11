@@ -1,6 +1,5 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Models.Organization;
 using Models.OrganizationEvent;
 using Models.OrganizationPost;
