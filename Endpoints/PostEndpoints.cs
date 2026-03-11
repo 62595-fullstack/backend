@@ -7,9 +7,9 @@ namespace Endpoint.PostEndpoint;
 
 public static class PostEndpoint
 {
-	public static void RegisterPostEndpoints(this WebApplication app)
+	public static RouteGroupBuilder MapPostEndpoints(this RouteGroupBuilder group)
 	{
-		app.MapGet("/posts", string () =>
+		group.MapGet("/", string () =>
 		{
 			try
 			{
@@ -27,7 +27,7 @@ public static class PostEndpoint
 		})
 		.WithName("GetPosts");
 
-		app.MapGet("/posts/{organizationsId}", string (int organizationsId) =>
+		group.MapGet("/{organizationsId}", string (int organizationsId) =>
 		{
 			try
 			{
@@ -45,7 +45,7 @@ public static class PostEndpoint
 		})
 		.WithName("GetPostsFromOrganizationsId");
 
-		app.MapPost("/posts", async Task<string> (string post) =>
+		group.MapPost("/", async Task<string> (string post) =>
 		{
 			try
 			{
@@ -63,5 +63,7 @@ public static class PostEndpoint
 			}
 		})
 		.WithName("PostPosts");
+
+		return group;
 	}
 }

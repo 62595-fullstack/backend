@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <UserSecretsId>3496eeae-940b-4e8a-bb98-e2f5f474a538</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
