@@ -1,5 +1,5 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Models.Organization;
 using Models.OrganizationEvent;
 using Models.OrganizationPost;
@@ -23,16 +23,27 @@ public class DatabaseContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+
+        try
+        {
+            
         IConfigurationRoot config = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
+            .AddUserSecrets(Assembly.GetExecutingAssembly())
             .Build();
 
         var connString = $@"Host={config["host"]};
                          Username={config["username"]};
                          Password={config["password"]};
                          Database={config["database"]}";
-
         optionsBuilder.UseNpgsql(connString);
+        }
+        catch
+        {
+            System.Console.WriteLine("No connections");    
+        }
+
+        
+        
     }
 
 }

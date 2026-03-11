@@ -7,7 +7,6 @@ using backend.getdata;
 using Models.UserOrganizationBinding;
 using Models.OrganizationEvent;
 
-DummyData.Initialize();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +18,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+DummyData.Initialize();
 	app.UseSwagger();
 	// SwaggerUI can be viewed at http://localhost:{port}
 	app.UseSwaggerUI(options =>
