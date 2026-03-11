@@ -1,6 +1,5 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
-using Models.User;
 using Models.Post;
 using Models.Organization;
 using Newtonsoft.Json;
@@ -76,7 +75,15 @@ app.MapPost("/posts", async Task<string> (string post) =>
 		using (DatabaseContext db = new DatabaseContext())
 		{
 			Posts? p = JsonConvert.DeserializeObject<Posts>(post);
-			db.Post.Add(p);
+			
+			if (p != null)
+			{
+				db.Post.Add(p);
+			}
+			else
+			{
+				return HttpStatusCode.InternalServerError.ToString();
+			}	
 			return HttpStatusCode.OK.ToString();
 		}
 	}
@@ -118,7 +125,16 @@ app.MapPost("/organizations", async Task<string> (string organizations) =>
 		using (DatabaseContext db = new DatabaseContext())
 		{
 			Organizations? o = JsonConvert.DeserializeObject<Organizations>(organizations);
-			db.Organization.Add(o);
+			
+			if (o != null)
+			{
+				db.Organization.Add(o);
+			}
+			else
+			{
+				return HttpStatusCode.InternalServerError.ToString();
+			}	
+			
 			return HttpStatusCode.OK.ToString();
 		}
 	}
@@ -224,7 +240,16 @@ app.MapPost("/OrganizationEvents", async Task<string> (string organizationEvent)
 		using (DatabaseContext db = new DatabaseContext())
 		{
 			OrganizationEvents? oe = JsonConvert.DeserializeObject<OrganizationEvents>(organizationEvent);
-			db.OrganizationEvent.Add(oe);
+
+			if (oe != null)
+			{
+				db.OrganizationEvent.Add(oe);
+			}
+			else
+			{
+				return HttpStatusCode.InternalServerError.ToString();
+			}	
+			
 			return HttpStatusCode.OK.ToString();
 		}
 	}
