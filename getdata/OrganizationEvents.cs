@@ -3,6 +3,7 @@
 using Microsoft.EntityFrameworkCore;
 using Models.OrganizationEvent;
 using Models.User;
+using Models.UserEventBinding;
 
 namespace backend.getdata
 {
@@ -24,6 +25,34 @@ namespace backend.getdata
                 return new List<OrganizationEvents>();
             }
         }
+
+
+
+        public async Task<bool> userJoinEvent(int userId, int organizationId)
+        {
+            try
+            {
+                DatabaseContext db = new DatabaseContext();
+                UserEventBindings ueb = new UserEventBindings
+                {
+                  UserId = userId,
+                  OrganizationEventsId = organizationId   
+                };
+
+                await db.UserEventBinding.AddAsync(ueb);
+                await db.SaveChangesAsync();
+                
+                
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+
 
     }
 }
