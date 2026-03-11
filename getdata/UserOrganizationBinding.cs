@@ -2,6 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Models.User;
+using Models.UserOrganizationBinding;
 
 namespace backend.getdata
 {
@@ -18,6 +19,31 @@ namespace backend.getdata
             {
                 Console.WriteLine(ex.Message);
                 return new List<Models.UserOrganizationBinding.UserOrganizationBindings>();
+            }
+        }
+
+
+        public async Task<bool> setUserToOrganization(int userId, int organizationId, int roleId)
+        {
+            try
+            {
+                DatabaseContext db = new DatabaseContext();
+                UserOrganizationBindings uob = new UserOrganizationBindings();
+
+                uob.OrganizationId = organizationId;
+                uob.UserId = userId;
+                uob.RoleId = roleId;
+
+                await db.UserOrganizationBinding.AddAsync(uob);
+                await db.SaveChangesAsync();
+
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
             }
         }
 
