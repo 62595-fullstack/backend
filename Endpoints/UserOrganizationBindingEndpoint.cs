@@ -27,6 +27,26 @@ public static class UserOrganizationBinding
 		})
 		.WithName("getUserOrganizationBinding");
 
+
+		group.MapPost("/{userId}/{organizationId}/{roleId}", async Task<string> (int userId, int organizationId, int roleId) =>
+		{
+			try
+			{
+				using (DatabaseContext db = new DatabaseContext())
+				{
+					DataUserOrganizationBinding organizationData = new DataUserOrganizationBinding();
+					bool successful = await organizationData.setUserToOrganization(userId, organizationId, roleId);
+					return JsonConvert.SerializeObject(successful);
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return "{}";
+			}
+		})
+		.WithName("setUserToOrganization");
+
 		return group;
 	}
 }
