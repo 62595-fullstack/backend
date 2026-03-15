@@ -13,7 +13,7 @@ namespace Models.Organization
         public int Id { get; set; }
         
         public required string Name { get; set; }
-        public required DateTime CreatedDate { get; set; }
+        public required DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public string Description { get; set; } = "";
         public int OrganizationPostId { get; set; }
 
