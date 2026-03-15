@@ -37,7 +37,7 @@ namespace backend.getdata
                             Attachments am = new Attachments
                             {
                                 FileName = file.FileName,
-                                FileType = file.GetType().ToString(),
+                                FileType = Path.GetExtension(file.FileName),
                                 Content = fileBytes,
                                 CreatedDate = DateTime.UtcNow,
                                 PostId = postId,
