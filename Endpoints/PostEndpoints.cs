@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using backend.getdata;
+using Microsoft.EntityFrameworkCore;
 using Models.Post;
 using Newtonsoft.Json;
 using System.Net;
@@ -9,13 +10,13 @@ public static class PostEndpoint
 {
 	public static RouteGroupBuilder MapPostEndpoints(this RouteGroupBuilder group)
 	{
-		group.MapGet("/", string () =>
+		group.MapGet("/", async Task<string> () =>
 		{
 			try
 			{
-
-					Task<List<Posts>> posts = db.Post.ToListAsync();
-					return JsonConvert.SerializeObject(posts);
+					Post p = new Post();
+					List<Posts>? allPost = await p.getAllPost();
+					return JsonConvert.SerializeObject(allPost);
 			}
 			catch (Exception ex)
 			{
@@ -25,15 +26,13 @@ public static class PostEndpoint
 		})
 		.WithName("GetPosts");
 
-		group.MapGet("/{organizationsId}", string (int organizationsId) =>
+		group.MapGet("/{organizationsId}", async Task<string> (int organizationsId) =>
 		{
 			try
 			{
-				using (DatabaseContext db = new DatabaseContext())
-				{
-					Task<List<Posts>> posts = db.Post.ToListAsync();
+					Post p = new Post();
+					List<Posts>? posts = await p.getPostByOrganization(organizationsId);
 					return JsonConvert.SerializeObject(posts);
-				}
 			}
 			catch (Exception ex)
 			{
@@ -53,7 +52,8 @@ public static class PostEndpoint
 
 					if (p != null)
 					{
-						db.Post.Add(p);
+						Post pd = new Post();
+						await pd.getPostByOrganization(p);
 					}
 					else
 					{
