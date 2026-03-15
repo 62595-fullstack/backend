@@ -42,20 +42,20 @@ public static class PostEndpoint
 		})
 		.WithName("GetPostsFromOrganizationsId");
 
-		group.MapPost("/", async Task<string> (string post, IFormFile file) =>
+		group.MapPost("/", async Task<string> (string post, IFormFile? file) =>
 		{
 			try
 			{
-
-				using (DatabaseContext db = new DatabaseContext())
+				Posts? p = JsonConvert.DeserializeObject<Posts>(post);
+				if (p != null)
 				{
-					Posts? p = JsonConvert.DeserializeObject<Posts>(post);
+					Post pd = new Post();
+					await pd.getPostByOrganization(p);
 
-					if (p != null)
+					if (file != null)
 					{
-						if (file != null)
+						using (DatabaseContext db = new DatabaseContext())
 						{
-							// db.Attachment.Add
 							using (var stream = file.OpenReadStream())
 							{
 								using (var memoryStream = new MemoryStream())
@@ -70,19 +70,18 @@ public static class PostEndpoint
 										CreatedDate = DateTime.UtcNow,
 										PostId = p.Id,
 									};
+									await db.Attachment.AddAsync(am);
+									await db.SaveChangesAsync();
 								}
 							}
 						}
-
-						Post pd = new Post();
-						await pd.getPostByOrganization(p);
 					}
-					else
-					{
-						return HttpStatusCode.InternalServerError.ToString();
-					}
-					return HttpStatusCode.OK.ToString();
 				}
+				else
+				{
+					return HttpStatusCode.InternalServerError.ToString();
+				}
+				return HttpStatusCode.OK.ToString();
 			}
 			catch (Exception ex)
 			{
