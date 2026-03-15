@@ -2,7 +2,6 @@
 
 using Microsoft.EntityFrameworkCore;
 using Models.OrganizationEvent;
-using Models.User;
 using Models.UserEventBinding;
 
 namespace backend.getdata
@@ -23,6 +22,23 @@ namespace backend.getdata
             {
                 Console.WriteLine(ex.Message);
                 return new List<OrganizationEvents>();
+            }
+        }
+
+        public async Task<bool> createOrganizationEvents(OrganizationEvents organizationEvents)
+        {
+            try
+            {
+                DatabaseContext db = new DatabaseContext();
+                await db.OrganizationEvent.AddAsync(organizationEvents);
+                await db.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
             }
         }
 

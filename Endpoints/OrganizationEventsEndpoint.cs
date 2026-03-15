@@ -14,12 +14,9 @@ public static class OrganizationEventsEndpoint
 		{
 			try
 			{
-				using (DatabaseContext db = new DatabaseContext())
-				{
-					DataOrganizationEvents organizationData = new DataOrganizationEvents();
-					List<OrganizationEvents> allOrganizations = await organizationData.getOrganizationEvents(organizationId);
-					return JsonConvert.SerializeObject(allOrganizations);
-				}
+				DataOrganizationEvents organizationData = new DataOrganizationEvents();
+				List<OrganizationEvents> allOrganizations = await organizationData.getOrganizationEvents(organizationId);
+				return JsonConvert.SerializeObject(allOrganizations);
 			}
 			catch (Exception ex)
 			{
@@ -33,21 +30,20 @@ public static class OrganizationEventsEndpoint
 		{
 			try
 			{
-				using (DatabaseContext db = new DatabaseContext())
+				OrganizationEvents? oe = JsonConvert.DeserializeObject<OrganizationEvents>(organizationEvent);
+
+				if (oe != null)
 				{
-					OrganizationEvents? oe = JsonConvert.DeserializeObject<OrganizationEvents>(organizationEvent);
-
-					if (oe != null)
-					{
-						db.OrganizationEvent.Add(oe);
-					}
-					else
-					{
-						return HttpStatusCode.InternalServerError.ToString();
-					}
-
-					return HttpStatusCode.OK.ToString();
+					DataOrganizationEvents doe = new DataOrganizationEvents();
+					await doe.createOrganizationEvents(oe);
 				}
+				else
+				{
+					return HttpStatusCode.InternalServerError.ToString();
+				}
+				return HttpStatusCode.OK.ToString();
+
+				
 			}
 			catch (Exception ex)
 			{
@@ -61,22 +57,19 @@ public static class OrganizationEventsEndpoint
 		{
 			try
 			{
-				using (DatabaseContext db = new DatabaseContext())
+				UserEventBindings? ueb = JsonConvert.DeserializeObject<UserEventBindings>(userEventBinding);
+				DataOrganizationEvents doe = new DataOrganizationEvents();
+				
+				if (ueb != null)
 				{
-					UserEventBindings? ueb = JsonConvert.DeserializeObject<UserEventBindings>(userEventBinding);
-					DataOrganizationEvents doe = new DataOrganizationEvents();
-					
-					if (ueb != null)
-					{
-						await doe.userJoinEvent(ueb.UserId, ueb.OrganizationEventsId);
-					}
-					else
-					{
-						return HttpStatusCode.InternalServerError.ToString();
-					}
-
-					return HttpStatusCode.OK.ToString();
+					await doe.userJoinEvent(ueb.UserId, ueb.OrganizationEventsId);
 				}
+				else
+				{
+					return HttpStatusCode.InternalServerError.ToString();
+				}
+
+				return HttpStatusCode.OK.ToString();
 			}
 			catch (Exception ex)
 			{

@@ -1,8 +1,7 @@
 
 
 using Microsoft.EntityFrameworkCore;
-using Models.OrganizationEvent;
-using Models.User;
+
 
 namespace backend.getdata
 {
