@@ -13,7 +13,7 @@ namespace Models.Post
         public required string Title { get; set; }
         public string BodyText { get; set; } = "";
         
-        public required DateTime CreatedDate { get; set; }
+        public required DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public DateTime? LastUpdateDate { get; set; } = null;
         public required int UserId { get; set; }
         public required int OrganizationEventId { get; set; }

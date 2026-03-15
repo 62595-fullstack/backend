@@ -11,7 +11,7 @@ namespace Models.OrganizationEvent
         public int Id { get; set; }
         public required int OrganizationId { get; set; }
         
-        public required DateTime CreatedDate { get; set; }
+        public required DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         
         public required DateTime StateDate { get; set; }
 
