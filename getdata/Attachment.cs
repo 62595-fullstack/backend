@@ -6,6 +6,22 @@ namespace backend.getdata
 {
     public class DataAttachment
     {
+        public async Task<Attachments?> GetAttachment(int attachmentId)
+        {
+            try
+            {
+                using (DatabaseContext db = new DatabaseContext())
+                {
+                    return await db.Attachment.Where(a => a.Id == attachmentId).FirstAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
         public async Task<bool> SaveFileToPost(IFormFile file, int postId)
         {
             try
