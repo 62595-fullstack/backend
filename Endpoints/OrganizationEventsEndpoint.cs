@@ -84,7 +84,7 @@ public static class OrganizationEventsEndpoint
 				return HttpStatusCode.InternalServerError.ToString();
 			}
 		})
-		.WithName("PostOrganizationEvents");
+		.WithName("UserJoinEvent");
 
 		return group;
 	}
