@@ -13,11 +13,9 @@ public static class PostEndpoint
 		{
 			try
 			{
-				using (DatabaseContext db = new DatabaseContext())
-				{
+
 					Task<List<Posts>> posts = db.Post.ToListAsync();
 					return JsonConvert.SerializeObject(posts);
-				}
 			}
 			catch (Exception ex)
 			{

@@ -26,6 +26,23 @@ namespace backend.getdata
             }
         }
 
+        public async Task<bool> createOrganizationEvents(OrganizationEvents organizationEvents)
+        {
+            try
+            {
+                DatabaseContext db = new DatabaseContext();
+                await db.OrganizationEvent.AddAsync(organizationEvents);
+                await db.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
 
 
         public async Task<bool> userJoinEvent(int userId, int organizationId)

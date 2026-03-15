@@ -13,12 +13,9 @@ public static class OrganizationEndpoint
 		{
 			try
 			{
-				using (DatabaseContext db = new DatabaseContext())
-				{
-					DataOrganization organizationData = new DataOrganization();
-					List<Organizations>? allOrganizations = await organizationData.GetAllOrganization();
-					return JsonConvert.SerializeObject(allOrganizations);
-				}
+				DataOrganization organizationData = new DataOrganization();
+				List<Organizations>? allOrganizations = await organizationData.GetAllOrganization();
+				return JsonConvert.SerializeObject(allOrganizations);	
 			}
 			catch (Exception ex)
 			{
@@ -38,7 +35,8 @@ public static class OrganizationEndpoint
 
 					if (o != null)
 					{
-						db.Organization.Add(o);
+						DataOrganization DO = new DataOrganization();
+						await DO.CreateOrganization(o);
 					}
 					else
 					{
@@ -60,13 +58,10 @@ public static class OrganizationEndpoint
 		{
 			try
 			{
-				using (DatabaseContext db = new DatabaseContext())
-				{
+				DataOrganization organizationData = new DataOrganization();
+				Organizations? allOrganizations = await organizationData.GetOrganizationById(id);
+				return JsonConvert.SerializeObject(allOrganizations);
 
-					DataOrganization organizationData = new DataOrganization();
-					Organizations? allOrganizations = await organizationData.GetOrganizationById(id);
-					return JsonConvert.SerializeObject(allOrganizations);
-				}
 			}
 			catch (Exception ex)
 			{
@@ -80,12 +75,9 @@ public static class OrganizationEndpoint
 		{
 			try
 			{
-				using (DatabaseContext db = new DatabaseContext())
-				{
-					DataOrganization organizationData = new DataOrganization();
-					bool allOrganizations = await organizationData.DeleteOrganization(id);
-					return JsonConvert.SerializeObject(allOrganizations);
-				}
+				DataOrganization organizationData = new DataOrganization();
+				bool allOrganizations = await organizationData.DeleteOrganization(id);
+				return JsonConvert.SerializeObject(allOrganizations);
 			}
 			catch (Exception ex)
 			{

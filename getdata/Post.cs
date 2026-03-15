@@ -1,13 +1,12 @@
-
-
 using Microsoft.EntityFrameworkCore;
-
+using Models.OrganizationEvent;
+using Models.User;
 
 namespace backend.getdata
 {
-    public class DataGDPR
+    public class Post
     {
-        public async Task<int?> DeleteUserAcount(int userId)
+        public async Task<int?> getAllPost (int userId)
         {
             try
             {
