@@ -1,5 +1,6 @@
 ﻿using backend.getdata;
 using Models.Post;
+using Models.Attachment;
 using Newtonsoft.Json;
 using System.Net;
 
@@ -13,9 +14,9 @@ public static class PostEndpoint
 		{
 			try
 			{
-					Post p = new Post();
-					List<Posts>? allPost = await p.getAllPost();
-					return JsonConvert.SerializeObject(allPost);
+				Post p = new Post();
+				List<Posts>? allPost = await p.getAllPost();
+				return JsonConvert.SerializeObject(allPost);
 			}
 			catch (Exception ex)
 			{
@@ -29,9 +30,9 @@ public static class PostEndpoint
 		{
 			try
 			{
-					Post p = new Post();
-					List<Posts>? posts = await p.getPostByOrganization(organizationsId);
-					return JsonConvert.SerializeObject(posts);
+				Post p = new Post();
+				List<Posts>? posts = await p.getPostByOrganization(organizationsId);
+				return JsonConvert.SerializeObject(posts);
 			}
 			catch (Exception ex)
 			{
@@ -41,16 +42,38 @@ public static class PostEndpoint
 		})
 		.WithName("GetPostsFromOrganizationsId");
 
-		group.MapPost("/", async Task<string> (string post) =>
+		group.MapPost("/", async Task<string> (string post, IFormFile file) =>
 		{
 			try
 			{
+
 				using (DatabaseContext db = new DatabaseContext())
 				{
 					Posts? p = JsonConvert.DeserializeObject<Posts>(post);
 
 					if (p != null)
 					{
+						if (file != null)
+						{
+							// db.Attachment.Add
+							using (var stream = file.OpenReadStream())
+							{
+								using (var memoryStream = new MemoryStream())
+								{
+									await stream.CopyToAsync(memoryStream);
+									byte[] fileBytes = memoryStream.ToArray();
+									Attachments am = new Attachments
+									{
+										FileName = file.FileName,
+										FileType = file.GetType().ToString(),
+										Content = fileBytes,
+										CreatedDate = DateTime.UtcNow,
+										PostId = p.Id,
+									};
+								}
+							}
+						}
+
 						Post pd = new Post();
 						await pd.getPostByOrganization(p);
 					}
@@ -67,7 +90,8 @@ public static class PostEndpoint
 				return HttpStatusCode.InternalServerError.ToString();
 			}
 		})
-		.WithName("PostPosts");
+		.WithName("PostPosts")
+		.DisableAntiforgery();
 
 		return group;
 	}
