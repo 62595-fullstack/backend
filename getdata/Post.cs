@@ -1,7 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Models.OrganizationEvent;
 using Models.Post;
-using Models.User;
 
 namespace backend.getdata
 {

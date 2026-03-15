@@ -2,7 +2,6 @@
 
 using Microsoft.EntityFrameworkCore;
 using Models.OrganizationEvent;
-using Models.User;
 using Models.UserEventBinding;
 
 namespace backend.getdata

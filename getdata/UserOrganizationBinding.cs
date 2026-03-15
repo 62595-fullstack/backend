@@ -1,7 +1,6 @@
 
 
 using Microsoft.EntityFrameworkCore;
-using Models.User;
 using Models.UserOrganizationBinding;
 
 namespace backend.getdata

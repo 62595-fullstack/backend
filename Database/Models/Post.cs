@@ -3,8 +3,6 @@
 using Models.OrganizationEvent;
 using Models.OrganizationPost;
 using Models.User;
-using Models.UserEventBinding;
-using Models.UserOrganizationBinding;
 
 namespace Models.Post
 {

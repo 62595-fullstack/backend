@@ -1,5 +1,4 @@
 ﻿using backend.getdata;
-using Microsoft.EntityFrameworkCore;
 using Models.Post;
 using Newtonsoft.Json;
 using System.Net;
