@@ -23,6 +23,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapGroup("/posts").MapPostEndpoints();
+app.MapGroup("/attachments").MapAttachmentEndpoints();
 app.MapGroup("/organizations").MapOrganizationEndpoints();
 app.MapGroup("/UserOrganizationBinding").MapUserOrganizationBindingEndpoints();
 app.MapGroup("/OrganizationEvents").MapOrganizationEventsEndpoints();
