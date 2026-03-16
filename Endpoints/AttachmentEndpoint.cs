@@ -1,9 +1,6 @@
 using backend.getdata;
-using Models.Post;
 using Models.Attachment;
-using Newtonsoft.Json;
 using System.Net;
-using Models.Attachment;
 
 namespace Endpoints;
 
@@ -24,7 +21,25 @@ public static class AttachmentEndpoint
 				Console.WriteLine(ex.Message);
 				return null;
 			}
-		});
+		})
+		.WithName("GetAttachment");
+
+
+		group.MapDelete("/{attachmentId}", async Task<string> (int attachmentId) =>
+		{
+			try
+			{
+				DataAttachment dam = new DataAttachment();
+				await dam.DeleteAttachment(attachmentId);
+				return HttpStatusCode.OK.ToString();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return HttpStatusCode.InternalServerError.ToString();
+			}
+		})
+		.WithName("DeleteAttachment");
 
 		group.MapPost("/{postsId}", async Task<string> (int postId, IFormFile file) =>
 		{

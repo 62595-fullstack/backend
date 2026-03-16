@@ -22,6 +22,24 @@ namespace backend.getdata
             }
         }
 
+        public async Task<bool> DeleteAttachment(int attachmentId)
+        {
+            try
+            {
+                using (DatabaseContext db = new DatabaseContext())
+                {
+                    var user = await db.Attachment.Where(x => x.Id == attachmentId).ExecuteDeleteAsync();
+                    await db.SaveChangesAsync();
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
         public async Task<bool> SaveFileToPost(IFormFile file, int postId)
         {
             try
