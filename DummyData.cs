@@ -11,12 +11,12 @@ class DummyData
 {
 	private static async Task Add<T>(DatabaseContext db, params T[] entities) where T : class
 	{
-		var entityType = db.Model.FindEntityType(typeof(T))!;
-		var primaryKey = entityType.FindPrimaryKey()!;
+		Microsoft.EntityFrameworkCore.Metadata.IEntityType entityType = db.Model.FindEntityType(typeof(T))!;
+		Microsoft.EntityFrameworkCore.Metadata.IKey primaryKey = entityType.FindPrimaryKey()!;
 
-		foreach (var entity in entities)
+		foreach (T entity in entities)
 		{
-			var keyValues = primaryKey.Properties
+			object[] keyValues = primaryKey.Properties
 				.Select(p => p.PropertyInfo!.GetValue(entity)!)
 				.ToArray();
 
@@ -29,9 +29,10 @@ class DummyData
 
 	public static async void Initialize()
 	{
-		using (var db = new DatabaseContext())
+		using (DatabaseContext db = new DatabaseContext())
 		{
 			await Add(db,
+				new Users { Id = 123, Email = "friskfyr@friskefyre.com", Password = "123", FirstName = "Frisk", Username = "Fyr", Age = 25 },
 				new Users { Id = 999, Email = "crazyfrog@hotmail.com", Password = "bingbing", FirstName = "Crazy", Username = "Frog", Age = 2 },
 				new Users { Id = 1000, Email = "bbbenson@hotmail.com", Password = "1234", FirstName = "Berry B.", Username = "Benson", Age = 2 }
 			);
