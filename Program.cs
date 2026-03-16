@@ -31,6 +31,7 @@ if (app.Environment.IsDevelopment())
 	});
 }
 
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 
 app.MapGroup("/posts").MapPostEndpoints();
