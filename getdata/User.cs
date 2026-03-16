@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Models.User;
 
 namespace backend.getdata
@@ -14,6 +15,13 @@ namespace backend.getdata
 
                 await db.SaveChangesAsync();
 
+
+                UserStore us = new UserStore(db);
+                
+
+                // us.CreateAsync();
+
+                
                 return true;
             }
             catch (Exception ex)
@@ -51,7 +59,7 @@ namespace backend.getdata
             try
             {
                 DatabaseContext db = new DatabaseContext();
-                Users? user = await db.User.FirstOrDefaultAsync(u => u.Username == userName);
+                Users? user = await db.User.FirstOrDefaultAsync(u => u.UserName == userName);
 
                 if (user != null)
                 {
