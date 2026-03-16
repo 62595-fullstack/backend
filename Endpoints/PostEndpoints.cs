@@ -1,5 +1,6 @@
 ﻿using backend.getdata;
 using Models.Post;
+using Models.Attachment;
 using Newtonsoft.Json;
 using System.Net;
 
@@ -13,9 +14,9 @@ public static class PostEndpoint
 		{
 			try
 			{
-					Post p = new Post();
-					List<Posts>? allPost = await p.getAllPost();
-					return JsonConvert.SerializeObject(allPost);
+				Post p = new Post();
+				List<Posts>? allPost = await p.getAllPost();
+				return JsonConvert.SerializeObject(allPost);
 			}
 			catch (Exception ex)
 			{
@@ -29,9 +30,9 @@ public static class PostEndpoint
 		{
 			try
 			{
-					Post p = new Post();
-					List<Posts>? posts = await p.getPostByOrganization(organizationsId);
-					return JsonConvert.SerializeObject(posts);
+				Post p = new Post();
+				List<Posts>? posts = await p.getPostByOrganization(organizationsId);
+				return JsonConvert.SerializeObject(posts);
 			}
 			catch (Exception ex)
 			{
@@ -45,21 +46,17 @@ public static class PostEndpoint
 		{
 			try
 			{
-				using (DatabaseContext db = new DatabaseContext())
+				Posts? p = JsonConvert.DeserializeObject<Posts>(post);
+				if (p != null)
 				{
-					Posts? p = JsonConvert.DeserializeObject<Posts>(post);
-
-					if (p != null)
-					{
-						Post pd = new Post();
-						await pd.getPostByOrganization(p);
-					}
-					else
-					{
-						return HttpStatusCode.InternalServerError.ToString();
-					}
-					return HttpStatusCode.OK.ToString();
+					Post pd = new Post();
+					await pd.getPostByOrganization(p);
 				}
+				else
+				{
+					return HttpStatusCode.InternalServerError.ToString();
+				}
+				return HttpStatusCode.OK.ToString();
 			}
 			catch (Exception ex)
 			{
