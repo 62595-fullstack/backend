@@ -20,8 +20,11 @@ class DummyData
 				.Select(p => p.PropertyInfo!.GetValue(entity)!)
 				.ToArray();
 
-			if (await db.Set<T>().FindAsync(keyValues) == null)
+			T? existing = await db.Set<T>().FindAsync(keyValues);
+			if (existing == null)
 				await db.Set<T>().AddAsync(entity);
+			else
+				db.Entry(existing).CurrentValues.SetValues(entity);
 		}
 
 		await db.SaveChangesAsync();
