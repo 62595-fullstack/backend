@@ -1,8 +1,7 @@
 ﻿using backend.getdata;
-using Models.Post;
-using Models.Attachment;
-using Newtonsoft.Json;
 using System.Net;
+using Models.Post;
+using Newtonsoft.Json;
 
 namespace Endpoints;
 
@@ -42,7 +41,7 @@ public static class PostEndpoint
 		})
 		.WithName("GetPostsFromOrganizationsId");
 
-		group.MapPost("/", async Task<string> (string post) =>
+		group.MapPost("/", async Task<HttpStatusCode> (string post) =>
 		{
 			try
 			{
@@ -54,14 +53,14 @@ public static class PostEndpoint
 				}
 				else
 				{
-					return HttpStatusCode.InternalServerError.ToString();
+					return HttpStatusCode.BadRequest;
 				}
-				return HttpStatusCode.OK.ToString();
+				return HttpStatusCode.OK;
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.Message);
-				return HttpStatusCode.InternalServerError.ToString();
+				return HttpStatusCode.InternalServerError;
 			}
 		})
 		.WithName("PostPosts");
