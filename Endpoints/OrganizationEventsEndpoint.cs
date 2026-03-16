@@ -27,25 +27,18 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("getOrganizationEvents");
 
-		group.MapPost("/", async Task<string> ([FromBody] OrganizationEvents oe) =>
+		group.MapPost("/", async Task<IResult> ([FromBody] OrganizationEvents oe) =>
 		{
 			try
 			{
-				if (oe != null)
-				{
-					DataOrganizationEvents doe = new DataOrganizationEvents();
-					await doe.createOrganizationEvents(oe);
-				}
-				else
-				{
-					return HttpStatusCode.InternalServerError.ToString();
-				}
-				return HttpStatusCode.OK.ToString();
+				DataOrganizationEvents doe = new DataOrganizationEvents();
+				await doe.createOrganizationEvents(oe);
+				return Results.Ok();
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.Message);
-				return HttpStatusCode.InternalServerError.ToString();
+				Console.WriteLine(ex.ToString());
+				return Results.Problem(ex.Message);
 			}
 		})
 		.WithName("PostOrganizationEvents");
