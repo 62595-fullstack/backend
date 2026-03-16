@@ -1,8 +1,5 @@
-﻿
-
-using Models.Organization;
+﻿using Models.Organization;
 using Models.UserEventBinding;
-
 
 namespace Models.OrganizationEvent
 {
@@ -22,6 +19,4 @@ namespace Models.OrganizationEvent
         public Organizations? Organization { get; set; } = null!;
 
     }
-
-
 }
