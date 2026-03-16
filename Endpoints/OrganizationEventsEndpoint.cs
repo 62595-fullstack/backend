@@ -1,4 +1,5 @@
 using backend.getdata;
+using Microsoft.AspNetCore.Mvc;
 using Models.OrganizationEvent;
 using Models.UserEventBinding;
 using Newtonsoft.Json;
@@ -26,12 +27,10 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("getOrganizationEvents");
 
-		group.MapPost("/", async Task<string> (string organizationEvent) =>
+		group.MapPost("/", async Task<string> ([FromBody] OrganizationEvents oe) =>
 		{
 			try
 			{
-				OrganizationEvents? oe = JsonConvert.DeserializeObject<OrganizationEvents>(organizationEvent);
-
 				if (oe != null)
 				{
 					DataOrganizationEvents doe = new DataOrganizationEvents();
@@ -42,8 +41,6 @@ public static class OrganizationEventsEndpoint
 					return HttpStatusCode.InternalServerError.ToString();
 				}
 				return HttpStatusCode.OK.ToString();
-
-				
 			}
 			catch (Exception ex)
 			{
