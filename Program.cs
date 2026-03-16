@@ -1,4 +1,5 @@
 using Endpoints;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+	using (var db = new DatabaseContext())
+		db.Database.Migrate();
 	DummyData.Initialize();
 	app.UseSwagger();
 	// SwaggerUI can be viewed at http://localhost:{port}
