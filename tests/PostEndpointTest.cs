@@ -62,8 +62,12 @@ public class PostEndpointTest
         HttpResponseMessage response = await client.GetAsync(
                 "posts",
                 TestContext.Current.CancellationToken);
+        string jsonPost = await response.Content.ReadAsStringAsync(
+                TestContext.Current.CancellationToken);
+        List<Posts>? posts = JsonConvert.DeserializeObject<List<Posts>>(jsonPost);
         // Assert
         Assert.True(response.IsSuccessStatusCode);
+        Assert.NotNull(posts);
     }
 
     // [Fact]
