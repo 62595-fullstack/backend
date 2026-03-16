@@ -1,4 +1,6 @@
+using backend.getdata;
 using Endpoints;
+using Models.User;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,24 @@ if (app.Environment.IsDevelopment())
 		options.RoutePrefix = string.Empty;
 	});
 }
+
+DataUser du = new DataUser();
+
+Users u = new Users
+			{
+				Email = "crazyfrog@hotmail.com",
+				PasswordHash = "bingbing",
+				FirstName = "Crazy",
+				UserName = "Frog",
+				Age = 2,
+			};
+
+
+await du.setUsers(u);
+
+
+
+
 
 app.UseHttpsRedirection();
 

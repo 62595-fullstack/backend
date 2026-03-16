@@ -25,20 +25,20 @@ class DummyData
 			db.User.Add(new Users
 			{
 				Email = "crazyfrog@hotmail.com",
-				Password = "bingbing",
+				// Password = "bingbing",
 				FirstName = "Crazy",
-				Username = "Frog",
+				// Username = "Frog",
 				Age = 2,
 			});
 			await db.SaveChangesAsync();
 
 			db.User.Add(new Users
 			{
-				Id = 1000,
+				Id = "1000",
 				Email = "bbbenson@hotmail.com",
-				Password = "1234",
+				// Password = "1234",
 				FirstName = "Berry B.",
-				Username = "Benson",
+				// Username = "Benson",
 				Age = 2,
 			});
 			await db.SaveChangesAsync();

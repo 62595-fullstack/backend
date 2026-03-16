@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Models.User;
 
 namespace backend.getdata
@@ -10,10 +12,14 @@ namespace backend.getdata
             try
             {
                 DatabaseContext db = new DatabaseContext();
-                await db.User.AddAsync(user);
+                PasswordHasher<Users> ph = new PasswordHasher<Users>();
 
-                await db.SaveChangesAsync();
+                Users AddToDataBase = user;
+                AddToDataBase.PasswordHash = ph.HashPassword(AddToDataBase, user.PasswordHash!);
 
+                UserStore us = new UserStore(db);
+                await us.CreateAsync(user);
+                
                 return true;
             }
             catch (Exception ex)
@@ -22,6 +28,34 @@ namespace backend.getdata
                 return false;
             }
         }
+
+
+        public async Task<bool> loginUsers(Users user)
+        {
+            try
+            {
+                DatabaseContext db = new DatabaseContext();
+                PasswordHasher<Users> ph = new PasswordHasher<Users>();
+
+                Users AddToDataBase = user;
+                AddToDataBase.PasswordHash = ph.HashPassword(AddToDataBase, user.PasswordHash!);
+
+                if(user.PasswordHash == AddToDataBase.PasswordHash)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
 
         public async Task<Users?> getUserByEmail(string email)
         {
@@ -51,7 +85,7 @@ namespace backend.getdata
             try
             {
                 DatabaseContext db = new DatabaseContext();
-                Users? user = await db.User.FirstOrDefaultAsync(u => u.Username == userName);
+                Users? user = await db.User.FirstOrDefaultAsync(u => u.UserName == userName);
 
                 if (user != null)
                 {
