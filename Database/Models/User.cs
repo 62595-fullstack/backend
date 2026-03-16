@@ -7,9 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Models.User;
 
 public class Users : IdentityUser
-{
-    [ForeignKey("Id")]
-    
+{   
     public required string FirstName { get; set; }
     
     public required int Age { get; set; }
