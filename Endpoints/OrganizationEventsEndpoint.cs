@@ -31,16 +31,28 @@ public static class OrganizationEventsEndpoint
 
 		group.MapPost("/", async Task<IResult> ([FromBody] OrganizationEvents oe) =>
 		{
+			Console.WriteLine($"[POST /OrganizationEvents] Id={oe.Id} OrganizationId={oe.OrganizationId} Title={oe.Title}");
 			try
 			{
 				DataOrganizationEvents doe = new DataOrganizationEvents();
 				await doe.createOrganizationEvents(oe);
 				return Results.Ok();
 			}
-			catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: "23503" } pgEx)
+			catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: "23503" })
 			{
 				Console.WriteLine(ex.ToString());
 				return Results.BadRequest($"Organization with ID {oe.OrganizationId} does not exist.");
+			}
+			catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: "23505" })
+			{
+				Console.WriteLine(ex.ToString());
+				return Results.BadRequest($"An event already exists for organization with ID {oe.OrganizationId}.");
+			}
+			catch (DbUpdateException ex)
+			{
+				Console.WriteLine(ex.ToString());
+				var detail = ex.InnerException?.Message ?? ex.Message;
+				return Results.Problem(detail);
 			}
 			catch (Exception ex)
 			{
