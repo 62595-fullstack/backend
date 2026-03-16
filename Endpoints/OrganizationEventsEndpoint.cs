@@ -1,8 +1,10 @@
 using backend.getdata;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Models.OrganizationEvent;
 using Models.UserEventBinding;
 using Newtonsoft.Json;
+using Npgsql;
 using System.Net;
 
 namespace Endpoints;
@@ -34,6 +36,11 @@ public static class OrganizationEventsEndpoint
 				DataOrganizationEvents doe = new DataOrganizationEvents();
 				await doe.createOrganizationEvents(oe);
 				return Results.Ok();
+			}
+			catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: "23503" } pgEx)
+			{
+				Console.WriteLine(ex.ToString());
+				return Results.BadRequest($"Organization with ID {oe.OrganizationId} does not exist.");
 			}
 			catch (Exception ex)
 			{
