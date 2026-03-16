@@ -1,4 +1,11 @@
 using Endpoints;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+
+JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+{
+    ContractResolver = new CamelCasePropertyNamesContractResolver()
+};
 
 var builder = WebApplication.CreateBuilder(args);
 
