@@ -6,6 +6,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddCors(options =>
+{
+	options.AddDefaultPolicy(policy =>
+	{
+		policy.WithOrigins("http://localhost:3000")
+			  .AllowAnyHeader()
+			  .AllowAnyMethod();
+	});
+});
 
 var app = builder.Build();
 
@@ -40,7 +49,12 @@ await du.setUsers(u);
 
 
 
-app.UseHttpsRedirection();
+app.UseCors();
+
+if (!app.Environment.IsDevelopment())
+{
+	app.UseHttpsRedirection();
+}
 
 app.MapGroup("/posts").MapPostEndpoints();
 app.MapGroup("/attachments").MapAttachmentEndpoints();
