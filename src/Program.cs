@@ -1,4 +1,6 @@
+using backend.getdata;
 using Endpoints;
+using Models.User;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -40,6 +42,6 @@ app.MapGroup("/organizations").MapOrganizationEndpoints();
 app.MapGroup("/UserOrganizationBinding").MapUserOrganizationBindingEndpoints();
 app.MapGroup("/OrganizationEvents").MapOrganizationEventsEndpoints();
 app.MapGroup("/GDPR").MapGDPREndpoints();
-
+app.MapGroup("/login").MaploginEndpoint();
 app.Run();
 

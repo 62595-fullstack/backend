@@ -13,10 +13,15 @@ namespace backend.getdata
             {
                 DatabaseContext db = new DatabaseContext();
                 
-                var user = await db.User.Where(x => x.Id == userId).ExecuteDeleteAsync();
+                var user = await db.User.Where(x => int.Parse(x.Id) == userId).ExecuteDeleteAsync();
 
-
-                return user;
+                if (user == 0)
+                {
+                    return 0;
+                } 
+                
+                await db.SaveChangesAsync();
+                return 1;
             }
             catch (Exception ex)
             {

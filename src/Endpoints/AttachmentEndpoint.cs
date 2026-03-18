@@ -1,4 +1,5 @@
 using backend.getdata;
+using Microsoft.AspNetCore.Mvc;
 using Models.Attachment;
 using System.Net;
 
@@ -24,19 +25,22 @@ public static class AttachmentEndpoint
 		})
 		.WithName("GetAttachment");
 
-
-		group.MapDelete("/{attachmentId}", async Task<string> (int attachmentId) =>
+		group.MapDelete("/{attachmentId}", async (int attachmentId) =>
 		{
 			try
 			{
 				DataAttachment dam = new DataAttachment();
-				await dam.DeleteAttachment(attachmentId);
-				return HttpStatusCode.OK.ToString();
+				bool success = await dam.DeleteAttachment(attachmentId);
+				if (!success)
+				{
+					return Results.NotFound();
+				}
+				return Results.Ok();
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.Message);
-				return HttpStatusCode.InternalServerError.ToString();
+				return Results.BadRequest();
 			}
 		})
 		.WithName("DeleteAttachment");

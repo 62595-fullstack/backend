@@ -79,7 +79,6 @@ namespace backend.getdata
                 DatabaseContext db = new DatabaseContext();
 
                 Organizations organizations = await db.Organization.Where(o => o.Id == id).FirstAsync();
-
                 db.Organization.Remove(organizations);
 
                 await db.SaveChangesAsync();
