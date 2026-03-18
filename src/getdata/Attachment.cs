@@ -28,7 +28,7 @@ namespace backend.getdata
                 using (DatabaseContext db = new DatabaseContext())
                 {
                     var user = await db.Attachment.Where(x => x.Id == attachmentId).ExecuteDeleteAsync();
-                    if (user == null)
+                    if (user == 0)
                     {
                         return false;
                     }
@@ -52,7 +52,7 @@ namespace backend.getdata
                     using (var stream = file.OpenReadStream())
                     {
                         using (var memoryStream = new MemoryStream())
-                        {
+                        {                   
                             await stream.CopyToAsync(memoryStream);
                             byte[] fileBytes = memoryStream.ToArray();
                             Attachments am = new Attachments

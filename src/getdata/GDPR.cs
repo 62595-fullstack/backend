@@ -15,8 +15,13 @@ namespace backend.getdata
                 
                 var user = await db.User.Where(x => int.Parse(x.Id) == userId).ExecuteDeleteAsync();
 
-
-                return user;
+                if (user == 0)
+                {
+                    return 0;
+                } 
+                
+                await db.SaveChangesAsync();
+                return 1;
             }
             catch (Exception ex)
             {
