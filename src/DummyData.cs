@@ -27,7 +27,7 @@ class DummyData
 				Email = "crazyfrog@hotmail.com",
 				Password = "bingbing",
 				FirstName = "Crazy",
-				Username = "Frog",
+				UserName = "Frog",
 				Age = 2,
 			});
 			await db.SaveChangesAsync();
@@ -38,7 +38,7 @@ class DummyData
 				Email = "bbbenson@hotmail.com",
 				Password = "1234",
 				FirstName = "Berry B.",
-				Username = "Benson",
+				UserName = "Benson",
 				Age = 2,
 			});
 			await db.SaveChangesAsync();
