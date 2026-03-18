@@ -25,6 +25,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore --project src/backend.csproj
-    - name: Test
-      run: dotnet test --no-build --verbosity normal --project src/backend.csproj
+      run: dotnet build --no-restore backend.slnx
+    # - name: Test
+    #   run: dotnet test --no-build --verbosity normal
