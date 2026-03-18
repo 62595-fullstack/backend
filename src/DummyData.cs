@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Models.Post;
 using Models.User;
 using Models.Role;
@@ -11,7 +12,9 @@ class DummyData
 {
 	public static async void Initialize()
 	{
-		using (var db = new DatabaseContext())
+		PasswordHasher<Users> hasher = new();
+
+		using (DatabaseContext db = new())
 		{
 			db.Post.RemoveRange(db.Post);
 			db.User.RemoveRange(db.User);
@@ -22,25 +25,25 @@ class DummyData
 			db.UserEventBinding.RemoveRange(db.UserEventBinding);
 			db.UserOrganizationBinding.RemoveRange(db.UserOrganizationBinding);
 
-			db.User.Add(new Users
-			{
+			Users frog = new() {
 				Email = "crazyfrog@hotmail.com",
-				Password = "bingbing",
 				FirstName = "Crazy",
 				UserName = "Frog",
 				Age = 2,
-			});
+			};
+			frog.PasswordHash = hasher.HashPassword(frog, "bingbing");
+			db.User.Add(frog);
 			await db.SaveChangesAsync();
 
-			db.User.Add(new Users
-			{
+			Users benson = new() {
 				Id = "1000",
 				Email = "bbbenson@hotmail.com",
-				Password = "1234",
 				FirstName = "Berry B.",
 				UserName = "Benson",
 				Age = 2,
-			});
+			};
+			benson.PasswordHash = hasher.HashPassword(benson, "1234");
+			db.User.Add(benson);
 			await db.SaveChangesAsync();
 
 			db.Organization.Add(new Organizations
