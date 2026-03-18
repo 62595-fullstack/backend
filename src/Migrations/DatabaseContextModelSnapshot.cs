@@ -95,13 +95,25 @@ namespace backend.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("OrganizationId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("StateDate")
+                    b.Property<DateTime?>("StateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UserOrganizationBindingId")
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("UserOrganizationBindingId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");

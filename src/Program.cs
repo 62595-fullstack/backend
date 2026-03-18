@@ -1,11 +1,22 @@
 using backend.getdata;
 using Endpoints;
 using Models.User;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+
+JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+{
+    ContractResolver = new CamelCasePropertyNamesContractResolver()
+};
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNameCaseInsensitive = true;
+});
 builder.Services.AddCors(options =>
 {
 	options.AddDefaultPolicy(policy =>
@@ -31,24 +42,7 @@ if (app.Environment.IsDevelopment())
 	});
 }
 
-DataUser du = new DataUser();
-
-Users u = new Users
-			{
-				Email = "crazyfrog@hotmail.com",
-				PasswordHash = "bingbing",
-				FirstName = "Crazy",
-				UserName = "Frog",
-				Age = 2,
-			};
-
-
-await du.setUsers(u);
-
-
-
-
-
+app.UseStaticFiles();
 app.UseCors();
 
 if (!app.Environment.IsDevelopment())

@@ -25,26 +25,13 @@ public static class OrganizationEndpoint
 		})
 		.WithName("GetOrganizations");
 
-		group.MapPost("/", async Task<string> (string organizations) =>
+		group.MapPost("/", async Task<string> ([Microsoft.AspNetCore.Mvc.FromBody] Organizations o) =>
 		{
 			try
 			{
-				using (DatabaseContext db = new DatabaseContext())
-				{
-					Organizations? o = JsonConvert.DeserializeObject<Organizations>(organizations);
-
-					if (o != null)
-					{
-						DataOrganization DO = new DataOrganization();
-						await DO.CreateOrganization(o);
-					}
-					else
-					{
-						return HttpStatusCode.InternalServerError.ToString();
-					}
-
-					return HttpStatusCode.OK.ToString();
-				}
+				DataOrganization DO = new DataOrganization();
+				await DO.CreateOrganization(o);
+				return HttpStatusCode.OK.ToString();
 			}
 			catch (Exception ex)
 			{
