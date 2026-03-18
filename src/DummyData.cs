@@ -14,7 +14,6 @@ class DummyData
 	{
 		Microsoft.EntityFrameworkCore.Metadata.IEntityType entityType = db.Model.FindEntityType(typeof(T))!;
 		Microsoft.EntityFrameworkCore.Metadata.IKey primaryKey = entityType.FindPrimaryKey()!;
-		PasswordHasher<Users> hasher = new();
 
 		foreach (T entity in entities)
 		{
@@ -36,28 +35,40 @@ class DummyData
 	{
 		using (DatabaseContext db = new())
 		{
-			await Add(db,
-				new Users { Id = 123, Email = "friskfyr@friskefyre.com", Password = "123", FirstName = "Frisk", Username = "Fyr", Age = 25 },
-				new Users { Id = 999, Email = "crazyfrog@hotmail.com", Password = "bingbing", FirstName = "Crazy", Username = "Frog", Age = 2 },
-				new Users { Id = 1000, Email = "bbbenson@hotmail.com", Password = "1234", FirstName = "Berry B.", Username = "Benson", Age = 2 }
-			);
+			PasswordHasher<Users> hasher = new();
 
+			// Users
+			Users friskFyr = new() { Id = "123", Email = "friskfyr@friskefyre.com", FirstName = "Frisk", UserName = "Fyr", Age = 25 };
+			friskFyr.PasswordHash = hasher.HashPassword(friskFyr, "123");
+
+			Users frog = new() { Id = "999", Email = "crazyfrog@hotmail.com", FirstName = "Crazy", UserName = "Frog", Age = 2 };
+			frog.PasswordHash = hasher.HashPassword(frog, "bingbing");
+
+			Users benson = new() { Id = "1000", Email = "bbbenson@hotmail.com", FirstName = "Berry B.", UserName = "Benson", Age = 2 };
+			benson.PasswordHash = hasher.HashPassword(benson, "1234");
+
+			await Add(db, friskFyr, frog, benson);
+
+			// Organizations
 			await Add(db,
 				new Organizations { Id = 123, Name = "Friske Gutter", CreatedDate = DateTime.UtcNow },
 				new Organizations { Id = 998, Name = "HollyWood", CreatedDate = DateTime.UtcNow },
 				new Organizations { Id = 1000, Name = "NetCompany", CreatedDate = DateTime.UtcNow }
 			);
 
+			// Roles
 			await Add(db,
 				new Roles { Id = 999, Name = "Employee" },
 				new Roles { Id = 1000, Name = "Admin" }
 			);
 
+			// UserOrganizationBindings
 			await Add(db,
 				new UserOrganizationBindings { Id = 123, UserId = 123, OrganizationId = 123, RoleId = 999 },
 				new UserOrganizationBindings { Id = 1000, UserId = 1000, OrganizationId = 1000, RoleId = 999 }
 			);
 
+			// OrganizationEvents
 			await Add(db,
 				new OrganizationEvents
 				{
@@ -83,17 +94,20 @@ class DummyData
 				}
 			);
 
+			// UserEventBindings
 			await Add(db,
 				new UserEventBindings { Id = 123, UserId = 123, OrganizationEventsId = 123 },
 				new UserEventBindings { Id = 1000, UserId = 1000, OrganizationEventsId = 1000 }
 			);
 
+			// Posts
 			await Add(db,
 				new Posts { Id = 998, Title = "Fist Event Post", CreatedDate = DateTime.UtcNow, UserId = 1000, OrganizationEventId = 1000 },
 				new Posts { Id = 999, Title = "Bee Movie Trailer Night", CreatedDate = DateTime.UtcNow, UserId = 1000, OrganizationEventId = 1000 },
 				new Posts { Id = 1000, Title = "Hello World", CreatedDate = DateTime.UtcNow, UserId = 1000, OrganizationEventId = 1000 }
 			);
 
+			// OrganizationPosts
 			await Add(db,
 				new OrganizationPosts { Id = 1000, OrganizationId = 1000, PostId = 1000 }
 			);
