@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Models.Attachment;
-using Models.User;
 
 namespace backend.getdata
 {
