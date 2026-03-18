@@ -48,7 +48,7 @@ namespace backend.getdata
         {
             try
             {
-                DatabaseContext db = new DatabaseContext();
+                DatabaseContext db = new DatabaseContext();              
                 UserEventBindings ueb = new UserEventBindings
                 {
                   UserId = userId,
@@ -57,7 +57,6 @@ namespace backend.getdata
 
                 await db.UserEventBinding.AddAsync(ueb);
                 await db.SaveChangesAsync();
-                
                 
                 return true;
             }
