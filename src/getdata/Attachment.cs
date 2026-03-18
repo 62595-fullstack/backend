@@ -29,6 +29,10 @@ namespace backend.getdata
                 using (DatabaseContext db = new DatabaseContext())
                 {
                     var user = await db.Attachment.Where(x => x.Id == attachmentId).ExecuteDeleteAsync();
+                    if (user == null)
+                    {
+                        return false;
+                    }
                     await db.SaveChangesAsync();
                 }
                 return true;

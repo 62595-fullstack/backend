@@ -1,8 +1,7 @@
 ﻿using backend.getdata;
-using Models.Post;
-using Models.Attachment;
-using Newtonsoft.Json;
 using System.Net;
+using Models.Post;
+using Newtonsoft.Json;
 
 namespace Endpoints;
 
@@ -26,27 +25,29 @@ public static class PostEndpoint
 		})
 		.WithName("GetPosts");
 
-		group.MapGet("/{organizationsId}", async Task<string> (int organizationsId) =>
+		group.MapGet("/{organizationsId}", async Task<IResult> (int organizationsId) =>
 		{
 			try
 			{
 				Post p = new Post();
 				List<Posts>? posts = await p.getPostByOrganization(organizationsId);
-				return JsonConvert.SerializeObject(posts);
+				string jsonPosts = JsonConvert.SerializeObject(posts);
+				return Results.Ok(jsonPosts);
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.Message);
-				return "{}";
+				return Results.InternalServerError();
 			}
 		})
 		.WithName("GetPostsFromOrganizationsId");
 
-		group.MapPost("/", async Task<string> (string post) =>
+		group.MapPost("/", async Task<IResult> (HttpRequest requestPost) =>
 		{
 			try
 			{
-				Posts? p = JsonConvert.DeserializeObject<Posts>(post);
+				Posts? p = await requestPost.ReadFromJsonAsync<Posts>();
+				// Posts? p = JsonConvert.DeserializeObject<Posts>(post.Body.ToString());
 				if (p != null)
 				{
 					Post pd = new Post();
@@ -54,14 +55,14 @@ public static class PostEndpoint
 				}
 				else
 				{
-					return HttpStatusCode.InternalServerError.ToString();
+					return Results.BadRequest();
 				}
-				return HttpStatusCode.OK.ToString();
+				return Results.Ok();
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.Message);
-				return HttpStatusCode.InternalServerError.ToString();
+				return Results.InternalServerError();
 			}
 		})
 		.WithName("PostPosts");
