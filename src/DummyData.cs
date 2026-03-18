@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Models.Post;
 using Models.User;
 using Models.Role;
@@ -9,129 +10,107 @@ using Models.UserOrganizationBinding;
 
 class DummyData
 {
+	private static async Task Add<T>(DatabaseContext db, params T[] entities) where T : class
+	{
+		Microsoft.EntityFrameworkCore.Metadata.IEntityType entityType = db.Model.FindEntityType(typeof(T))!;
+		Microsoft.EntityFrameworkCore.Metadata.IKey primaryKey = entityType.FindPrimaryKey()!;
+
+		foreach (T entity in entities)
+		{
+			object[] keyValues = primaryKey.Properties
+				.Select(p => p.PropertyInfo!.GetValue(entity)!)
+				.ToArray();
+
+			T? existing = await db.Set<T>().FindAsync(keyValues);
+			if (existing == null)
+				await db.Set<T>().AddAsync(entity);
+			else
+				db.Entry(existing).CurrentValues.SetValues(entity);
+		}
+
+		await db.SaveChangesAsync();
+	}
+
 	public static async void Initialize()
 	{
-		using (var db = new DatabaseContext())
+		using (DatabaseContext db = new())
 		{
-			db.Post.RemoveRange(db.Post);
-			db.User.RemoveRange(db.User);
-			db.Role.RemoveRange(db.Role);
-			db.Organization.RemoveRange(db.Organization);
-			db.OrganizationPost.RemoveRange(db.OrganizationPost);
-			db.OrganizationEvent.RemoveRange(db.OrganizationEvent);
-			db.UserEventBinding.RemoveRange(db.UserEventBinding);
-			db.UserOrganizationBinding.RemoveRange(db.UserOrganizationBinding);
+			PasswordHasher<Users> hasher = new();
 
-			db.User.Add(new Users
-			{
-				Email = "crazyfrog@hotmail.com",
-				// Password = "bingbing",
-				FirstName = "Crazy",
-				// Username = "Frog",
-				Age = 2,
-			});
-			await db.SaveChangesAsync();
+			// Users
+			Users friskFyr = new() { Id = "123", Email = "friskfyr@friskefyre.com", FirstName = "Frisk", UserName = "Fyr", Age = 25 };
+			friskFyr.PasswordHash = hasher.HashPassword(friskFyr, "123");
 
-			db.User.Add(new Users
-			{
-				Id = "1000",
-				Email = "bbbenson@hotmail.com",
-				// Password = "1234",
-				FirstName = "Berry B.",
-				// Username = "Benson",
-				Age = 2,
-			});
-			await db.SaveChangesAsync();
+			Users frog = new() { Id = "999", Email = "crazyfrog@hotmail.com", FirstName = "Crazy", UserName = "Frog", Age = 2 };
+			frog.PasswordHash = hasher.HashPassword(frog, "bingbing");
 
-			db.Organization.Add(new Organizations
-			{
-				Id = 1000,
-				Name = "NetCompany",
-				CreatedDate = DateTime.UtcNow,
-			});
-			await db.SaveChangesAsync();
+			Users benson = new() { Id = "1000", Email = "bbbenson@hotmail.com", FirstName = "Berry B.", UserName = "Benson", Age = 2 };
+			benson.PasswordHash = hasher.HashPassword(benson, "1234");
 
-			db.Organization.Add(new Organizations
-			{
-				Name = "HollyWood",
-				CreatedDate = DateTime.UtcNow,
-			});
-			await db.SaveChangesAsync();
+			await Add(db, friskFyr, frog, benson);
 
-			db.Role.Add(new Roles
-			{
-				Id = 1000,
-				Name = "Admin",
-			});
-			await db.SaveChangesAsync();
+			// Organizations
+			await Add(db,
+				new Organizations { Id = 123, Name = "Friske Gutter", CreatedDate = DateTime.UtcNow },
+				new Organizations { Id = 998, Name = "HollyWood", CreatedDate = DateTime.UtcNow },
+				new Organizations { Id = 1000, Name = "NetCompany", CreatedDate = DateTime.UtcNow }
+			);
 
-			db.Role.Add(new Roles
-			{
-				Name = "Employee",
-			});
-			await db.SaveChangesAsync();
+			// Roles
+			await Add(db,
+				new Roles { Id = 999, Name = "Employee" },
+				new Roles { Id = 1000, Name = "Admin" }
+			);
 
-			db.UserOrganizationBinding.Add(new UserOrganizationBindings
-			{
-				Id = 1000,
-				UserId = 1000,
-				OrganizationId = 1000,
-				RoleId = 1000,
-			});
+			// UserOrganizationBindings
+			await Add(db,
+				new UserOrganizationBindings { Id = 123, UserId = 123, OrganizationId = 123, RoleId = 999 },
+				new UserOrganizationBindings { Id = 1000, UserId = 1000, OrganizationId = 1000, RoleId = 999 }
+			);
 
-			db.OrganizationEvent.Add(new OrganizationEvents
-			{
-				Id = 1000,
-				OrganizationId = 1000,
-				CreatedDate = DateTime.UtcNow,
-				StateDate = DateTime.UtcNow,
-				AgeLimit = 18,
-				UserOrganizationBindingId = 1000,
-			});
-			await db.SaveChangesAsync();
+			// OrganizationEvents
+			await Add(db,
+				new OrganizationEvents
+				{
+					Id = 123,
+					OrganizationId = 123,
+					Title = "Faldskærmsudspringning i Fælledparken",
+					Description = "Kom og tag med os på en spændende faldskærmsudspringningsoplevelse!",
+					ImageUrl = "/images/dynamic-realistic-parachuting.jpg",
+					CreatedDate = DateTime.UtcNow,
+					StateDate = DateTime.UtcNow,
+					AgeLimit = 18,
+					UserOrganizationBindingId = 123
+				},
+				new OrganizationEvents
+				{
+					Id = 1000,
+					OrganizationId = 1000,
+					Title = "Åbent hus i NetCompany",
+					CreatedDate = DateTime.UtcNow,
+					StateDate = DateTime.UtcNow,
+					AgeLimit = 18,
+					UserOrganizationBindingId = 1000
+				}
+			);
 
-			db.UserEventBinding.Add(new UserEventBindings
-			{
-				Id = 1000,
-				UserId = 1000,
-				OrganizationEventsId = 1000,
-			});
+			// UserEventBindings
+			await Add(db,
+				new UserEventBindings { Id = 123, UserId = 123, OrganizationEventsId = 123 },
+				new UserEventBindings { Id = 1000, UserId = 1000, OrganizationEventsId = 1000 }
+			);
 
-			db.Post.Add(new Posts
-			{
-				Title = "Fist Event Post",
-				CreatedDate = DateTime.UtcNow,
-				UserId = 1000,
-				OrganizationEventId = 1000
-			});
-			await db.SaveChangesAsync();
+			// Posts
+			await Add(db,
+				new Posts { Id = 998, Title = "Fist Event Post", CreatedDate = DateTime.UtcNow, UserId = 1000, OrganizationEventId = 1000 },
+				new Posts { Id = 999, Title = "Bee Movie Trailer Night", CreatedDate = DateTime.UtcNow, UserId = 1000, OrganizationEventId = 1000 },
+				new Posts { Id = 1000, Title = "Hello World", CreatedDate = DateTime.UtcNow, UserId = 1000, OrganizationEventId = 1000 }
+			);
 
-			db.Post.Add(new Posts
-			{
-				Id = 1000,
-				Title = "Hello World",
-				CreatedDate = DateTime.UtcNow,
-				UserId = 1000,
-				OrganizationEventId = 1000,
-			});
-			await db.SaveChangesAsync();
-
-			db.OrganizationPost.Add(new OrganizationPosts
-			{
-				Id = 1000,
-				OrganizationId = 1000,
-				PostId = 1000,
-			});
-			await db.SaveChangesAsync();
-
-			db.Post.Add(new Posts
-			{
-				Title = "Bee Movie Trailer Night",
-				CreatedDate = DateTime.UtcNow,
-				UserId = 1000,
-				OrganizationEventId = 1000,
-			});
-			await db.SaveChangesAsync();
+			// OrganizationPosts
+			await Add(db,
+				new OrganizationPosts { Id = 1000, OrganizationId = 1000, PostId = 1000 }
+			);
 		}
 	}
 }

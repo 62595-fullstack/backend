@@ -1,5 +1,6 @@
 
 
+
 using Microsoft.EntityFrameworkCore;
 using Models.OrganizationEvent;
 using Models.UserEventBinding;
@@ -13,33 +14,23 @@ namespace backend.getdata
             try
             {
                 DatabaseContext db = new DatabaseContext();
-                
+
 
 
                 return await db.OrganizationEvent.Where(x => x.OrganizationId == organizationId).ToListAsync();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.ToString());
                 return new List<OrganizationEvents>();
             }
         }
 
-        public async Task<bool> createOrganizationEvents(OrganizationEvents organizationEvents)
+        public async Task createOrganizationEvents(OrganizationEvents organizationEvents)
         {
-            try
-            {
-                DatabaseContext db = new DatabaseContext();
-                await db.OrganizationEvent.AddAsync(organizationEvents);
-                await db.SaveChangesAsync();
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return false;
-            }
+            DatabaseContext db = new DatabaseContext();
+            await db.OrganizationEvent.AddAsync(organizationEvents);
+            await db.SaveChangesAsync();
         }
 
 
@@ -52,17 +43,17 @@ namespace backend.getdata
                 UserEventBindings ueb = new UserEventBindings
                 {
                   UserId = userId,
-                  OrganizationEventsId = organizationId   
+                  OrganizationEventsId = organizationId
                 };
 
                 await db.UserEventBinding.AddAsync(ueb);
                 await db.SaveChangesAsync();
-                
+
                 return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.ToString());
                 return false;
             }
         }
