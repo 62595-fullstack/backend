@@ -32,7 +32,7 @@ class DummyData
 
 	public static async void Initialize()
 	{
-		using (DatabaseContext db = new DatabaseContext())
+		using (DatabaseContext db = new())
 		{
 			await Add(db,
 				new Users { Id = 123, Email = "friskfyr@friskefyre.com", Password = "123", FirstName = "Frisk", Username = "Fyr", Age = 25 },
