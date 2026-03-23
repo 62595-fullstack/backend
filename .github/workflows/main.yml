@@ -8,6 +8,9 @@ jobs:
     name: deploy to production
     runs-on: self-hosted
     steps:
-    - run: git pull
-    - run: dotnet run -e ASPNETCORE_ENVIRONMENT=development
+    - run: |
+        cd ~/backend
+        git pull
+        cd ~/backend/src
+        dotnet run -e ASPNETCORE_ENVIRONMENT=development
 
