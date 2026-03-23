@@ -25,9 +25,9 @@ class DummyData
 			db.User.Add(new Users
 			{
 				Email = "crazyfrog@hotmail.com",
-				// Password = "bingbing",
+				PasswordHash = "bingbing",
 				FirstName = "Crazy",
-				// Username = "Frog",
+				UserName = "Frog",
 				Age = 2,
 			});
 			await db.SaveChangesAsync();
@@ -36,9 +36,9 @@ class DummyData
 			{
 				Id = "1000",
 				Email = "bbbenson@hotmail.com",
-				// Password = "1234",
+				PasswordHash = "1234",
 				FirstName = "Berry B.",
-				// Username = "Benson",
+				UserName = "Benson",
 				Age = 2,
 			});
 			await db.SaveChangesAsync();
