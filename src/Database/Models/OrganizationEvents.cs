@@ -1,4 +1,5 @@
-﻿using Models.Organization;
+﻿using Models.Attachment;
+using Models.Organization;
 using Models.UserEventBinding;
 
 namespace Models.OrganizationEvent
@@ -9,7 +10,7 @@ namespace Models.OrganizationEvent
         public required int OrganizationId { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public string ImageUrl { get; set; } = string.Empty;
+        public Attachments? ImageUrl { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public DateTime StartDate { get; set; } = DateTime.UtcNow;
         public int AgeLimit { get; set; } = 0;
