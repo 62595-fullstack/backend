@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Models.OrganizationEvent;
 using Models.UserEventBinding;
 using Newtonsoft.Json;
-using Npgsql;
 using System.Net;
 
 namespace Endpoints;
@@ -34,19 +33,17 @@ public static class OrganizationEventsEndpoint
 			//Console.WriteLine($"[POST /OrganizationEvents] Id={oe.Id} OrganizationId={oe.OrganizationId} Title={oe.Title}");
 			try
 			{
+				using DatabaseContext db = new();
+
+				bool organizationExists = await db.Organization.AnyAsync(o => o.Id == oe.OrganizationId);
+				if (!organizationExists) return Results.BadRequest($"Organization with ID {oe.OrganizationId} does not exist.");
+
+				bool eventExists = await db.OrganizationEvent.AnyAsync(e => e.OrganizationId == oe.OrganizationId);
+				if (eventExists) return Results.BadRequest($"An event already exists for organization with ID {oe.OrganizationId}.");
+
 				DataOrganizationEvents doe = new DataOrganizationEvents();
 				await doe.createOrganizationEvents(oe);
 				return Results.Ok();
-			}
-			catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: "23503" })
-			{
-				Console.WriteLine(ex.ToString());
-				return Results.BadRequest($"Organization with ID {oe.OrganizationId} does not exist.");
-			}
-			catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: "23505" })
-			{
-				Console.WriteLine(ex.ToString());
-				return Results.BadRequest($"An event already exists for organization with ID {oe.OrganizationId}.");
 			}
 			catch (DbUpdateException ex)
 			{
