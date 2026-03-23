@@ -9,7 +9,8 @@ jobs:
     runs-on: self-hosted
     steps:
     - run: |
-        tmux attach-session -t runner
+        tmux send -t runner:pane 123
+        tmux attach -t runner
         cd ~/backend
         git pull
         cd ~/backend/src
