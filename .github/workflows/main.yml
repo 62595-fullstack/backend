@@ -10,5 +10,6 @@ jobs:
     steps:
     - run: cd ~/backend
     - run: git pull
+    - run: cd ~/backend/src
     - run: dotnet run -e ASPNETCORE_ENVIRONMENT=development
 
