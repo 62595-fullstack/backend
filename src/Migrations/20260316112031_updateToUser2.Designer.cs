@@ -101,7 +101,7 @@ namespace backend.Migrations
                     b.Property<int>("OrganizationId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("StateDate")
+                    b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserOrganizationBindingId")

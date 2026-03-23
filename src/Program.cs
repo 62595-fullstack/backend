@@ -1,11 +1,35 @@
 using backend.getdata;
 using Endpoints;
 using Models.User;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
-var builder = WebApplication.CreateBuilder(args);
+JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+{
+    ContractResolver = new CamelCasePropertyNamesContractResolver()
+};
+
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+	Args = args,
+	WebRootPath = "../wwwroot"
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNameCaseInsensitive = true;
+});
+builder.Services.AddCors(options =>
+{
+	options.AddDefaultPolicy(policy =>
+	{
+		policy.WithOrigins("http://localhost:3000")
+			  .AllowAnyHeader()
+			  .AllowAnyMethod();
+	});
+});
 
 var app = builder.Build();
 
@@ -22,25 +46,13 @@ if (app.Environment.IsDevelopment())
 	});
 }
 
-DataUser du = new DataUser();
+app.UseStaticFiles();
+app.UseCors();
 
-Users u = new Users
-			{
-				Email = "crazyfrog@hotmail.com",
-				PasswordHash = "bingbing",
-				FirstName = "Crazy",
-				UserName = "Frog",
-				Age = 2,
-			};
-
-
-await du.setUsers(u);
-
-
-
-
-
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+	app.UseHttpsRedirection();
+}
 
 app.MapGroup("/posts").MapPostEndpoints();
 app.MapGroup("/attachments").MapAttachmentEndpoints();

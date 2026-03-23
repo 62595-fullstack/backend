@@ -13,6 +13,6 @@ public class Attachments
 
     public required DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
-    public required int PostId { get; set; }
+    public int? PostId { get; set; }
     public Posts? Post { get; set; } = null!;
 }

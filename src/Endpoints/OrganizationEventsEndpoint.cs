@@ -1,4 +1,6 @@
 using backend.getdata;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Models.OrganizationEvent;
 using Models.UserEventBinding;
 using Newtonsoft.Json;
@@ -26,29 +28,33 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("getOrganizationEvents");
 
-		group.MapPost("/", async Task<string> (string organizationEvent) =>
+		group.MapPost("/", async Task<IResult> ([FromBody] OrganizationEvents oe) =>
 		{
+			//Console.WriteLine($"[POST /OrganizationEvents] Id={oe.Id} OrganizationId={oe.OrganizationId} Title={oe.Title}");
 			try
 			{
-				OrganizationEvents? oe = JsonConvert.DeserializeObject<OrganizationEvents>(organizationEvent);
+				using DatabaseContext db = new();
 
-				if (oe != null)
-				{
-					DataOrganizationEvents doe = new DataOrganizationEvents();
-					await doe.createOrganizationEvents(oe);
-				}
-				else
-				{
-					return HttpStatusCode.InternalServerError.ToString();
-				}
-				return HttpStatusCode.OK.ToString();
+				bool organizationExists = await db.Organization.AnyAsync(o => o.Id == oe.OrganizationId);
+				if (!organizationExists) return Results.BadRequest($"Organization with ID {oe.OrganizationId} does not exist.");
 
-				
+				bool eventExists = await db.OrganizationEvent.AnyAsync(e => e.OrganizationId == oe.OrganizationId);
+				if (eventExists) return Results.BadRequest($"An event already exists for organization with ID {oe.OrganizationId}.");
+
+				DataOrganizationEvents doe = new DataOrganizationEvents();
+				await doe.createOrganizationEvents(oe);
+				return Results.Ok();
+			}
+			catch (DbUpdateException ex)
+			{
+				Console.WriteLine(ex.ToString());
+				var detail = ex.InnerException?.Message ?? ex.Message;
+				return Results.Problem(detail);
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.Message);
-				return HttpStatusCode.InternalServerError.ToString();
+				Console.WriteLine(ex.ToString());
+				return Results.Problem(ex.Message);
 			}
 		})
 		.WithName("PostOrganizationEvents");
