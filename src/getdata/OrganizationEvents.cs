@@ -1,6 +1,3 @@
-
-
-
 using Microsoft.EntityFrameworkCore;
 using Models.OrganizationEvent;
 using Models.UserEventBinding;
@@ -11,13 +8,13 @@ namespace backend.getdata
     {
         public async Task<List<OrganizationEvents>> getOrganizationEvents(int organizationId)
         {
-            try
-            {
+            try {
                 DatabaseContext db = new DatabaseContext();
-
-
-
-                return await db.OrganizationEvent.Where(x => x.OrganizationId == organizationId).ToListAsync();
+                
+                return await db.OrganizationEvent
+                    .Include(x => x.ImageUrl)
+                    .Where(x => x.OrganizationId == organizationId)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -32,9 +29,7 @@ namespace backend.getdata
             await db.OrganizationEvent.AddAsync(organizationEvents);
             await db.SaveChangesAsync();
         }
-
-
-
+        
         public async Task<bool> userJoinEvent(int userId, int organizationId)
         {
             try
@@ -57,8 +52,5 @@ namespace backend.getdata
                 return false;
             }
         }
-
-
-
     }
 }
