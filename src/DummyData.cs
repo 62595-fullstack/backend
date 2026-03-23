@@ -78,7 +78,7 @@ class DummyData
 					Description = "Kom og tag med os på en spændende faldskærmsudspringningsoplevelse!",
 					ImageUrl = "/images/dynamic-realistic-parachuting.jpg",
 					CreatedDate = DateTime.UtcNow,
-					StateDate = DateTime.UtcNow,
+					StartDate = DateTime.UtcNow,
 					AgeLimit = 18,
 					UserOrganizationBindingId = 123
 				},
@@ -88,7 +88,7 @@ class DummyData
 					OrganizationId = 1000,
 					Title = "Åbent hus i NetCompany",
 					CreatedDate = DateTime.UtcNow,
-					StateDate = DateTime.UtcNow,
+					StartDate = DateTime.UtcNow,
 					AgeLimit = 18,
 					UserOrganizationBindingId = 1000
 				}

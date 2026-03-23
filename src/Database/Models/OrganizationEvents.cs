@@ -11,7 +11,7 @@ namespace Models.OrganizationEvent
         public string Description { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
-        public DateTime? StateDate { get; set; }
+        public DateTime? StartDate { get; set; }
         public int AgeLimit { get; set; } = 0;
         public int? UserOrganizationBindingId { get; set; }
 
