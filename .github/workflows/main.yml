@@ -9,10 +9,7 @@ jobs:
     runs-on: self-hosted
     steps:
     - run: |
-        tmux send -t runner:pane 123
-        tmux attach -t runner
-        cd ~/backend
-        git pull
-        cd ~/backend/src
-        dotnet run -e ASPNETCORE_ENVIRONMENT=development
-        tmux detach-client
+        tmux send -t runner:pane cd ~/backend ENTER
+        tmux send -t runner:pane git pull ENTER
+        tmux send -t runner:pane cd ~/backend/src ENTER
+        tmux send -t runner:pane dotnet run -e ASPNETCORE_ENVIRONMENT=development ENTER
