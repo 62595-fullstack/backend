@@ -31,7 +31,7 @@ public static class OrganizationEventsEndpoint
 
 		group.MapPost("/", async Task<IResult> ([FromBody] OrganizationEvents oe) =>
 		{
-			Console.WriteLine($"[POST /OrganizationEvents] Id={oe.Id} OrganizationId={oe.OrganizationId} Title={oe.Title}");
+			//Console.WriteLine($"[POST /OrganizationEvents] Id={oe.Id} OrganizationId={oe.OrganizationId} Title={oe.Title}");
 			try
 			{
 				DataOrganizationEvents doe = new DataOrganizationEvents();
