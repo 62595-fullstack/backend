@@ -77,13 +77,6 @@ class DummyData
 					OrganizationId = 123,
 					Title = "Faldskærmsudspringning i Fælledparken",
 					Description = "Kom og tag med os på en spændende faldskærmsudspringningsoplevelse!",
-					Attachment = new Attachments
-				{
-					FileName = "dynamic-realistic-parachuting.jpg",
-					FileType = "image/jpeg",
-					Content = File.ReadAllBytes("../wwwroot/images/dynamic-realistic-parachuting.jpg"),
-					CreatedDate = DateTime.UtcNow
-				},
 					CreatedDate = DateTime.UtcNow,
 					StartDate = DateTime.UtcNow,
 					AgeLimit = 18,
@@ -100,6 +93,23 @@ class DummyData
 					UserOrganizationBindingId = 1000
 				}
 			);
+
+			// Attach image to event 123 if not already linked (SetValues doesn't cascade to nav properties)
+			var event123 = await db.OrganizationEvent.FindAsync(123);
+			if (event123 != null && event123.AttachmentId == null)
+			{
+				var attachment = new Attachments
+				{
+					FileName = "dynamic-realistic-parachuting.jpg",
+					FileType = "image/jpeg",
+					Content = File.ReadAllBytes("../wwwroot/images/dynamic-realistic-parachuting.jpg"),
+					CreatedDate = DateTime.UtcNow
+				};
+				db.Attachment.Add(attachment);
+				await db.SaveChangesAsync();
+				event123.AttachmentId = attachment.Id;
+				await db.SaveChangesAsync();
+			}
 
 			// UserEventBindings
 			await Add(db,
