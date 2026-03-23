@@ -81,7 +81,7 @@ class DummyData
 				{
 					FileName = "dynamic-realistic-parachuting.jpg",
 					FileType = "image/jpeg",
-					Content = File.ReadAllBytes("wwwroot/images/dynamic-realistic-parachuting.jpg"),
+					Content = File.ReadAllBytes("../wwwroot/images/dynamic-realistic-parachuting.jpg"),
 					CreatedDate = DateTime.UtcNow
 				},
 					CreatedDate = DateTime.UtcNow,

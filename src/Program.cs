@@ -9,7 +9,11 @@ JsonConvert.DefaultSettings = () => new JsonSerializerSettings
     ContractResolver = new CamelCasePropertyNamesContractResolver()
 };
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+	Args = args,
+	WebRootPath = "../wwwroot"
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
