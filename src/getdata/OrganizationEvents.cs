@@ -12,7 +12,7 @@ namespace backend.getdata
                 DatabaseContext db = new DatabaseContext();
                 
                 return await db.OrganizationEvent
-                    .Include(x => x.ImageUrl)
+                    .Include(x => x.Attachment)
                     .Where(x => x.OrganizationId == organizationId)
                     .ToListAsync();
             }

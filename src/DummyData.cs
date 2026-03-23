@@ -77,7 +77,7 @@ class DummyData
 					OrganizationId = 123,
 					Title = "Faldskærmsudspringning i Fælledparken",
 					Description = "Kom og tag med os på en spændende faldskærmsudspringningsoplevelse!",
-					ImageUrl = new Attachments
+					Attachment = new Attachments
 				{
 					FileName = "dynamic-realistic-parachuting.jpg",
 					FileType = "image/jpeg",
