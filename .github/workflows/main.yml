@@ -9,8 +9,9 @@ jobs:
     runs-on: self-hosted
     steps:
     - run: |
+        tmux attach-session -t runner
         cd ~/backend
         git pull
         cd ~/backend/src
         dotnet run -e ASPNETCORE_ENVIRONMENT=development
-
+        tmux detach-session
