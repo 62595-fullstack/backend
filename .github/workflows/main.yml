@@ -14,4 +14,4 @@ jobs:
         git pull
         cd ~/backend/src
         dotnet run -e ASPNETCORE_ENVIRONMENT=development
-        tmux detach-session
+        tmux detach-client
