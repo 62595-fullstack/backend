@@ -5,6 +5,7 @@ using Models.Role;
 using Models.Organization;
 using Models.OrganizationPost;
 using Models.OrganizationEvent;
+using Models.Attachment;
 using Models.UserEventBinding;
 using Models.UserOrganizationBinding;
 
@@ -76,7 +77,13 @@ class DummyData
 					OrganizationId = 123,
 					Title = "Faldskærmsudspringning i Fælledparken",
 					Description = "Kom og tag med os på en spændende faldskærmsudspringningsoplevelse!",
-					ImageUrl = "/images/dynamic-realistic-parachuting.jpg",
+					ImageUrl = new Attachments
+				{
+					FileName = "dynamic-realistic-parachuting.jpg",
+					FileType = "image/jpeg",
+					Content = File.ReadAllBytes("wwwroot/images/dynamic-realistic-parachuting.jpg"),
+					CreatedDate = DateTime.UtcNow
+				},
 					CreatedDate = DateTime.UtcNow,
 					StartDate = DateTime.UtcNow,
 					AgeLimit = 18,
