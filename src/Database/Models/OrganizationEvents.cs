@@ -10,6 +10,7 @@ namespace Models.OrganizationEvent
         public required int OrganizationId { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public int? AttachmentId { get; set; }
         public Attachments? Attachment { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public DateTime StartDate { get; set; } = DateTime.UtcNow;
