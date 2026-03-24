@@ -1,12 +1,14 @@
 using backend.getdata;
 using Endpoints;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Models.User;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 JsonConvert.DefaultSettings = () => new JsonSerializerSettings
 {
-    ContractResolver = new CamelCasePropertyNamesContractResolver()
+	ContractResolver = new CamelCasePropertyNamesContractResolver()
 };
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
@@ -19,7 +21,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
-    options.SerializerOptions.PropertyNameCaseInsensitive = true;
+	options.SerializerOptions.PropertyNameCaseInsensitive = true;
 });
 builder.Services.AddCors(options =>
 {
@@ -30,6 +32,19 @@ builder.Services.AddCors(options =>
 			  .AllowAnyMethod();
 	});
 });
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(jwtOptions =>
+{
+	jwtOptions.Authority = "https://{--your-authority--}";
+	jwtOptions.Audience = "https://{--your-audience--}";
+});
+builder.Services.AddAuthorizationBuilder();
+// var requireAuthPolicy = new AuthorizationPolicyBuilder()
+// 	.RequireAuthenticatedUser()
+// 	.Build();
+// builder.Services.AddAuthorizationBuilder()
+// 	.SetFallbackPolicy(requireAuthPolicy);
+
 
 var app = builder.Build();
 

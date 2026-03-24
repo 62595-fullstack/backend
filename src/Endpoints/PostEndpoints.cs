@@ -2,6 +2,7 @@
 using System.Net;
 using Models.Post;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Endpoints;
 
@@ -9,7 +10,9 @@ public static class PostEndpoint
 {
 	public static RouteGroupBuilder MapPostEndpoints(this RouteGroupBuilder group)
 	{
-		group.MapGet("/", async Task<string> () =>
+
+		group.MapGet("/", [Authorize] async Task<string> () =>
+		// group.MapGet("/", async Task<string> () =>
 		{
 			try
 			{
