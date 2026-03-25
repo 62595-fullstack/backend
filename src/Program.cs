@@ -51,7 +51,7 @@ builder.Services
 				    .AddJsonFile("appsettings.json")
 				    .Build();
 
-			    options.RequireHttpsMetadata = false;
+			    // options.RequireHttpsMetadata = false;
 			    options.TokenValidationParameters = new TokenValidationParameters
 			    {
 				    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
