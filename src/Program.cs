@@ -1,7 +1,10 @@
+using System.Text;
 using backend.getdata;
 using Endpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Models.User;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -11,14 +14,23 @@ JsonConvert.DefaultSettings = () => new JsonSerializerSettings
 	ContractResolver = new CamelCasePropertyNamesContractResolver()
 };
 
-var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
 	Args = args,
 	WebRootPath = "../wwwroot"
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+	var securityScheme = new OpenApiSecurityScheme
+	{
+		Type = SecuritySchemeType.Http,
+		Scheme = JwtBearerDefaults.AuthenticationScheme,
+		BearerFormat = "JWT",
+	};
+	options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, securityScheme);
+});
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
 	options.SerializerOptions.PropertyNameCaseInsensitive = true;
@@ -32,21 +44,34 @@ builder.Services.AddCors(options =>
 			  .AllowAnyMethod();
 	});
 });
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(jwtOptions =>
-{
-	jwtOptions.Authority = "https://{--your-authority--}";
-	jwtOptions.Audience = "https://{--your-audience--}";
-});
-builder.Services.AddAuthorizationBuilder();
-// var requireAuthPolicy = new AuthorizationPolicyBuilder()
-// 	.RequireAuthenticatedUser()
-// 	.Build();
-// builder.Services.AddAuthorizationBuilder()
-// 	.SetFallbackPolicy(requireAuthPolicy);
 
+// TODO: Is this better?
+// builder.Services.AddDbContext<DatabaseContext>();
+// TODO: Add configuration to builder?
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+		    {
+			    IConfigurationRoot config = new ConfigurationBuilder()
+				    .AddJsonFile("appsettings.json")
+				    .Build();
 
-var app = builder.Build();
+			    options.RequireHttpsMetadata = false;
+			    options.TokenValidationParameters = new TokenValidationParameters
+			    {
+				    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
+				    ValidIssuer = config["Jwt:Issuers"],
+				    ValidAudience = config["Jwt:Audience"],
+				    ClockSkew = TimeSpan.Zero,
+			    };
+		    });
+builder.Services.AddAuthorization();
+
+WebApplication app = builder.Build();
+app.UseAuthorization();
+app.UseAuthentication();
+app.UseStaticFiles();
+app.UseCors();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -60,11 +85,7 @@ if (app.Environment.IsDevelopment())
 		options.RoutePrefix = string.Empty;
 	});
 }
-
-app.UseStaticFiles();
-app.UseCors();
-
-if (!app.Environment.IsDevelopment())
+else
 {
 	app.UseHttpsRedirection();
 }

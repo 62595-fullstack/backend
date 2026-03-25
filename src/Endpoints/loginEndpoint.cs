@@ -1,11 +1,10 @@
 using System.ComponentModel;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using backend.getdata;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Models.User;
-using Newtonsoft.Json;
 
 namespace Endpoints;
 
@@ -52,7 +51,7 @@ public static class loginEndpoint
 					Users? u = await ud.getUserByEmail(email);
 					if (u == null) return Results.BadRequest();
 					bool correctPassword = await ud.loginUsers(email, password);
-					return correctPassword ? Results.Ok(GenerateToken(u)) : Results.BadRequest();
+					return correctPassword ? Results.Ok(CreateToken(u)) : Results.BadRequest();
 				}
 				catch (Exception ex)
 				{
@@ -65,31 +64,59 @@ public static class loginEndpoint
 		return group;
 	}
 
-	// Source: https://stackoverflow.com/questions/74441535/creating-and-validating-jwt-tokens-in-c-sharp-net
-	static private string GenerateToken(Users user)
+	static private string CreateToken(Users user)
 	{
 		IConfigurationRoot config = new ConfigurationBuilder()
 			.AddJsonFile("appsettings.json")
 			.Build();
 
-		var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
+		string secretKey = config["Jwt:Secret"]!;
+		SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+
 		var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-		var claims = new[]
+		var tokenDiscriptor = new SecurityTokenDescriptor
 		{
-		       new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-		       new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-		       // new Claim(ClaimTypes.Role, user.UserType),
+			Subject = new ClaimsIdentity([
+					new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+					new Claim(JwtRegisteredClaimNames.Email, user.Email!),
+			]),
+			Expires = DateTime.UtcNow.AddMinutes(60),
+			SigningCredentials = credentials,
+			Issuer = config["Jwt:Issuer"],
+			Audience = config["Jwt:Audience"],
 		};
 
-		var token = new JwtSecurityToken(
-		    issuer: config["Jwt:Issuer"],
-		    audience: config["Jwt:Audience"],
-		    claims: claims,
-		    expires: DateTime.Now.AddMinutes(30),
-		    signingCredentials: credentials
-		);
+		var handler = new JsonWebTokenHandler();
 
-		return new JwtSecurityTokenHandler().WriteToken(token);
+		string token = handler.CreateToken(tokenDiscriptor);
+
+		return token;
 	}
+
+	// // Source: https://stackoverflow.com/questions/74441535/creating-and-validating-jwt-tokens-in-c-sharp-net
+	// static private string GenerateToken(Users user)
+	// {
+	//
+	// 	var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
+	// 	var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+	//
+	// 	var claims = new[]
+	// 	{
+	// 	       new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+	// 	       new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+	// 	       // new Claim(ClaimTypes.Role, user.UserType),
+	// 	};
+	//
+	// 	var token = new JwtSecurityToken(
+	// 	    issuer: config["Jwt:Issuer"],
+	// 	    audience: config["Jwt:Audience"],
+	// 	    claims: claims,
+	// 	    expires: DateTime.Now.AddMinutes(30),
+	// 	    signingCredentials: credentials
+	// 	);
+	//
+	// 	return new JwtSecurityTokenHandler().WriteToken(token);
+	// }
+
 }

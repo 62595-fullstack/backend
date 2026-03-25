@@ -10,9 +10,7 @@ public static class PostEndpoint
 {
 	public static RouteGroupBuilder MapPostEndpoints(this RouteGroupBuilder group)
 	{
-
-		group.MapGet("/", [Authorize] async Task<string> () =>
-		// group.MapGet("/", async Task<string> () =>
+		group.MapGet("/", async Task<string> () =>
 		{
 			try
 			{
@@ -26,6 +24,7 @@ public static class PostEndpoint
 				return "{}";
 			}
 		})
+		.RequireAuthorization()
 		.WithName("GetPosts");
 
 		group.MapGet("/{organizationsId}", async Task<IResult> (int organizationsId) =>
