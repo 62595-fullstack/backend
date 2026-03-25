@@ -24,6 +24,7 @@ public static class PostEndpoint
 				return "{}";
 			}
 		})
+		.RequireAuthorization()
 		.WithName("GetPosts");
 
 		group.MapGet("/{organizationsId}", async Task<IResult> (int organizationsId) =>

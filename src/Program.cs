@@ -50,8 +50,7 @@ builder.Services
 				IConfigurationRoot config = new ConfigurationBuilder()
 					.AddJsonFile("appsettings.json")
 					.Build();
-
-				// options.RequireHttpsMetadata = false;
+				options.RequireHttpsMetadata = false;
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
 					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
@@ -66,8 +65,8 @@ builder.Services
 builder.Services.AddAuthorization();
 
 WebApplication app = builder.Build();
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 app.UseStaticFiles();
 app.UseCors();
 
