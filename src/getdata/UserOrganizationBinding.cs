@@ -5,46 +5,46 @@ using Models.UserOrganizationBinding;
 
 namespace backend.getdata
 {
-    public class DataUserOrganizationBinding
-    {
-        public async Task<List<Models.UserOrganizationBinding.UserOrganizationBindings>> getUserOrganizationForOrganization(int organizationId)
-        {
-            try
-            {
-                DatabaseContext db = new DatabaseContext();
-                return await db.UserOrganizationBinding.Where(x => x.OrganizationId == organizationId).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return new List<Models.UserOrganizationBinding.UserOrganizationBindings>();
-            }
-        }
+	public class DataUserOrganizationBinding
+	{
+		public async Task<List<Models.UserOrganizationBinding.UserOrganizationBindings>> getUserOrganizationForOrganization(int organizationId)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
+				return await db.UserOrganizationBinding.Where(x => x.OrganizationId == organizationId).ToListAsync();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return new List<Models.UserOrganizationBinding.UserOrganizationBindings>();
+			}
+		}
 
 
-        public async Task<bool> setUserToOrganization(int userId, int organizationId, int roleId)
-        {
-            try
-            {
-                DatabaseContext db = new DatabaseContext();
-                UserOrganizationBindings uob = new UserOrganizationBindings();
+		public async Task<bool> setUserToOrganization(int userId, int organizationId, int roleId)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
+				UserOrganizationBindings uob = new UserOrganizationBindings();
 
-                uob.OrganizationId = organizationId;
-                uob.UserId = userId;
-                uob.RoleId = roleId;
+				uob.OrganizationId = organizationId;
+				uob.UserId = userId;
+				uob.RoleId = roleId;
 
-                await db.UserOrganizationBinding.AddAsync(uob);
-                await db.SaveChangesAsync();
+				await db.UserOrganizationBinding.AddAsync(uob);
+				await db.SaveChangesAsync();
 
-                return true;
+				return true;
 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return false;
-            }
-        }
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return false;
+			}
+		}
 
-    }
+	}
 }
