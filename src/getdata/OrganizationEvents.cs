@@ -4,53 +4,54 @@ using Models.UserEventBinding;
 
 namespace backend.getdata
 {
-    public class DataOrganizationEvents
-    {
-        public async Task<List<OrganizationEvents>> getOrganizationEvents(int organizationId)
-        {
-            try {
-                DatabaseContext db = new DatabaseContext();
-                
-                return await db.OrganizationEvent
-                    .Include(x => x.Attachment)
-                    .Where(x => x.OrganizationId == organizationId)
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                return new List<OrganizationEvents>();
-            }
-        }
+	public class DataOrganizationEvents
+	{
+		public async Task<List<OrganizationEvents>> getOrganizationEvents(int organizationId)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
 
-        public async Task createOrganizationEvents(OrganizationEvents organizationEvents)
-        {
-            DatabaseContext db = new DatabaseContext();
-            await db.OrganizationEvent.AddAsync(organizationEvents);
-            await db.SaveChangesAsync();
-        }
-        
-        public async Task<bool> userJoinEvent(int userId, int organizationId)
-        {
-            try
-            {
-                DatabaseContext db = new DatabaseContext();              
-                UserEventBindings ueb = new UserEventBindings
-                {
-                  UserId = userId,
-                  OrganizationEventsId = organizationId
-                };
+				return await db.OrganizationEvent
+					.Include(x => x.Attachment)
+					.Where(x => x.OrganizationId == organizationId)
+					.ToListAsync();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				return new List<OrganizationEvents>();
+			}
+		}
 
-                await db.UserEventBinding.AddAsync(ueb);
-                await db.SaveChangesAsync();
+		public async Task createOrganizationEvents(OrganizationEvents organizationEvents)
+		{
+			DatabaseContext db = new DatabaseContext();
+			await db.OrganizationEvent.AddAsync(organizationEvents);
+			await db.SaveChangesAsync();
+		}
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                return false;
-            }
-        }
-    }
+		public async Task<bool> userJoinEvent(int userId, int organizationId)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
+				UserEventBindings ueb = new UserEventBindings
+				{
+					UserId = userId,
+					OrganizationEventsId = organizationId
+				};
+
+				await db.UserEventBinding.AddAsync(ueb);
+				await db.SaveChangesAsync();
+
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				return false;
+			}
+		}
+	}
 }

@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Identity;
-using Models.Post;
-using Models.User;
-using Models.Role;
-using Models.Organization;
-using Models.OrganizationPost;
-using Models.OrganizationEvent;
 using Models.Attachment;
+using Models.Organization;
+using Models.OrganizationEvent;
+using Models.OrganizationPost;
+using Models.Post;
+using Models.Role;
+using Models.User;
 using Models.UserEventBinding;
 using Models.UserOrganizationBinding;
 

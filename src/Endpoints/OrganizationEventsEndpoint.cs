@@ -65,7 +65,7 @@ public static class OrganizationEventsEndpoint
 			{
 				UserEventBindings? ueb = JsonConvert.DeserializeObject<UserEventBindings>(userEventBinding);
 				DataOrganizationEvents doe = new DataOrganizationEvents();
-				
+
 				if (ueb != null)
 				{
 					await doe.userJoinEvent(ueb.UserId, ueb.OrganizationEventsId);
@@ -88,5 +88,3 @@ public static class OrganizationEventsEndpoint
 		return group;
 	}
 }
-
-

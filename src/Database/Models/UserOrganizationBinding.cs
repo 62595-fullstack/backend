@@ -8,23 +8,23 @@ using Models.User;
 
 namespace Models.UserOrganizationBinding
 {
-    public class UserOrganizationBindings
-    {
-        public int Id { get; set; }
-
-        
-        public  int? UserId { get; set; }
-
-        public  int? OrganizationId { get; set; }
-
-        public  int RoleId { get; set; }
+	public class UserOrganizationBindings
+	{
+		public int Id { get; set; }
 
 
-        // Setts the forenkey
-        public Roles? Role { get; set; } = null!;
+		public int? UserId { get; set; }
 
-        public Users? User { get; set; } = null!;
+		public int? OrganizationId { get; set; }
 
-        public Organizations? Organization { get; set; } = null!;
-    }
+		public int RoleId { get; set; }
+
+
+		// Setts the forenkey
+		public Roles? Role { get; set; } = null!;
+
+		public Users? User { get; set; } = null!;
+
+		public Organizations? Organization { get; set; } = null!;
+	}
 }

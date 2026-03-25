@@ -15,7 +15,7 @@ public static class OrganizationEndpoint
 			{
 				DataOrganization organizationData = new DataOrganization();
 				List<Organizations>? allOrganizations = await organizationData.GetAllOrganization();
-				return JsonConvert.SerializeObject(allOrganizations);	
+				return JsonConvert.SerializeObject(allOrganizations);
 			}
 			catch (Exception ex)
 			{
