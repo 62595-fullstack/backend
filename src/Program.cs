@@ -90,11 +90,23 @@ else
 	app.UseHttpsRedirection();
 }
 
-app.MapGroup("/posts").MapPostEndpoints();
-app.MapGroup("/attachments").MapAttachmentEndpoints();
-app.MapGroup("/organizations").MapOrganizationEndpoints();
-app.MapGroup("/UserOrganizationBinding").MapUserOrganizationBindingEndpoints();
-app.MapGroup("/OrganizationEvents").MapOrganizationEventsEndpoints();
-app.MapGroup("/GDPR").MapGDPREndpoints();
+app.MapGroup("/posts")
+	.RequireAuthorization()
+	.MapPostEndpoints();
+app.MapGroup("/attachments")
+	.RequireAuthorization()
+	.MapAttachmentEndpoints();
+app.MapGroup("/organizations")
+	.RequireAuthorization()
+	.MapOrganizationEndpoints();
+app.MapGroup("/UserOrganizationBinding")
+	.RequireAuthorization()
+	.MapUserOrganizationBindingEndpoints();
+app.MapGroup("/OrganizationEvents")
+	.RequireAuthorization()
+	.MapOrganizationEventsEndpoints();
+app.MapGroup("/GDPR")
+	.RequireAuthorization()
+	.MapGDPREndpoints();
 app.MapGroup("/login").MaploginEndpoint();
 app.Run();
