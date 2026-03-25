@@ -1,11 +1,8 @@
 using System.Text;
-using backend.getdata;
 using Endpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using Models.User;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -46,9 +43,6 @@ builder.Services.AddCors(options =>
 	});
 });
 
-// TODO: Is this better?
-// builder.Services.AddDbContext<DatabaseContext>();
-// TODO: Add configuration to builder?
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -65,7 +59,7 @@ builder.Services
 				    ValidAudience = config["Jwt:Audience"],
 				    ClockSkew = TimeSpan.Zero,
 				    ValidIssuers = [
-					"localhost:5000"
+					"http://localhost:5000"
 				    ],
 			    };
 		    });
