@@ -20,14 +20,17 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationO
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-	var securityScheme = new OpenApiSecurityScheme
+	options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
 	{
-		In = ParameterLocation.Header,
 		Type = SecuritySchemeType.Http,
-		Scheme = JwtBearerDefaults.AuthenticationScheme,
+		Scheme = "bearer",
 		BearerFormat = "JWT",
-	};
-	options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, securityScheme);
+		Description = "JWT Authorization header using the Bearer scheme."
+	});
+	options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+	{
+		[new OpenApiSecuritySchemeReference("bearer", document)] = []
+	});
 });
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
