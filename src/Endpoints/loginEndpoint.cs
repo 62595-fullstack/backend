@@ -93,30 +93,4 @@ public static class loginEndpoint
 
 		return token;
 	}
-
-	// // Source: https://stackoverflow.com/questions/74441535/creating-and-validating-jwt-tokens-in-c-sharp-net
-	// static private string GenerateToken(Users user)
-	// {
-	//
-	// 	var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
-	// 	var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-	//
-	// 	var claims = new[]
-	// 	{
-	// 	       new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-	// 	       new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-	// 	       // new Claim(ClaimTypes.Role, user.UserType),
-	// 	};
-	//
-	// 	var token = new JwtSecurityToken(
-	// 	    issuer: config["Jwt:Issuer"],
-	// 	    audience: config["Jwt:Audience"],
-	// 	    claims: claims,
-	// 	    expires: DateTime.Now.AddMinutes(30),
-	// 	    signingCredentials: credentials
-	// 	);
-	//
-	// 	return new JwtSecurityTokenHandler().WriteToken(token);
-	// }
-
 }

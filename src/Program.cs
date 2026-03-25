@@ -25,6 +25,7 @@ builder.Services.AddSwaggerGen(options =>
 {
 	var securityScheme = new OpenApiSecurityScheme
 	{
+		In = ParameterLocation.Header,
 		Type = SecuritySchemeType.Http,
 		Scheme = JwtBearerDefaults.AuthenticationScheme,
 		BearerFormat = "JWT",
@@ -63,6 +64,9 @@ builder.Services
 				    ValidIssuer = config["Jwt:Issuers"],
 				    ValidAudience = config["Jwt:Audience"],
 				    ClockSkew = TimeSpan.Zero,
+				    ValidIssuers = [
+					"localhost:5000"
+				    ],
 			    };
 		    });
 builder.Services.AddAuthorization();
