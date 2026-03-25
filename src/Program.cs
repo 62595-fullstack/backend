@@ -1,25 +1,37 @@
-using backend.getdata;
+using System.Text;
 using Endpoints;
-using Models.User;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 JsonConvert.DefaultSettings = () => new JsonSerializerSettings
 {
-    ContractResolver = new CamelCasePropertyNamesContractResolver()
+	ContractResolver = new CamelCasePropertyNamesContractResolver()
 };
 
-var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
 	Args = args,
 	WebRootPath = "../wwwroot"
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+	var securityScheme = new OpenApiSecurityScheme
+	{
+		In = ParameterLocation.Header,
+		Type = SecuritySchemeType.Http,
+		Scheme = JwtBearerDefaults.AuthenticationScheme,
+		BearerFormat = "JWT",
+	};
+	options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, securityScheme);
+});
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
-    options.SerializerOptions.PropertyNameCaseInsensitive = true;
+	options.SerializerOptions.PropertyNameCaseInsensitive = true;
 });
 builder.Services.AddCors(options =>
 {
@@ -31,7 +43,33 @@ builder.Services.AddCors(options =>
 	});
 });
 
-var app = builder.Build();
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+		    {
+			    IConfigurationRoot config = new ConfigurationBuilder()
+				    .AddJsonFile("appsettings.json")
+				    .Build();
+
+			    // options.RequireHttpsMetadata = false;
+			    options.TokenValidationParameters = new TokenValidationParameters
+			    {
+				    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
+				    ValidIssuer = config["Jwt:Issuers"],
+				    ValidAudience = config["Jwt:Audience"],
+				    ClockSkew = TimeSpan.Zero,
+				    ValidIssuers = [
+					"http://localhost:5000"
+				    ],
+			    };
+		    });
+builder.Services.AddAuthorization();
+
+WebApplication app = builder.Build();
+app.UseAuthorization();
+app.UseAuthentication();
+app.UseStaticFiles();
+app.UseCors();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -45,11 +83,7 @@ if (app.Environment.IsDevelopment())
 		options.RoutePrefix = string.Empty;
 	});
 }
-
-app.UseStaticFiles();
-app.UseCors();
-
-if (!app.Environment.IsDevelopment())
+else
 {
 	app.UseHttpsRedirection();
 }

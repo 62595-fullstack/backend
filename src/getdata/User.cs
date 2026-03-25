@@ -14,12 +14,12 @@ namespace backend.getdata
                 DatabaseContext db = new DatabaseContext();
                 PasswordHasher<Users> ph = new PasswordHasher<Users>();
 
-                Users AddToDataBase = user;
-                AddToDataBase.PasswordHash = ph.HashPassword(AddToDataBase, user.PasswordHash!);
+                user.PasswordHash = ph.HashPassword(user, user.PasswordHash!);
+                await db.SaveChangesAsync();
 
                 UserStore us = new UserStore(db);
                 await us.CreateAsync(user);
-                
+
                 return true;
             }
             catch (Exception ex)
@@ -30,23 +30,25 @@ namespace backend.getdata
         }
 
 
-        public async Task<bool> loginUsers(Users user)
+        public async Task<bool> loginUsers(string email, string password)
         {
             try
             {
                 DatabaseContext db = new DatabaseContext();
                 PasswordHasher<Users> ph = new PasswordHasher<Users>();
 
-                Users AddToDataBase = user;
-                AddToDataBase.PasswordHash = ph.HashPassword(AddToDataBase, user.PasswordHash!);
+                Users? user = await getUserByEmail(email);
+                if (user == null) return false;
+                PasswordVerificationResult verificationResult = ph.VerifyHashedPassword(user, user.PasswordHash!, password);
 
-                if(user.PasswordHash == AddToDataBase.PasswordHash)
+                switch (verificationResult)
                 {
-                    return true;
-                }
-                else
-                {
-                    return false;
+                    case PasswordVerificationResult.Success:
+                        return true;
+                    case PasswordVerificationResult.Failed:
+                        return false;
+                    default:
+                        return false;
                 }
             }
             catch (Exception ex)
