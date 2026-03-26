@@ -20,14 +20,17 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationO
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-	var securityScheme = new OpenApiSecurityScheme
+	options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
 	{
-		In = ParameterLocation.Header,
 		Type = SecuritySchemeType.Http,
-		Scheme = JwtBearerDefaults.AuthenticationScheme,
+		Scheme = "bearer",
 		BearerFormat = "JWT",
-	};
-	options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, securityScheme);
+		Description = "JWT Authorization header using the Bearer scheme."
+	});
+	options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+	{
+		[new OpenApiSecuritySchemeReference("bearer", document)] = []
+	});
 });
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
@@ -50,8 +53,7 @@ builder.Services
 				IConfigurationRoot config = new ConfigurationBuilder()
 					.AddJsonFile("appsettings.json")
 					.Build();
-
-				// options.RequireHttpsMetadata = false;
+				options.RequireHttpsMetadata = false;
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
 					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
@@ -66,8 +68,8 @@ builder.Services
 builder.Services.AddAuthorization();
 
 WebApplication app = builder.Build();
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 app.UseStaticFiles();
 app.UseCors();
 
@@ -88,11 +90,23 @@ else
 	app.UseHttpsRedirection();
 }
 
-app.MapGroup("/posts").MapPostEndpoints();
-app.MapGroup("/attachments").MapAttachmentEndpoints();
-app.MapGroup("/organizations").MapOrganizationEndpoints();
-app.MapGroup("/UserOrganizationBinding").MapUserOrganizationBindingEndpoints();
-app.MapGroup("/OrganizationEvents").MapOrganizationEventsEndpoints();
-app.MapGroup("/GDPR").MapGDPREndpoints();
+app.MapGroup("/posts")
+	.RequireAuthorization()
+	.MapPostEndpoints();
+app.MapGroup("/attachments")
+	.RequireAuthorization()
+	.MapAttachmentEndpoints();
+app.MapGroup("/organizations")
+	.RequireAuthorization()
+	.MapOrganizationEndpoints();
+app.MapGroup("/UserOrganizationBinding")
+	.RequireAuthorization()
+	.MapUserOrganizationBindingEndpoints();
+app.MapGroup("/OrganizationEvents")
+	.RequireAuthorization()
+	.MapOrganizationEventsEndpoints();
+app.MapGroup("/GDPR")
+	.RequireAuthorization()
+	.MapGDPREndpoints();
 app.MapGroup("/login").MaploginEndpoint();
 app.Run();

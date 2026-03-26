@@ -1,8 +1,6 @@
 ﻿using backend.getdata;
-using Microsoft.AspNetCore.Authorization;
 using Models.Post;
 using Newtonsoft.Json;
-using System.Net;
 
 namespace Endpoints;
 
