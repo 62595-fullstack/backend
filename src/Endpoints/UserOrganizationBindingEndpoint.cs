@@ -1,6 +1,7 @@
 using backend.getdata;
 using Models.UserOrganizationBinding;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace Endpoints;
 
@@ -8,6 +9,26 @@ public static class UserOrganizationBinding
 {
 	public static RouteGroupBuilder MapUserOrganizationBindingEndpoints(this RouteGroupBuilder group)
 	{
+		group.MapGet("/{organizationId}/me", async Task<IResult> (int organizationId, ClaimsPrincipal user) =>
+		{
+			try
+			{
+				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null) return Results.Unauthorized();
+
+				DataUserOrganizationBinding organizationData = new DataUserOrganizationBinding();
+				UserOrganizationBindings? binding = await organizationData.getUserOrganizationBindingForUser(userId, organizationId);
+				if (binding == null) return Results.NotFound();
+				return Results.Ok(binding);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("getUserOrganizationBindingForCurrentUser");
+
 		group.MapGet("/{organizationId}", async Task<string> (int organizationId) =>
 		{
 			try
