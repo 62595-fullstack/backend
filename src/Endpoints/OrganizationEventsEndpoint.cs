@@ -55,6 +55,9 @@ public static class OrganizationEventsEndpoint
 				bool organizationExists = await db.Organization.AnyAsync(o => o.Id == oe.OrganizationId);
 				if (!organizationExists) return Results.BadRequest($"Organization with ID {oe.OrganizationId} does not exist.");
 
+				oe.CreatedDate = DateTime.SpecifyKind(oe.CreatedDate, DateTimeKind.Utc);
+				oe.StartDate = DateTime.SpecifyKind(oe.StartDate, DateTimeKind.Utc);
+
 				DataOrganizationEvents doe = new();
 				await doe.createOrganizationEvents(oe);
 				return Results.Ok();
