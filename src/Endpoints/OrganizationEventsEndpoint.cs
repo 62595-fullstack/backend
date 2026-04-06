@@ -18,10 +18,9 @@ public static class OrganizationEventsEndpoint
 		{
 			try
 			{
-				DataOrganizationEvents doe = new DataOrganizationEvents();
+				DataOrganizationEvents doe = new();
 				OrganizationEvents? ev = await doe.getOrganizationEventById(id);
-				if (ev == null) return Results.NotFound();
-				return Results.Ok(ev);
+				return ev == null ? Results.NotFound() : Results.Ok(ev);
 			}
 			catch (Exception ex)
 			{
@@ -35,7 +34,7 @@ public static class OrganizationEventsEndpoint
 		{
 			try
 			{
-				DataOrganizationEvents organizationData = new DataOrganizationEvents();
+				DataOrganizationEvents organizationData = new();
 				List<OrganizationEvents> allOrganizations = await organizationData.getOrganizationEvents(organizationId);
 				return JsonConvert.SerializeObject(allOrganizations);
 			}
