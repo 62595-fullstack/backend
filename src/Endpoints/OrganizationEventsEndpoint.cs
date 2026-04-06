@@ -12,6 +12,23 @@ public static class OrganizationEventsEndpoint
 {
 	public static RouteGroupBuilder MapOrganizationEventsEndpoints(this RouteGroupBuilder group)
 	{
+		group.MapGet("/event/{id}", async Task<IResult> (int id) =>
+		{
+			try
+			{
+				DataOrganizationEvents doe = new DataOrganizationEvents();
+				OrganizationEvents? ev = await doe.getOrganizationEventById(id);
+				if (ev == null) return Results.NotFound();
+				return Results.Ok(ev);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("getOrganizationEventById");
+
 		group.MapGet("/{organizationId}", async Task<string> (int organizationId) =>
 		{
 			try

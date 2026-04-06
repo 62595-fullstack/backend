@@ -6,6 +6,22 @@ namespace backend.getdata
 {
 	public class DataOrganizationEvents
 	{
+		public async Task<OrganizationEvents?> getOrganizationEventById(int eventId)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
+				return await db.OrganizationEvent
+					.Include(x => x.Attachment)
+					.FirstOrDefaultAsync(x => x.Id == eventId);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				return null;
+			}
+		}
+
 		public async Task<List<OrganizationEvents>> getOrganizationEvents(int organizationId)
 		{
 			try
