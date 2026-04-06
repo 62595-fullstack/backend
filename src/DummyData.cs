@@ -39,13 +39,13 @@ class DummyData
 			PasswordHasher<Users> hasher = new();
 
 			// Users
-			Users friskFyr = new() { Id = "123", Email = "friskfyr@friskefyre.com", FirstName = "Frisk", UserName = "Fyr", Age = 25 };
+			Users friskFyr = new() { Id = "123", Email = "friskfyr@friskefyre.com", FirstName = "Frisk", UserName = "Frisk Fyr", Age = 25 };
 			friskFyr.PasswordHash = hasher.HashPassword(friskFyr, "123");
 
-			Users frog = new() { Id = "999", Email = "crazyfrog@hotmail.com", FirstName = "Crazy", UserName = "Frog", Age = 2 };
+			Users frog = new() { Id = "999", Email = "crazyfrog@hotmail.com", FirstName = "Crazy", UserName = "Crazy Frog", Age = 2 };
 			frog.PasswordHash = hasher.HashPassword(frog, "bingbing");
 
-			Users benson = new() { Id = "1000", Email = "bbbenson@hotmail.com", FirstName = "Berry B.", UserName = "Benson", Age = 2 };
+			Users benson = new() { Id = "1000", Email = "bbbenson@hotmail.com", FirstName = "Berry B.", UserName = "Berry B. Benson", Age = 2 };
 			benson.PasswordHash = hasher.HashPassword(benson, "1234");
 
 			await Add(db, friskFyr, frog, benson);
