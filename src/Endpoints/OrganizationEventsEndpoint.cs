@@ -76,6 +76,25 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("PostOrganizationEvents");
 
+		group.MapDelete("/{id}", async Task<IResult> (int id) =>
+		{
+			try
+			{
+				using DatabaseContext db = new();
+				OrganizationEvents? ev = await db.OrganizationEvent.FindAsync(id);
+				if (ev == null) return Results.NotFound();
+				db.OrganizationEvent.Remove(ev);
+				await db.SaveChangesAsync();
+				return Results.Ok();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("DeleteOrganizationEvent");
+
 		group.MapPost("/{UserEventBinding}", async Task<string> (string userEventBinding) =>
 		{
 			try
