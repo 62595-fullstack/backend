@@ -13,7 +13,7 @@ namespace backend.getdata
 			UserOrganizationBindings? binding = await db.UserOrganizationBinding.FindAsync(userOrganizationBindingId);
 			if (binding?.UserId == null) return string.Empty;
 			Users? user = await db.User.FindAsync(binding.UserId.Value.ToString());
-			return user?.FirstName ?? string.Empty;
+			return user?.UserName ?? string.Empty;
 		}
 
 		public async Task<OrganizationEvents?> getOrganizationEventById(int eventId)
