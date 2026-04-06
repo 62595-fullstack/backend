@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models.OrganizationEvent;
 using Models.UserEventBinding;
+using Models.UserOrganizationBinding;
 using Newtonsoft.Json;
 using System.Net;
+using System.Security.Claims;
 
 namespace Endpoints;
 
@@ -76,13 +78,21 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("PostOrganizationEvents");
 
-		group.MapDelete("/{id}", async Task<IResult> (int id) =>
+		group.MapDelete("/{id}", async Task<IResult> (int id, ClaimsPrincipal user) =>
 		{
 			try
 			{
+				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null) return Results.Unauthorized();
+
 				using DatabaseContext db = new();
 				OrganizationEvents? ev = await db.OrganizationEvent.FindAsync(id);
 				if (ev == null) return Results.NotFound();
+
+				UserOrganizationBindings? binding = await db.UserOrganizationBinding.FindAsync(ev.UserOrganizationBindingId);
+				if (binding == null || binding.UserId != int.Parse(userId))
+					return Results.Forbid();
+
 				db.OrganizationEvent.Remove(ev);
 				await db.SaveChangesAsync();
 				return Results.Ok();
