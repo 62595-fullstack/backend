@@ -119,7 +119,8 @@ namespace backend.Migrations
 
                     b.HasIndex("AttachmentId");
 
-                    b.HasIndex("OrganizationId");
+                    b.HasIndex("OrganizationId")
+                        .IsUnique();
 
                     b.ToTable("OrganizationEvent");
                 });
@@ -342,7 +343,7 @@ namespace backend.Migrations
                         .HasForeignKey("AttachmentId");
 
                     b.HasOne("Models.Organization.Organizations", "Organization")
-                        .WithMany("OrganizationEvents")
+                        .WithOne("OrganizationEvent")
                         .HasForeignKey("Models.OrganizationEvent.OrganizationEvents", "OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -426,7 +427,7 @@ namespace backend.Migrations
 
             modelBuilder.Entity("Models.Organization.Organizations", b =>
                 {
-                    b.Navigation("OrganizationEvents");
+                    b.Navigation("OrganizationEvent");
 
                     b.Navigation("OrganizationPost");
 
