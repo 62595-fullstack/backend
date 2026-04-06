@@ -1,6 +1,7 @@
 ﻿using Models.Attachment;
 using Models.Organization;
 using Models.UserEventBinding;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models.OrganizationEvent
 {
@@ -16,6 +17,9 @@ namespace Models.OrganizationEvent
 		public DateTime StartDate { get; set; } = DateTime.UtcNow;
 		public int AgeLimit { get; set; } = 0;
 		public required int UserOrganizationBindingId { get; set; }
+
+		[NotMapped]
+		public string CreatorName { get; set; } = string.Empty;
 
 		public UserEventBindings? UserEventBinding { get; set; } = null!;
 		public Organizations? Organization { get; set; } = null!;
