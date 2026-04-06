@@ -55,10 +55,7 @@ public static class OrganizationEventsEndpoint
 				bool organizationExists = await db.Organization.AnyAsync(o => o.Id == oe.OrganizationId);
 				if (!organizationExists) return Results.BadRequest($"Organization with ID {oe.OrganizationId} does not exist.");
 
-				bool eventExists = await db.OrganizationEvent.AnyAsync(e => e.OrganizationId == oe.OrganizationId);
-				if (eventExists) return Results.BadRequest($"An event already exists for organization with ID {oe.OrganizationId}.");
-
-				DataOrganizationEvents doe = new DataOrganizationEvents();
+				DataOrganizationEvents doe = new();
 				await doe.createOrganizationEvents(oe);
 				return Results.Ok();
 			}
