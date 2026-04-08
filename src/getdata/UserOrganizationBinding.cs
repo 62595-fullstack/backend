@@ -22,6 +22,21 @@ namespace backend.getdata
 		}
 
 
+		public async Task<UserOrganizationBindings?> getUserOrganizationBindingForUser(string userId, int organizationId)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
+				return await db.UserOrganizationBinding
+					.FirstOrDefaultAsync(x => x.UserId == int.Parse(userId) && x.OrganizationId == organizationId);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return null;
+			}
+		}
+
 		public async Task<bool> setUserToOrganization(int userId, int organizationId, int roleId)
 		{
 			try
