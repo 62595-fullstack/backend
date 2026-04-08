@@ -1,10 +1,17 @@
 
 # Start Database up
-1. open docker desktop
-2. run docker run --name BookFace -e POSTGRES_PASSWORD=facebook -d -p 5432:5432 postgres
-3. dotnet ef database update
+1. Optional: Open docker desktop
+2. Run the following to start the database locally using docker:
+```bash
+docker run --name BookFace -e POSTGRES_PASSWORD=facebook -d -p 5432:5432 postgres
+```
 
-To run in development set the ASPNETCORE_ENVIRONMENT environment variable to Development or set it for the duration of the program running like so:
+3. Update the database tables:
+```bash
+dotnet ef database update
+```
+
+4. To run in development set the ASPNETCORE_ENVIRONMENT environment variable to Development or set it for the duration of the program running like so:
 ```bash
 env ASPNETCORE_ENVIRONMENT=Development dotnet run --project src
 ```
