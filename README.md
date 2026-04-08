@@ -6,7 +6,7 @@
 
 To run in development set the ASPNETCORE_ENVIRONMENT environment variable to Development or set it for the duration of the program running like so:
 ```bash
-env ASPNETCORE_ENVIRONMENT=Development dotnet run
+env ASPNETCORE_ENVIRONMENT=Development dotnet run --project src
 ```
 
 dotnet run -e ASPNETCORE_ENVIRONMENT=development
