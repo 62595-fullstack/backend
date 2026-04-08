@@ -18,8 +18,8 @@ namespace Models.Organization
 
 
 		public UserOrganizationBindings? UserOrganizationBindings { get; set; } = null!;
-		public ICollection<OrganizationEvents> OrganizationEvents { get; set; } = new List<OrganizationEvents>();
-		public ICollection<OrganizationPosts?> OrganizationPost { get; set; } = new List<OrganizationPosts>();
+		public ICollection<OrganizationEvents?> OrganizationEvents { get; set; } = new List<OrganizationEvents?>();
+		public ICollection<OrganizationPosts?> OrganizationPost { get; set; } = new List<OrganizationPosts?>();
 
 	}
 }
