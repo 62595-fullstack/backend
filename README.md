@@ -5,6 +5,10 @@
 ```bash
 docker run --name BookFace -e POSTGRES_PASSWORD=facebook -d -p 5432:5432 postgres
 ```
+Or if you've already made the container before:
+```bash
+docker start BookFace
+```
 
 3. Update the database tables:
 ```bash
