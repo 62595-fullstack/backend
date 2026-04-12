@@ -12,7 +12,6 @@ public class PostEndpointTest(HttpClientFixture httpClientFixture)
 	[Fact]
 	public async Task PostPostTest1()
 	{
-		Console.WriteLine("Should be second");
 		// Arrange
 		Posts post = new Posts
 		{
@@ -32,8 +31,6 @@ public class PostEndpointTest(HttpClientFixture httpClientFixture)
 				"posts",
 				httpContentPost,
 				TestContext.Current.CancellationToken);
-		Console.WriteLine(httpContentPost);
-		Console.WriteLine(httpContentPost.Headers);
 		// Assert
 		Assert.True(response.IsSuccessStatusCode);
 	}
