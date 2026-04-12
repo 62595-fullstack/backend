@@ -45,6 +45,9 @@ public static class PostEndpoint
 		{
 			try
 			{
+				Console.WriteLine("requestPost:");
+				Console.WriteLine(requestPost);
+				Console.WriteLine(requestPost.Body);
 				Posts? p = await requestPost.ReadFromJsonAsync<Posts>();
 				// Posts? p = JsonConvert.DeserializeObject<Posts>(post.Body.ToString());
 				if (p != null)

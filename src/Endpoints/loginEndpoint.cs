@@ -1,4 +1,6 @@
 using backend.getdata;
+using Credentials;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Models.User;
@@ -12,7 +14,7 @@ public static class loginEndpoint
 {
 	public static RouteGroupBuilder MaploginEndpoint(this RouteGroupBuilder group)
 	{
-		group.MapPost("/{email}", async Task<IResult> (
+		group.MapPost("/register", async Task<IResult> (
 					[DefaultValue("Bob")] string firstName,
 					[DefaultValue("Bob@hotmail.com")] string email,
 					[DefaultValue("12345password")] string password,
@@ -41,24 +43,22 @@ public static class loginEndpoint
 		})
 		.WithName("CreateUser");
 
-		group.MapGet("/{email}", async Task<IResult> (
-					[DefaultValue("Bob@hotmail.com")] string email,
-					[DefaultValue("12345password")] string password) =>
+		group.MapPost("/login", async Task<IResult> ([FromBody] LoginCredentials loginCredentials) =>
+		{
+			try
 			{
-				try
-				{
-					DataUser ud = new DataUser();
-					Users? u = await ud.getUserByEmail(email);
-					if (u == null) return Results.BadRequest();
-					bool correctPassword = await ud.loginUsers(email, password);
-					return correctPassword ? Results.Ok(CreateToken(u)) : Results.BadRequest();
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine(ex.Message);
-					return Results.BadRequest(ex.Message);
-				}
-			})
+				DataUser ud = new DataUser();
+				Users? u = await ud.getUserByEmail(loginCredentials.Email);
+				if (u == null) return Results.BadRequest();
+				bool correctPassword = await ud.loginUsers(loginCredentials.Email, loginCredentials.Password);
+				return correctPassword ? Results.Ok(CreateToken(u)) : Results.BadRequest();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return Results.BadRequest(ex.Message);
+			}
+		})
 			.WithName("Login");
 
 		return group;

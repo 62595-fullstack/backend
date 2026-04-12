@@ -2,23 +2,17 @@ using Models.Post;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 
-namespace tests;
+namespace tests.EndpointsTests;
 
-public class PostEndpointTest
+[Collection("httpclient collection")]
+public class PostEndpointTest(HttpClientFixture httpClientFixture)
 {
-	private readonly HttpClient client;
-
-	public PostEndpointTest()
-	{
-		client = new HttpClient
-		{
-			BaseAddress = new Uri("http://localhost:5000")
-		};
-	}
+	private readonly HttpClient client = httpClientFixture.client;
 
 	[Fact]
 	public async Task PostPostTest1()
 	{
+		Console.WriteLine("Should be second");
 		// Arrange
 		Posts post = new Posts
 		{
@@ -29,13 +23,17 @@ public class PostEndpointTest
 			OrganizationEventId = 1000
 		};
 		string jsonPost = JsonConvert.SerializeObject(post);
-		StringContent httpContentPost = new StringContent(
-				jsonPost, new MediaTypeHeaderValue("application/json"));
+		StringContent httpContentPost = new(
+				jsonPost,
+				new MediaTypeHeaderValue("application/json")
+			);
 		// Act
 		HttpResponseMessage response = await client.PostAsync(
 				"posts",
 				httpContentPost,
 				TestContext.Current.CancellationToken);
+		Console.WriteLine(httpContentPost);
+		Console.WriteLine(httpContentPost.Headers);
 		// Assert
 		Assert.True(response.IsSuccessStatusCode);
 	}
