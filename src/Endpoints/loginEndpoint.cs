@@ -1,8 +1,8 @@
 using backend.getdata;
+using Dto;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Models.User;
-using System.ComponentModel;
 using System.Security.Claims;
 using System.Text;
 
@@ -12,23 +12,12 @@ public static class loginEndpoint
 {
 	public static RouteGroupBuilder MaploginEndpoint(this RouteGroupBuilder group)
 	{
-		group.MapPost("/{email}", async Task<IResult> (
-					[DefaultValue("Bob")] string firstName,
-					[DefaultValue("Bob@hotmail.com")] string email,
-					[DefaultValue("12345password")] string password,
-					[DefaultValue(25)] int age) =>
+		group.MapPost("/register", async Task<IResult> (RegisterCredentialsDto registerDto) =>
 		{
 			try
 			{
-				Users u = new Users
-				{
-					FirstName = firstName,
-					Email = email,
-					Age = age,
-					PasswordHash = password,
-				};
 				DataUser ud = new DataUser();
-				bool success = await ud.setUsers(u);
+				bool success = await ud.AddUsers(registerDto);
 				return success ?
 					Results.Ok() :
 					Results.BadRequest("Failed to register user");
@@ -41,24 +30,22 @@ public static class loginEndpoint
 		})
 		.WithName("CreateUser");
 
-		group.MapGet("/{email}", async Task<IResult> (
-					[DefaultValue("Bob@hotmail.com")] string email,
-					[DefaultValue("12345password")] string password) =>
+		group.MapPost("/login", async Task<IResult> (LoginCredentialsDto loginCredentials) =>
+		{
+			try
 			{
-				try
-				{
-					DataUser ud = new DataUser();
-					Users? u = await ud.getUserByEmail(email);
-					if (u == null) return Results.BadRequest();
-					bool correctPassword = await ud.loginUsers(email, password);
-					return correctPassword ? Results.Ok(CreateToken(u)) : Results.BadRequest();
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine(ex.Message);
-					return Results.BadRequest(ex.Message);
-				}
-			})
+				DataUser ud = new DataUser();
+				Users? u = await ud.getUserByEmail(loginCredentials.Email);
+				if (u == null) return Results.BadRequest();
+				bool correctPassword = await ud.loginUsers(loginCredentials.Email, loginCredentials.Password);
+				return correctPassword ? Results.Ok(CreateToken(u)) : Results.BadRequest();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return Results.BadRequest(ex.Message);
+			}
+		})
 			.WithName("Login");
 
 		return group;

@@ -108,5 +108,5 @@ app.MapGroup("/OrganizationEvents")
 app.MapGroup("/GDPR")
 	.RequireAuthorization()
 	.MapGDPREndpoints();
-app.MapGroup("/login").MaploginEndpoint();
+app.MapGroup("").MaploginEndpoint();
 app.Run();

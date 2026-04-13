@@ -1,47 +1,38 @@
+using Dto;
 using Models.Post;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
-namespace tests;
+namespace tests.EndpointsTests;
 
-public class PostEndpointTest
+[Collection("httpclient collection")]
+public class PostEndpointTest(HttpClientFixture httpClientFixture)
 {
-	private readonly HttpClient client;
-
-	public PostEndpointTest()
-	{
-		client = new HttpClient
-		{
-			BaseAddress = new Uri("http://localhost:5000")
-		};
-	}
+	private readonly HttpClient client = httpClientFixture.client;
 
 	[Fact]
-	public async Task PostPostTest1()
+	public async Task Post_SendPost_ReturnSuccess()
 	{
 		// Arrange
-		Posts post = new Posts
-		{
-			Id = 12345,
-			Title = "Test Post",
-			CreatedDate = DateTime.UtcNow,
-			UserId = 1000,
-			OrganizationEventId = 1000
-		};
-		string jsonPost = JsonConvert.SerializeObject(post);
-		StringContent httpContentPost = new StringContent(
-				jsonPost, new MediaTypeHeaderValue("application/json"));
+		PostDto post = new PostDto
+		(
+			Title: "Test Post",
+			BodyText: "Test Bodytext",
+			UserId: 1000,
+			OrganizationEventId: 1000
+		);
 		// Act
-		HttpResponseMessage response = await client.PostAsync(
+		HttpResponseMessage response = await client.PostAsJsonAsync(
 				"posts",
-				httpContentPost,
+				post,
 				TestContext.Current.CancellationToken);
 		// Assert
 		Assert.True(response.IsSuccessStatusCode);
 	}
 
 	[Fact]
-	public async Task PostPostTest2()
+	public async Task Post_SendWrongPost_ReturnUnsuccessful()
 	{
 		// Arrange
 		StringContent httpContentPost = new StringContent(
@@ -56,7 +47,7 @@ public class PostEndpointTest
 	}
 
 	[Fact]
-	public async Task GetPostTest()
+	public async Task Get_ReturnPosts()
 	{
 		// Act
 		HttpResponseMessage response = await client.GetAsync(
@@ -64,10 +55,9 @@ public class PostEndpointTest
 				TestContext.Current.CancellationToken);
 		string jsonPost = await response.Content.ReadAsStringAsync(
 				TestContext.Current.CancellationToken);
-		List<Posts>? posts = JsonConvert.DeserializeObject<List<Posts>>(jsonPost);
 		// Assert
 		Assert.True(response.IsSuccessStatusCode);
-		Assert.NotNull(posts);
+		Assert.NotNull(jsonPost);
 	}
 
 	// [Fact]

@@ -9,18 +9,19 @@ public static class OrganizationEndpoint
 {
 	public static RouteGroupBuilder MapOrganizationEndpoints(this RouteGroupBuilder group)
 	{
-		group.MapGet("/", async Task<string> () =>
+		group.MapGet("/", async Task<IResult> () =>
 		{
 			try
 			{
 				DataOrganization organizationData = new DataOrganization();
 				List<Organizations>? allOrganizations = await organizationData.GetAllOrganization();
-				return JsonConvert.SerializeObject(allOrganizations);
+				string allOrganizationsJson = JsonConvert.SerializeObject(allOrganizations);
+				return Results.Ok(allOrganizationsJson);
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.Message);
-				return "{}";
+				return Results.BadRequest();
 			}
 		})
 		.WithName("GetOrganizations");
