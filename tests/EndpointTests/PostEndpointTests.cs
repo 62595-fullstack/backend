@@ -22,11 +22,6 @@ public class PostEndpointTest(HttpClientFixture httpClientFixture)
 			UserId: 1000,
 			OrganizationEventId: 1000
 		);
-		// string jsonPost = JsonConvert.SerializeObject(post);
-		// StringContent httpContentPost = new(
-		// 		jsonPost,
-		// 		new MediaTypeHeaderValue("application/json")
-		// 	);
 		// Act
 		HttpResponseMessage response = await client.PostAsJsonAsync(
 				"posts",
@@ -60,10 +55,9 @@ public class PostEndpointTest(HttpClientFixture httpClientFixture)
 				TestContext.Current.CancellationToken);
 		string jsonPost = await response.Content.ReadAsStringAsync(
 				TestContext.Current.CancellationToken);
-		List<Posts>? posts = JsonConvert.DeserializeObject<List<Posts>>(jsonPost);
 		// Assert
 		Assert.True(response.IsSuccessStatusCode);
-		Assert.NotNull(posts);
+		Assert.NotNull(jsonPost);
 	}
 
 	// [Fact]

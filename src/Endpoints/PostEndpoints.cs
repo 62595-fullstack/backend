@@ -9,18 +9,19 @@ public static class PostEndpoint
 {
 	public static RouteGroupBuilder MapPostEndpoints(this RouteGroupBuilder group)
 	{
-		group.MapGet("/", async Task<string> () =>
+		group.MapGet("/", async Task<IResult> () =>
 		{
 			try
 			{
 				Post p = new Post();
 				List<Posts>? allPost = await p.getAllPost();
-				return JsonConvert.SerializeObject(allPost);
+				string allPostsJson = JsonConvert.SerializeObject(allPost);
+				return Results.Ok(allPostsJson);
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.Message);
-				return "{}";
+				return Results.BadRequest();
 			}
 		})
 		.WithName("GetPosts");
