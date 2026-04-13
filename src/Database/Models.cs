@@ -31,6 +31,7 @@ public class DatabaseContext : DbContext
 				.Build();
 
 			var connString = $@"Host={config["host"]};
+						 Port={config["port"]};
                          Username={config["username"]};
                          Password={config["password"]};
                          Database={config["database"]}";

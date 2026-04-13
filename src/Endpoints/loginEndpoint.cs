@@ -70,7 +70,7 @@ public static class loginEndpoint
 			]),
 			Expires = DateTime.UtcNow.AddMinutes(60),
 			SigningCredentials = credentials,
-			Issuer = config["Jwt:Issuer"],
+			Issuer = $"http://{config["host"]}:5000",
 			Audience = config["Jwt:Audience"],
 		};
 

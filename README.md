@@ -7,6 +7,7 @@ dotnet user-secrets set host localhost --project src
 dotnet user-secrets set username postgres --project src
 dotnet user-secrets set password facebook --project src
 dotnet user-secrets set database BookFace --project src
+dotnet user-secrets set port 5000 --project src
 ```
 
 2. Optional: Open docker desktop
