@@ -29,3 +29,11 @@ dotnet ef database update
 ```bash
 dotnet run -e ASPNETCORE_ENVIRONMENT=development --project src
 ```
+
+
+dotnet user-secrets init --project tests
+dotnet user-secrets set host localhost --project tests
+dotnet user-secrets set port 5000 --project tests
+dotnet user-secrets set username postgres --project tests
+dotnet user-secrets set password facebook --project tests
+dotnet user-secrets set database BookFace --project tests
