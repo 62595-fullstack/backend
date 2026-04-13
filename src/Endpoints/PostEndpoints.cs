@@ -1,4 +1,5 @@
 ﻿using backend.getdata;
+using Dto;
 using Models.Post;
 using Newtonsoft.Json;
 
@@ -41,16 +42,18 @@ public static class PostEndpoint
 		})
 		.WithName("GetPostsFromOrganizationsId");
 
-		group.MapPost("/", async Task<IResult> (HttpRequest requestPost) =>
+		group.MapPost("/", async Task<IResult> (PostDto p) =>
 		{
 			try
 			{
-				Posts? p = await requestPost.ReadFromJsonAsync<Posts>();
-				// Posts? p = JsonConvert.DeserializeObject<Posts>(post.Body.ToString());
 				if (p != null)
 				{
 					Post pd = new Post();
-					await pd.getPostByOrganization(p);
+					bool success = await pd.AddPost(p);
+					if (!success)
+					{
+						return Results.BadRequest();
+					}
 				}
 				else
 				{

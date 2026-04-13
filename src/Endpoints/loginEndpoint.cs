@@ -1,10 +1,8 @@
 using backend.getdata;
-using Credentials;
-using Microsoft.AspNetCore.Mvc;
+using Dto;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Models.User;
-using System.ComponentModel;
 using System.Security.Claims;
 using System.Text;
 
@@ -14,23 +12,12 @@ public static class loginEndpoint
 {
 	public static RouteGroupBuilder MaploginEndpoint(this RouteGroupBuilder group)
 	{
-		group.MapPost("/register", async Task<IResult> (
-					[DefaultValue("Bob")] string firstName,
-					[DefaultValue("Bob@hotmail.com")] string email,
-					[DefaultValue("12345password")] string password,
-					[DefaultValue(25)] int age) =>
+		group.MapPost("/register", async Task<IResult> (RegisterCredentialsDto registerDto) =>
 		{
 			try
 			{
-				Users u = new Users
-				{
-					FirstName = firstName,
-					Email = email,
-					Age = age,
-					PasswordHash = password,
-				};
 				DataUser ud = new DataUser();
-				bool success = await ud.setUsers(u);
+				bool success = await ud.AddUsers(registerDto);
 				return success ?
 					Results.Ok() :
 					Results.BadRequest("Failed to register user");
@@ -43,7 +30,7 @@ public static class loginEndpoint
 		})
 		.WithName("CreateUser");
 
-		group.MapPost("/login", async Task<IResult> ([FromBody] LoginCredentials loginCredentials) =>
+		group.MapPost("/login", async Task<IResult> (LoginCredentialsDto loginCredentials) =>
 		{
 			try
 			{

@@ -1,3 +1,4 @@
+using Dto;
 using Microsoft.EntityFrameworkCore;
 using Models.Post;
 
@@ -50,6 +51,28 @@ namespace backend.getdata
 				await db.Post.AddAsync(post);
 				await db.SaveChangesAsync();
 
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return false;
+			}
+		}
+
+		public async Task<bool> AddPost(PostDto post)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
+
+				await db.Post.AddAsync(new Posts
+				{
+					Title = post.Title,
+					BodyText = post.BodyText,
+					UserId = post.UserId,
+					OrganizationEventId = post.OrganizationEventId,
+				});
 				return true;
 			}
 			catch (Exception ex)

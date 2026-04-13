@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Dto;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Models.User;
@@ -7,10 +8,17 @@ namespace backend.getdata
 {
 	public class DataUser
 	{
-		public async Task<bool> setUsers(Users user)
+		public async Task<bool> AddUsers(RegisterCredentialsDto registerDto)
 		{
 			try
 			{
+				Users user = new Users
+				{
+					FirstName = registerDto.FirstName,
+					Email = registerDto.Email,
+					Age = registerDto.Age,
+					PasswordHash = registerDto.Password,
+				};
 				DatabaseContext db = new DatabaseContext();
 				PasswordHasher<Users> ph = new PasswordHasher<Users>();
 

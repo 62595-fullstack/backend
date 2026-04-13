@@ -7,14 +7,13 @@ public static class GDPREndpoint
 {
 	public static RouteGroupBuilder MapGDPREndpoints(this RouteGroupBuilder group)
 	{
-		group.MapDelete("/{userId}", async Task<IResult> (int userId) =>
+		group.MapDelete("/{email}", async Task<IResult> (string email) =>
 		{
 			try
 			{
 				DataGDPR organizationData = new DataGDPR();
-				int? allOrganizations = await organizationData.DeleteUserAcount(userId);
-				string allOrganizationsJson = JsonConvert.SerializeObject(allOrganizations);
-				return Results.Ok(allOrganizationsJson);
+				int? nrRowsDeleted = await organizationData.DeleteUserAcountByEmail(email);
+				return Results.Ok(nrRowsDeleted);
 			}
 			catch (Exception ex)
 			{

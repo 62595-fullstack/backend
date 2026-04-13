@@ -1,6 +1,8 @@
+using Dto;
 using Models.Post;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
 namespace tests.EndpointsTests;
 
@@ -10,33 +12,32 @@ public class PostEndpointTest(HttpClientFixture httpClientFixture)
 	private readonly HttpClient client = httpClientFixture.client;
 
 	[Fact]
-	public async Task PostPostTest1()
+	public async Task Post_SendPost_ReturnSuccess()
 	{
 		// Arrange
-		Posts post = new Posts
-		{
-			Id = 12345,
-			Title = "Test Post",
-			CreatedDate = DateTime.UtcNow,
-			UserId = 1000,
-			OrganizationEventId = 1000
-		};
-		string jsonPost = JsonConvert.SerializeObject(post);
-		StringContent httpContentPost = new(
-				jsonPost,
-				new MediaTypeHeaderValue("application/json")
-			);
+		PostDto post = new PostDto
+		(
+			Title: "Test Post",
+			BodyText: "Test Bodytext",
+			UserId: 1000,
+			OrganizationEventId: 1000
+		);
+		// string jsonPost = JsonConvert.SerializeObject(post);
+		// StringContent httpContentPost = new(
+		// 		jsonPost,
+		// 		new MediaTypeHeaderValue("application/json")
+		// 	);
 		// Act
-		HttpResponseMessage response = await client.PostAsync(
+		HttpResponseMessage response = await client.PostAsJsonAsync(
 				"posts",
-				httpContentPost,
+				post,
 				TestContext.Current.CancellationToken);
 		// Assert
 		Assert.True(response.IsSuccessStatusCode);
 	}
 
 	[Fact]
-	public async Task PostPostTest2()
+	public async Task Post_SendWrongPost_ReturnUnsuccessful()
 	{
 		// Arrange
 		StringContent httpContentPost = new StringContent(
@@ -51,7 +52,7 @@ public class PostEndpointTest(HttpClientFixture httpClientFixture)
 	}
 
 	[Fact]
-	public async Task GetPostTest()
+	public async Task Get_ReturnPosts()
 	{
 		// Act
 		HttpResponseMessage response = await client.GetAsync(
