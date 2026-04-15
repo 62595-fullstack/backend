@@ -11,7 +11,7 @@ public class Attachments
 
 	public required byte[] Content { get; set; } = null!;
 
-	public required DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+	public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
 	public int? PostId { get; set; }
 	public Posts? Post { get; set; } = null!;

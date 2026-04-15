@@ -1,7 +1,6 @@
 using backend.getdata;
-using Microsoft.AspNetCore.Mvc;
+using Dto;
 using Models.Attachment;
-using System.Net;
 
 namespace Endpoints;
 
@@ -45,22 +44,43 @@ public static class AttachmentEndpoint
 		})
 		.WithName("DeleteAttachment");
 
-		group.MapPost("/{postsId}", async Task<string> (int postId, IFormFile file) =>
+		group.MapPost("/profilepicture/{organizationId}", async Task<IResult> (AttachmentDto attachment, int organizationId) =>
 		{
 			try
 			{
 				DataAttachment dam = new DataAttachment();
-				await dam.SaveFileToPost(file, postId);
+				bool success = await dam.AddOrganizationCoverPhoto(attachment, organizationId);
+				if (success) return Results.InternalServerError();
+				return Results.Ok();
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.Message);
-				return HttpStatusCode.InternalServerError.ToString();
+				return Results.InternalServerError();
 			}
-			return HttpStatusCode.OK.ToString();
 		})
-		.WithName("PostAttachment")
+		.WithName("PostOrganizationProfilepicture")
 		.DisableAntiforgery();
+
+		group.MapPost("/coverphoto/{organizationId}", async Task<IResult> (AttachmentDto attachment, int organizationId) =>
+			{
+				try
+				{
+					DataAttachment dam = new DataAttachment();
+					bool success = await dam.AddOrganizationCoverPhoto(attachment, organizationId);
+					if (success) return Results.InternalServerError();
+					return Results.Ok();
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine(ex.Message);
+					return Results.InternalServerError();
+				}
+			})
+			.WithName("PostOrganizationCoverphoto")
+			.DisableAntiforgery();
+
 		return group;
 	}
+
 }
