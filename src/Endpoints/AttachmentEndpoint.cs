@@ -9,17 +9,25 @@ public static class AttachmentEndpoint
 {
 	public static RouteGroupBuilder MapAttachmentEndpoints(this RouteGroupBuilder group)
 	{
-		group.MapGet("/{attachmentId}", async Task<Attachments> (int attachmentId) =>
+		group.MapGet("/{attachmentId}", async Task<Attachments?> (int attachmentId) =>
 		{
 			try
 			{
 				DataAttachment dam = new DataAttachment();
-				Attachments am = await dam.GetAttachment(attachmentId);
-				return am;
+				Attachments? am = await dam.GetAttachment(attachmentId);
+				
+				if (am == null)
+				{
+					throw new Exception("No attachments");
+				} else
+				{
+					return am;
+				}
+
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.Message);
+				Console.Write(ex.Message);
 				return null;
 			}
 		})

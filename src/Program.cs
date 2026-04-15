@@ -61,11 +61,11 @@ builder.Services
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
 					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
-					ValidIssuer = $"http://{config["host"]}:5000",
+					ValidIssuer = $"http://{config["host"]}:{config["programPort"]}",
 					ValidAudience = config["Jwt:Audience"],
 					ClockSkew = TimeSpan.Zero,
 					ValidIssuers = [
-					$"http://{config["host"]}:5000"
+					$"http://{config["host"]}:{config["programPort"]}"
 					],
 				};
 			});
@@ -112,5 +112,5 @@ app.MapGroup("/OrganizationEvents")
 app.MapGroup("/GDPR")
 	.RequireAuthorization()
 	.MapGDPREndpoints();
-app.MapGroup("").MaploginEndpoint();
+app.MapGroup("").MapLoginEndpoint();
 app.Run();

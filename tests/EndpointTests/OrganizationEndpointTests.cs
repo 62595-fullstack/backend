@@ -1,6 +1,6 @@
 namespace tests.EndpointsTests;
 
-[Collection("httpclient collection")]
+[Collection("httpClientCollection")]
 public class OrganizationEndpointTests(HttpClientFixture httpClientFixture)
 {
 	private readonly HttpClient client = httpClientFixture.client;

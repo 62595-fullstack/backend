@@ -7,7 +7,7 @@ namespace backend.getdata
 {
 	public class DataGDPR
 	{
-		public async Task<int?> DeleteUserAcount(string userId)
+		public async Task<int?> DeleteUserAccount(string userId)
 		{
 			try
 			{
@@ -29,7 +29,7 @@ namespace backend.getdata
 				return null;
 			}
 		}
-		public async Task<int?> DeleteUserAcountByEmail(string email)
+		public async Task<int?> DeleteUserAccountByEmail(string email)
 		{
 			try
 			{
@@ -48,7 +48,7 @@ namespace backend.getdata
 				}
 				else
 				{
-					// Don't save changes since email is unqiue, only one user 
+					// Don't save changes since email is unique, only one user 
 					// should be able to be deleted at most
 					return user;
 				}

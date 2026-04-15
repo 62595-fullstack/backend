@@ -17,7 +17,7 @@ public class HttpClientFixture : IAsyncLifetime
 					.Build();
 		client = new HttpClient
 		{
-			BaseAddress = new Uri($"http://{config["host"]}:5000")
+			BaseAddress = new Uri($"http://{config["host"]}:{config["port"]}")
 		};
 	}
 
@@ -25,7 +25,6 @@ public class HttpClientFixture : IAsyncLifetime
 	public async ValueTask InitializeAsync()
 	{
 		// Arrange
-		// LoginCredentials loginCredentials = new("crazyfrog@hotmail.com", "bingbing");
 		var loginCredentials = new
 		{
 			Email = "crazyfrog@hotmail.com",
