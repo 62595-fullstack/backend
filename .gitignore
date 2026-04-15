@@ -3,3 +3,4 @@ bin/
 backend.sln
 /.vs
 .idea
+appsettings.Development.json
