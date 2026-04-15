@@ -37,12 +37,12 @@ dotnet run -e ASPNETCORE_ENVIRONMENT=development --project src
 
 
 Update user secrets
-dotnet user-secrets update host localhost --project src
-dotnet user-secrets update username postgres --project src
-dotnet user-secrets update password facebook --project src
-dotnet user-secrets update database BookFace --project src
-dotnet user-secrets update port 5432 --project src
-dotnet user-secrets update programPort 5000 --project src
+dotnet user-secrets set host localhost --project src
+dotnet user-secrets set username postgres --project src
+dotnet user-secrets set password facebook --project src
+dotnet user-secrets set database BookFace --project src
+dotnet user-secrets set port 5432 --project src
+dotnet user-secrets set programPort 5000 --project src
 
-dotnet user-secrets update host localhost --project tests
-dotnet user-secrets update port 5000 --project tests
+dotnet user-secrets set host localhost --project tests
+dotnet user-secrets set port 5000 --project tests
