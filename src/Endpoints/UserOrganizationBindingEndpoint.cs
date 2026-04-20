@@ -70,7 +70,6 @@ public static class UserOrganizationBinding
 		})
 		.WithName("getUserOrganizationBinding");
 
-
 		group.MapPost("/{userId}/{organizationId}/{roleId}", async Task<string> (int userId, int organizationId, int roleId) =>
 		{
 			try

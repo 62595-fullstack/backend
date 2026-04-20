@@ -21,7 +21,6 @@ namespace backend.getdata
 			}
 		}
 
-
 		public async Task<UserOrganizationBindings?> getUserOrganizationBindingForUser(string userId, int organizationId)
 		{
 			try
@@ -74,6 +73,5 @@ namespace backend.getdata
 				return false;
 			}
 		}
-
 	}
 }
