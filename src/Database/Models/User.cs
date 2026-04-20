@@ -8,6 +8,7 @@ namespace Models.User;
 
 public class Users : IdentityUser
 {
+	[MaxLength(128)]
 	public required string FirstName { get; set; }
 
 	public required int Age { get; set; }
