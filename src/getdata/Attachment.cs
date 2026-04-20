@@ -1,5 +1,8 @@
+using Dto;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Models.Attachment;
+using Models.Organization;
 
 namespace backend.getdata
 {
@@ -43,32 +46,24 @@ namespace backend.getdata
 			}
 		}
 
-		public async Task<bool> SaveFileToPost(IFormFile file, int postId)
+		public async Task<bool> AddOrganizationCoverPhoto(AttachmentDto attachmentDto, int organizationId)
 		{
 			try
 			{
 				using (DatabaseContext db = new DatabaseContext())
 				{
-					using (var stream = file.OpenReadStream())
+					Attachments am = new Attachments
 					{
-						using (var memoryStream = new MemoryStream())
-						{
-							await stream.CopyToAsync(memoryStream);
-							byte[] fileBytes = memoryStream.ToArray();
-							Attachments am = new Attachments
-							{
-								FileName = file.FileName,
-								FileType = Path.GetExtension(file.FileName),
-								Content = fileBytes,
-								CreatedDate = DateTime.UtcNow,
-								PostId = postId,
-							};
-							await db.Attachment.AddAsync(am);
-							await db.SaveChangesAsync();
-						}
-					}
+						FileName = attachmentDto.FileName,
+						FileType = Path.GetExtension(attachmentDto.FileName),
+						Content = attachmentDto.Content,
+					};
+					Organizations organization = await db.Organization.Where(o => o.Id == organizationId).FirstAsync();
+					organization.CoverPhotoId = am.Id;
+					await db.Attachment.AddAsync(am);
+					await db.SaveChangesAsync();
+					return true;
 				}
-				return true;
 			}
 			catch (Exception ex)
 			{
@@ -76,5 +71,32 @@ namespace backend.getdata
 				return false;
 			}
 		}
+
+		public async Task<bool> AddOrganizationProfilePicture(AttachmentDto attachmentDto, int organizationId)
+		{
+			try
+			{
+				using (DatabaseContext db = new DatabaseContext())
+				{
+					Attachments am = new Attachments
+					{
+						FileName = attachmentDto.FileName,
+						FileType = Path.GetExtension(attachmentDto.FileName),
+						Content = attachmentDto.Content,
+					};
+					Organizations organization = await db.Organization.Where(o => o.Id == organizationId).FirstAsync();
+					organization.ProfilePictureId = am.Id;
+					await db.Attachment.AddAsync(am);
+					await db.SaveChangesAsync();
+					return true;
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return false;
+			}
+		}
+
 	}
 }
