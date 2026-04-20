@@ -12,7 +12,7 @@ public class UserFriendships
 
 	public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
-	public Users? UserA { get; set; }
+	public Users UserA { get; set; }
 
-	public Users? UserB { get; set; }
+	public Users UserB { get; set; }
 }
