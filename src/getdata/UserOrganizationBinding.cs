@@ -37,6 +37,20 @@ namespace backend.getdata
 			}
 		}
 
+		public async Task<UserOrganizationBindings?> getUserOrganizationBindingById(int id)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
+				return await db.UserOrganizationBinding.FindAsync(id);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return null;
+			}
+		}
+
 		public async Task<bool> setUserToOrganization(int userId, int organizationId, int roleId)
 		{
 			try

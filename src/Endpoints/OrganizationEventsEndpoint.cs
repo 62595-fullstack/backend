@@ -53,10 +53,8 @@ public static class OrganizationEventsEndpoint
 				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 				if (userId == null) return Results.Unauthorized();
 
-				await using DatabaseContext db = new();
-
-				UserOrganizationBindings? binding = await db.UserOrganizationBinding
-					.FirstOrDefaultAsync(b => b.UserId == int.Parse(userId) && b.OrganizationId == oe.OrganizationId);
+				DataUserOrganizationBinding duob = new();
+				UserOrganizationBindings? binding = await duob.getUserOrganizationBindingForUser(userId, oe.OrganizationId);
 				if (binding == null) return Results.Forbid();
 
 				oe.UserOrganizationBindingId = binding.Id;
@@ -88,16 +86,16 @@ public static class OrganizationEventsEndpoint
 				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 				if (userId == null) return Results.Unauthorized();
 
-				using DatabaseContext db = new();
-				OrganizationEvents? ev = await db.OrganizationEvent.FindAsync(id);
+				DataOrganizationEvents doe = new();
+				OrganizationEvents? ev = await doe.getOrganizationEventById(id);
 				if (ev == null) return Results.NotFound();
 
-				UserOrganizationBindings? binding = await db.UserOrganizationBinding.FindAsync(ev.UserOrganizationBindingId);
+				DataUserOrganizationBinding duob = new();
+				UserOrganizationBindings? binding = await duob.getUserOrganizationBindingById(ev.UserOrganizationBindingId);
 				if (binding == null || binding.UserId != int.Parse(userId))
 					return Results.Forbid();
 
-				db.OrganizationEvent.Remove(ev);
-				await db.SaveChangesAsync();
+				await doe.deleteOrganizationEvent(id);
 				return Results.Ok();
 			}
 			catch (Exception ex)
