@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
 using Models.Attachment;
 using Models.Organization;
 using Models.OrganizationEvent;
@@ -11,6 +10,7 @@ using Models.User;
 using Models.UserEventBinding;
 using Models.UserFriendship;
 using Models.UserOrganizationBinding;
+using System.Text.RegularExpressions;
 
 class DummyData
 {
