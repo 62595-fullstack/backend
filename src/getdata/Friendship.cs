@@ -22,7 +22,7 @@ public class DataFriendship
 			user.FirstName,
 			user.LastName,
 			user.UserName ?? user.FirstName,
-			user.Age
+			user.DateOfBirth
 		);
 	}
 
@@ -34,7 +34,7 @@ public class DataFriendship
 			user.FirstName,
 			user.LastName,
 			user.UserName ?? user.FirstName,
-			user.Age,
+			user.DateOfBirth,
 			friendsSince
 		);
 	}

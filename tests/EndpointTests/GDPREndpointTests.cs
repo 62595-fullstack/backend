@@ -39,7 +39,7 @@ public class GDPREndpointTests(HttpClientFixture httpClientFixture)
 			LastName: "Dobby",
 			Email: "bobby@hotmail.com",
 			Password: "123password",
-			Age: 67
+			DateOfBirth: new DateOnly(1959, 4, 20)
 		);
 		HttpResponseMessage response1 = await client.PostAsJsonAsync(
 				"register",

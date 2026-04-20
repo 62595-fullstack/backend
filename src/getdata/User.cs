@@ -17,7 +17,7 @@ namespace backend.getdata
 					FirstName = registerDto.FirstName,
 					LastName = registerDto.LastName,
 					Email = registerDto.Email,
-					Age = registerDto.Age,
+					DateOfBirth = registerDto.DateOfBirth,
 					PasswordHash = registerDto.Password,
 				};
 				DatabaseContext db = new DatabaseContext();
