@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Models.Attachment;
 using Models.Organization;
 using Models.OrganizationEvent;
@@ -7,6 +8,7 @@ using Models.Post;
 using Models.Role;
 using Models.User;
 using Models.UserEventBinding;
+using Models.UserFriendship;
 using Models.UserOrganizationBinding;
 
 class DummyData
@@ -32,7 +34,18 @@ class DummyData
 		await db.SaveChangesAsync();
 	}
 
-	public static async void Initialize()
+	private static async Task ResetIdentitySequence(DatabaseContext db, string tableName)
+	{
+		await db.Database.ExecuteSqlRawAsync($"""
+			SELECT setval(
+				pg_get_serial_sequence('"{tableName}"', 'Id'),
+				COALESCE((SELECT MAX("Id") FROM "{tableName}"), 1),
+				true
+			);
+			""");
+	}
+
+	public static async Task Initialize()
 	{
 		using (DatabaseContext db = new())
 		{
@@ -217,6 +230,14 @@ class DummyData
 				new UserEventBindings { Id = 123, UserId = 123, OrganizationEventsId = 123 },
 				new UserEventBindings { Id = 1000, UserId = 1000, OrganizationEventsId = 1000 }
 			);
+
+			// UserFriendships
+			await Add(db,
+				new UserFriendships { Id = 1, UserAId = "123", UserBId = "999", CreatedDate = DateTime.UtcNow.AddDays(-14) },
+				new UserFriendships { Id = 2, UserAId = "9001", UserBId = "999", CreatedDate = DateTime.UtcNow.AddDays(-7) },
+				new UserFriendships { Id = 3, UserAId = "9002", UserBId = "9003", CreatedDate = DateTime.UtcNow.AddDays(-3) }
+			);
+			await ResetIdentitySequence(db, "UserFriendship");
 
 			// Posts
 			await Add(db,

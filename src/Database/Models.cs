@@ -7,6 +7,7 @@ using Models.Post;
 using Models.Role;
 using Models.User;
 using Models.UserEventBinding;
+using Models.UserFriendship;
 using Models.UserOrganizationBinding;
 using System.Reflection;
 
@@ -19,6 +20,7 @@ public class DatabaseContext : DbContext
 	public DbSet<Posts> Post { get; set; }
 	public DbSet<Roles> Role { get; set; }
 	public DbSet<UserEventBindings> UserEventBinding { get; set; }
+	public DbSet<UserFriendships> UserFriendship { get; set; }
 	public DbSet<UserOrganizationBindings> UserOrganizationBinding { get; set; }
 	public DbSet<Attachments> Attachment { get; set; }
 
@@ -40,6 +42,30 @@ public class DatabaseContext : DbContext
 		{
 			System.Console.WriteLine("No connections");
 		}
+	}
+
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
+	{
+		modelBuilder.Entity<Users>()
+			.HasAlternateKey(user => user.Id);
+
+		modelBuilder.Entity<UserFriendships>()
+			.HasIndex(friendship => new { friendship.UserAId, friendship.UserBId })
+			.IsUnique();
+
+		modelBuilder.Entity<UserFriendships>()
+			.HasOne(friendship => friendship.UserA)
+			.WithMany(user => user.FriendshipsAsUserA)
+			.HasForeignKey(friendship => friendship.UserAId)
+			.HasPrincipalKey(user => user.Id)
+			.OnDelete(DeleteBehavior.Cascade);
+
+		modelBuilder.Entity<UserFriendships>()
+			.HasOne(friendship => friendship.UserB)
+			.WithMany(user => user.FriendshipsAsUserB)
+			.HasForeignKey(friendship => friendship.UserBId)
+			.HasPrincipalKey(user => user.Id)
+			.OnDelete(DeleteBehavior.Cascade);
 	}
 }
 

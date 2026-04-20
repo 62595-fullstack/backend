@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Models.UserFriendship;
 using Models.UserEventBinding;
 using Models.UserOrganizationBinding;
 using System.ComponentModel.DataAnnotations;
@@ -17,5 +18,9 @@ public class Users : IdentityUser
 	public ICollection<UserOrganizationBindings> UserOrganizationBindings { get; set; } = new List<UserOrganizationBindings>();
 
 	public ICollection<UserEventBindings> UserEventBindings { get; set; } = new List<UserEventBindings>();
+
+	public ICollection<UserFriendships> FriendshipsAsUserA { get; set; } = new List<UserFriendships>();
+
+	public ICollection<UserFriendships> FriendshipsAsUserB { get; set; } = new List<UserFriendships>();
 
 }
