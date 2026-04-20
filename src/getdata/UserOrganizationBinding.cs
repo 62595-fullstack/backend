@@ -21,6 +21,19 @@ namespace backend.getdata
 			}
 		}
 
+		public async Task<List<UserOrganizationBindings>> getAllUserOrganizationBindingsForUser(string userId)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
+				return await db.UserOrganizationBinding.Where(x => x.UserId == int.Parse(userId)).ToListAsync();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return new List<UserOrganizationBindings>();
+			}
+		}
 
 		public async Task<UserOrganizationBindings?> getUserOrganizationBindingForUser(string userId, int organizationId)
 		{
@@ -29,6 +42,20 @@ namespace backend.getdata
 				DatabaseContext db = new DatabaseContext();
 				return await db.UserOrganizationBinding
 					.FirstOrDefaultAsync(x => x.UserId == int.Parse(userId) && x.OrganizationId == organizationId);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return null;
+			}
+		}
+
+		public async Task<UserOrganizationBindings?> getUserOrganizationBindingById(int id)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
+				return await db.UserOrganizationBinding.FindAsync(id);
 			}
 			catch (Exception ex)
 			{
@@ -60,6 +87,5 @@ namespace backend.getdata
 				return false;
 			}
 		}
-
 	}
 }

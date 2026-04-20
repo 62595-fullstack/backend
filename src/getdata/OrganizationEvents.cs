@@ -65,6 +65,24 @@ namespace backend.getdata
 			await db.SaveChangesAsync();
 		}
 
+		public async Task<bool> deleteOrganizationEvent(int id)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
+				OrganizationEvents? ev = await db.OrganizationEvent.FindAsync(id);
+				if (ev == null) return false;
+				db.OrganizationEvent.Remove(ev);
+				await db.SaveChangesAsync();
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				return false;
+			}
+		}
+
 		public async Task<bool> userJoinEvent(int userId, int organizationId)
 		{
 			try

@@ -46,16 +46,18 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("getOrganizationEvents");
 
-		group.MapPost("/", async Task<IResult> ([FromBody] OrganizationEvents oe) =>
+		group.MapPost("/", async Task<IResult> ([FromBody] OrganizationEvents oe, ClaimsPrincipal user) =>
 		{
-			//Console.WriteLine($"[POST /OrganizationEvents] Id={oe.Id} OrganizationId={oe.OrganizationId} Title={oe.Title}");
 			try
 			{
-				using DatabaseContext db = new();
+				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null) return Results.Unauthorized();
 
-				bool organizationExists = await db.Organization.AnyAsync(o => o.Id == oe.OrganizationId);
-				if (!organizationExists) return Results.BadRequest($"Organization with ID {oe.OrganizationId} does not exist.");
+				DataUserOrganizationBinding duob = new();
+				UserOrganizationBindings? binding = await duob.getUserOrganizationBindingForUser(userId, oe.OrganizationId);
+				if (binding == null) return Results.Forbid();
 
+				oe.UserOrganizationBindingId = binding.Id;
 				oe.CreatedDate = DateTime.SpecifyKind(oe.CreatedDate, DateTimeKind.Utc);
 				oe.StartDate = DateTime.SpecifyKind(oe.StartDate, DateTimeKind.Utc);
 
@@ -66,7 +68,7 @@ public static class OrganizationEventsEndpoint
 			catch (DbUpdateException ex)
 			{
 				Console.WriteLine(ex.ToString());
-				var detail = ex.InnerException?.Message ?? ex.Message;
+				string detail = ex.InnerException?.Message ?? ex.Message;
 				return Results.Problem(detail);
 			}
 			catch (Exception ex)
@@ -84,16 +86,16 @@ public static class OrganizationEventsEndpoint
 				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 				if (userId == null) return Results.Unauthorized();
 
-				using DatabaseContext db = new();
-				OrganizationEvents? ev = await db.OrganizationEvent.FindAsync(id);
+				DataOrganizationEvents doe = new();
+				OrganizationEvents? ev = await doe.getOrganizationEventById(id);
 				if (ev == null) return Results.NotFound();
 
-				UserOrganizationBindings? binding = await db.UserOrganizationBinding.FindAsync(ev.UserOrganizationBindingId);
+				DataUserOrganizationBinding duob = new();
+				UserOrganizationBindings? binding = await duob.getUserOrganizationBindingById(ev.UserOrganizationBindingId);
 				if (binding == null || binding.UserId != int.Parse(userId))
 					return Results.Forbid();
 
-				db.OrganizationEvent.Remove(ev);
-				await db.SaveChangesAsync();
+				await doe.deleteOrganizationEvent(id);
 				return Results.Ok();
 			}
 			catch (Exception ex)
