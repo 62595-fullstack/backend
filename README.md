@@ -44,5 +44,5 @@ dotnet user-secrets set database BookFace --project src
 dotnet user-secrets set port 5432 --project src
 dotnet user-secrets set programPort 5000 --project src
 
-dotnet user-secrets set host localhost --project tests
-dotnet user-secrets set port 5000 --project tests
+dotnet user-secrets set host testHost --project tests
+dotnet user-secrets set testPort 5000 --project tests
