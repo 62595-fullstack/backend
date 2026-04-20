@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 using Models.Attachment;
 using Models.Organization;
 using Models.OrganizationEvent;
@@ -36,13 +37,18 @@ class DummyData
 
 	private static async Task ResetIdentitySequence(DatabaseContext db, string tableName)
 	{
-		await db.Database.ExecuteSqlAsync($"""
+		if (!Regex.IsMatch(tableName, "^[A-Za-z][A-Za-z0-9_]*$"))
+			throw new ArgumentException("Invalid table name.", nameof(tableName));
+
+		string sql = $$"""
 			SELECT setval(
-				pg_get_serial_sequence('"{tableName}"', 'Id'),
-				COALESCE((SELECT MAX("Id") FROM "{tableName}"), 1),
+				pg_get_serial_sequence('"{{tableName}}"', 'Id'),
+				COALESCE((SELECT MAX("Id") FROM "{{tableName}}"), 1),
 				true
 			);
-			""");
+			""";
+
+		await db.Database.ExecuteSqlRawAsync(sql);
 	}
 
 	public static async Task Initialize()
