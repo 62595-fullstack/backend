@@ -15,6 +15,7 @@ namespace backend.getdata
 				Users user = new Users
 				{
 					FirstName = registerDto.FirstName,
+					LastName = registerDto.LastName,
 					Email = registerDto.Email,
 					Age = registerDto.Age,
 					PasswordHash = registerDto.Password,

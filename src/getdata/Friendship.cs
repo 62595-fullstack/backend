@@ -20,6 +20,7 @@ public class DataFriendship
 			user.Id,
 			user.Email ?? string.Empty,
 			user.FirstName,
+			user.LastName,
 			user.UserName ?? user.FirstName,
 			user.Age
 		);
@@ -31,6 +32,7 @@ public class DataFriendship
 			user.Id,
 			user.Email ?? string.Empty,
 			user.FirstName,
+			user.LastName,
 			user.UserName ?? user.FirstName,
 			user.Age,
 			friendsSince
@@ -50,6 +52,7 @@ public class DataFriendship
 			string search = query.Trim().ToLower();
 			usersQuery = usersQuery.Where(user =>
 				(user.FirstName != null && user.FirstName.ToLower().Contains(search)) ||
+				(user.LastName != null && user.LastName.ToLower().Contains(search)) ||
 				(user.UserName != null && user.UserName.ToLower().Contains(search)) ||
 				(user.Email != null && user.Email.ToLower().Contains(search)));
 		}

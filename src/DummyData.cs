@@ -42,28 +42,28 @@ class DummyData
 			PasswordHasher<Users> hasher = new();
 
 			// Users
-			Users friskFyr = new() { Id = "123", Email = "friskfyr@friskefyre.com", FirstName = "Frisk", UserName = "Frisk Fyr", Age = 25 };
+			Users friskFyr = new() { Id = "123", Email = "friskfyr@friskefyre.com", FirstName = "Frisk", LastName = "Fyr", UserName = "Frisk Fyr", Age = 25 };
 			friskFyr.PasswordHash = hasher.HashPassword(friskFyr, "123");
 
-			Users frog = new() { Id = "999", Email = "crazyfrog@hotmail.com", FirstName = "Crazy", UserName = "Crazy Frog", Age = 2 };
+			Users frog = new() { Id = "999", Email = "crazyfrog@hotmail.com", FirstName = "Crazy", LastName = "Frog", UserName = "Crazy Frog", Age = 2 };
 			frog.PasswordHash = hasher.HashPassword(frog, "bingbing");
 
-			Users benson = new() { Id = "1000", Email = "bbbenson@hotmail.com", FirstName = "Berry B.", UserName = "Berry B. Benson", Age = 2 };
+			Users benson = new() { Id = "1000", Email = "bbbenson@hotmail.com", FirstName = "Berry B.", LastName = "Benson", UserName = "Berry B. Benson", Age = 2 };
 			benson.PasswordHash = hasher.HashPassword(benson, "1234");
 
-			Users johnDoe = new() { Id = "9001", Email = "johndoe@mock.com", FirstName = "John", UserName = "John Doe", Age = 30 };
+			Users johnDoe = new() { Id = "9001", Email = "johndoe@mock.com", FirstName = "John", LastName = "Doe", UserName = "John Doe", Age = 30 };
 			johnDoe.PasswordHash = hasher.HashPassword(johnDoe, "mock");
 
-			Users janeSmith = new() { Id = "9002", Email = "janesmith@mock.com", FirstName = "Jane", UserName = "Jane Smith", Age = 28 };
+			Users janeSmith = new() { Id = "9002", Email = "janesmith@mock.com", FirstName = "Jane", LastName = "Smith", UserName = "Jane Smith", Age = 28 };
 			janeSmith.PasswordHash = hasher.HashPassword(janeSmith, "mock");
 
-			Users chefMarco = new() { Id = "9003", Email = "chefmarco@mock.com", FirstName = "Marco", UserName = "Chef Marco", Age = 35 };
+			Users chefMarco = new() { Id = "9003", Email = "chefmarco@mock.com", FirstName = "Chef", LastName = "Marco", UserName = "Chef Marco", Age = 35 };
 			chefMarco.PasswordHash = hasher.HashPassword(chefMarco, "mock");
 
-			Users lisaGreen = new() { Id = "9004", Email = "lisagreen@mock.com", FirstName = "Lisa", UserName = "Lisa Green", Age = 25 };
+			Users lisaGreen = new() { Id = "9004", Email = "lisagreen@mock.com", FirstName = "Lisa", LastName = "Green", UserName = "Lisa Green", Age = 25 };
 			lisaGreen.PasswordHash = hasher.HashPassword(lisaGreen, "mock");
 
-			Users galleryOne = new() { Id = "9005", Email = "galleryone@mock.com", FirstName = "Gallery", UserName = "Gallery One", Age = 30 };
+			Users galleryOne = new() { Id = "9005", Email = "galleryone@mock.com", FirstName = "Gallery", LastName = "One", UserName = "Gallery One", Age = 30 };
 			galleryOne.PasswordHash = hasher.HashPassword(galleryOne, "mock");
 
 			await Add(db, friskFyr, frog, benson, johnDoe, janeSmith, chefMarco, lisaGreen, galleryOne);
