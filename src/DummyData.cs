@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Models.Attachment;
 using Models.Organization;
 using Models.OrganizationEvent;
@@ -7,7 +8,9 @@ using Models.Post;
 using Models.Role;
 using Models.User;
 using Models.UserEventBinding;
+using Models.UserFriendship;
 using Models.UserOrganizationBinding;
+using System.Text.RegularExpressions;
 
 class DummyData
 {
@@ -32,7 +35,7 @@ class DummyData
 		await db.SaveChangesAsync();
 	}
 
-	public static async void Initialize()
+	public static async Task Initialize()
 	{
 		using (DatabaseContext db = new())
 		{
@@ -218,6 +221,13 @@ class DummyData
 				new UserEventBindings { Id = 1000, UserId = 1000, OrganizationEventsId = 1000 }
 			);
 
+			// UserFriendships
+			await Add(db,
+				new UserFriendships { Id = 1, UserAId = "123", UserBId = "999", CreatedDate = DateTime.UtcNow.AddDays(-14) },
+				new UserFriendships { Id = 2, UserAId = "9001", UserBId = "999", CreatedDate = DateTime.UtcNow.AddDays(-7) },
+				new UserFriendships { Id = 3, UserAId = "9002", UserBId = "9003", CreatedDate = DateTime.UtcNow.AddDays(-3) }
+			);
+			
 			// Posts
 			await Add(db,
 				new Posts { Id = 998, Title = "Fist Event Post", CreatedDate = DateTime.UtcNow, UserId = 1000, OrganizationEventId = 1000 },
