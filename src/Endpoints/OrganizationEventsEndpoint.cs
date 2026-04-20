@@ -53,10 +53,7 @@ public static class OrganizationEventsEndpoint
 				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 				if (userId == null) return Results.Unauthorized();
 
-				using DatabaseContext db = new();
-
-				bool organizationExists = await db.Organization.AnyAsync(o => o.Id == oe.OrganizationId);
-				if (!organizationExists) return Results.BadRequest($"Organization with ID {oe.OrganizationId} does not exist.");
+				await using DatabaseContext db = new();
 
 				UserOrganizationBindings? binding = await db.UserOrganizationBinding
 					.FirstOrDefaultAsync(b => b.UserId == int.Parse(userId) && b.OrganizationId == oe.OrganizationId);
@@ -73,7 +70,7 @@ public static class OrganizationEventsEndpoint
 			catch (DbUpdateException ex)
 			{
 				Console.WriteLine(ex.ToString());
-				var detail = ex.InnerException?.Message ?? ex.Message;
+				string detail = ex.InnerException?.Message ?? ex.Message;
 				return Results.Problem(detail);
 			}
 			catch (Exception ex)
