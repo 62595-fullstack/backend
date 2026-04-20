@@ -36,7 +36,7 @@ class DummyData
 
 	private static async Task ResetIdentitySequence(DatabaseContext db, string tableName)
 	{
-		await db.Database.ExecuteSqlRawAsync($"""
+		await db.Database.ExecuteSqlAsync($"""
 			SELECT setval(
 				pg_get_serial_sequence('"{tableName}"', 'Id'),
 				COALESCE((SELECT MAX("Id") FROM "{tableName}"), 1),

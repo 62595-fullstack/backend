@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
-using Models.UserFriendship;
 using Models.UserEventBinding;
+using Models.UserFriendship;
 using Models.UserOrganizationBinding;
 using System.ComponentModel.DataAnnotations;
 
