@@ -46,16 +46,23 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("getOrganizationEvents");
 
-		group.MapPost("/", async Task<IResult> ([FromBody] OrganizationEvents oe) =>
+		group.MapPost("/", async Task<IResult> ([FromBody] OrganizationEvents oe, ClaimsPrincipal user) =>
 		{
-			//Console.WriteLine($"[POST /OrganizationEvents] Id={oe.Id} OrganizationId={oe.OrganizationId} Title={oe.Title}");
 			try
 			{
+				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null) return Results.Unauthorized();
+
 				using DatabaseContext db = new();
 
 				bool organizationExists = await db.Organization.AnyAsync(o => o.Id == oe.OrganizationId);
 				if (!organizationExists) return Results.BadRequest($"Organization with ID {oe.OrganizationId} does not exist.");
 
+				UserOrganizationBindings? binding = await db.UserOrganizationBinding
+					.FirstOrDefaultAsync(b => b.UserId == int.Parse(userId) && b.OrganizationId == oe.OrganizationId);
+				if (binding == null) return Results.Forbid();
+
+				oe.UserOrganizationBindingId = binding.Id;
 				oe.CreatedDate = DateTime.SpecifyKind(oe.CreatedDate, DateTimeKind.Utc);
 				oe.StartDate = DateTime.SpecifyKind(oe.StartDate, DateTimeKind.Utc);
 
