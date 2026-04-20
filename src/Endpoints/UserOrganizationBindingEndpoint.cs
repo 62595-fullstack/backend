@@ -1,5 +1,4 @@
 using backend.getdata;
-using Microsoft.EntityFrameworkCore;
 using Models.UserOrganizationBinding;
 using Newtonsoft.Json;
 using System.Security.Claims;
@@ -17,10 +16,8 @@ public static class UserOrganizationBinding
 				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 				if (userId == null) return Results.Unauthorized();
 
-				using DatabaseContext db = new();
-				List<UserOrganizationBindings> bindings = await db.UserOrganizationBinding
-					.Where(b => b.UserId == int.Parse(userId))
-					.ToListAsync();
+				DataUserOrganizationBinding duob = new();
+				List<UserOrganizationBindings> bindings = await duob.getAllUserOrganizationBindingsForUser(userId);
 				return Results.Ok(bindings);
 			}
 			catch (Exception ex)
@@ -38,9 +35,8 @@ public static class UserOrganizationBinding
 				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 				if (userId == null) return Results.Unauthorized();
 
-				DataUserOrganizationBinding organizationData = new DataUserOrganizationBinding();
+				DataUserOrganizationBinding organizationData = new();
 				UserOrganizationBindings? binding = await organizationData.getUserOrganizationBindingForUser(userId, organizationId);
-				if (binding == null) return Results.NotFound();
 				return Results.Ok(binding);
 			}
 			catch (Exception ex)
@@ -55,12 +51,9 @@ public static class UserOrganizationBinding
 		{
 			try
 			{
-				using (DatabaseContext db = new DatabaseContext())
-				{
-					DataUserOrganizationBinding organizationData = new DataUserOrganizationBinding();
-					List<UserOrganizationBindings> allOrganizations = await organizationData.getUserOrganizationForOrganization(organizationId);
-					return JsonConvert.SerializeObject(allOrganizations);
-				}
+				DataUserOrganizationBinding organizationData = new();
+				List<UserOrganizationBindings> allOrganizations = await organizationData.getUserOrganizationForOrganization(organizationId);
+				return JsonConvert.SerializeObject(allOrganizations);
 			}
 			catch (Exception ex)
 			{
@@ -74,12 +67,9 @@ public static class UserOrganizationBinding
 		{
 			try
 			{
-				using (DatabaseContext db = new DatabaseContext())
-				{
-					DataUserOrganizationBinding organizationData = new DataUserOrganizationBinding();
-					bool successful = await organizationData.setUserToOrganization(userId, organizationId, roleId);
-					return JsonConvert.SerializeObject(successful);
-				}
+				DataUserOrganizationBinding organizationData = new();
+				bool successful = await organizationData.setUserToOrganization(userId, organizationId, roleId);
+				return JsonConvert.SerializeObject(successful);
 			}
 			catch (Exception ex)
 			{
