@@ -35,22 +35,6 @@ class DummyData
 		await db.SaveChangesAsync();
 	}
 
-	private static async Task ResetIdentitySequence(DatabaseContext db, string tableName)
-	{
-		if (!Regex.IsMatch(tableName, "^[A-Za-z][A-Za-z0-9_]*$"))
-			throw new ArgumentException("Invalid table name.", nameof(tableName));
-
-		string sql = $$"""
-			SELECT setval(
-				pg_get_serial_sequence('"{{tableName}}"', 'Id'),
-				COALESCE((SELECT MAX("Id") FROM "{{tableName}}"), 1),
-				true
-			);
-			""";
-
-		await db.Database.ExecuteSqlRawAsync(sql);
-	}
-
 	public static async Task Initialize()
 	{
 		using (DatabaseContext db = new())
@@ -243,8 +227,7 @@ class DummyData
 				new UserFriendships { Id = 2, UserAId = "9001", UserBId = "999", CreatedDate = DateTime.UtcNow.AddDays(-7) },
 				new UserFriendships { Id = 3, UserAId = "9002", UserBId = "9003", CreatedDate = DateTime.UtcNow.AddDays(-3) }
 			);
-			await ResetIdentitySequence(db, "UserFriendship");
-
+			
 			// Posts
 			await Add(db,
 				new Posts { Id = 998, Title = "Fist Event Post", CreatedDate = DateTime.UtcNow, UserId = 1000, OrganizationEventId = 1000 },
