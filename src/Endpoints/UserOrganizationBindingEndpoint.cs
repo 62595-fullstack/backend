@@ -1,4 +1,5 @@
 using backend.getdata;
+using Microsoft.EntityFrameworkCore;
 using Models.UserOrganizationBinding;
 using Newtonsoft.Json;
 using System.Security.Claims;
@@ -9,6 +10,27 @@ public static class UserOrganizationBinding
 {
 	public static RouteGroupBuilder MapUserOrganizationBindingEndpoints(this RouteGroupBuilder group)
 	{
+		group.MapGet("/me", async Task<IResult> (ClaimsPrincipal user) =>
+		{
+			try
+			{
+				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null) return Results.Unauthorized();
+
+				using DatabaseContext db = new();
+				List<UserOrganizationBindings> bindings = await db.UserOrganizationBinding
+					.Where(b => b.UserId == int.Parse(userId))
+					.ToListAsync();
+				return Results.Ok(bindings);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("getAllUserOrganizationBindingsForCurrentUser");
+
 		group.MapGet("/{organizationId}/me", async Task<IResult> (int organizationId, ClaimsPrincipal user) =>
 		{
 			try
