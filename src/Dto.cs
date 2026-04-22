@@ -7,3 +7,4 @@ public record AttachmentDto(string FileName, string FileType, byte[] Content);
 public record UserSummaryDto(string Id, string Email, string FirstName, string LastName, string UserName, DateOnly DateOfBirth);
 public record FriendSummaryDto(string Id, string Email, string FirstName, string LastName, string UserName, DateOnly DateOfBirth, DateTime FriendsSince);
 public record AddFriendDto(string FriendUserId);
+public record UpdateEventRequest(string? Description, string? Rules);

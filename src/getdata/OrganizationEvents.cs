@@ -1,3 +1,4 @@
+using Dto;
 using Microsoft.EntityFrameworkCore;
 using Models.OrganizationEvent;
 using Models.User;
@@ -65,7 +66,7 @@ namespace backend.getdata
 			await db.SaveChangesAsync();
 		}
 
-		public async Task<bool> updateEvent(int id, Endpoints.UpdateEventRequest req)
+		public async Task<bool> updateEvent(int id, UpdateEventRequest req)
 		{
 			try
 			{

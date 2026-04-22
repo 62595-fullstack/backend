@@ -1,4 +1,5 @@
 using backend.getdata;
+using Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models.OrganizationEvent;
@@ -9,8 +10,6 @@ using System.Net;
 using System.Security.Claims;
 
 namespace Endpoints;
-
-public record UpdateEventRequest(string? Description, string? Rules);
 
 public static class OrganizationEventsEndpoint
 {
