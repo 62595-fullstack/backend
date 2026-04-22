@@ -17,7 +17,7 @@ public static class UserEndpoint
 			if (currentUserId == null) return Results.Unauthorized();
 
 			DataFriendship friendshipData = new();
-			List<UserSummaryDto> users = await friendshipData.SearchUsers(currentUserId, query);
+			List<UserSearchResultDto> users = await friendshipData.SearchUsers(currentUserId, query);
 			return Results.Ok(users);
 		})
 		.WithName("SearchUsers");

@@ -39,9 +39,9 @@ public class DataFriendship
 		);
 	}
 
-	public async Task<List<UserSummaryDto>> SearchUsers(string currentUserId, string? query)
+	public async Task<List<UserSearchResultDto>> SearchUsers(string currentUserId, string? query)
 	{
-		using DatabaseContext db = new();
+		await using DatabaseContext db = new();
 
 		IQueryable<Users> usersQuery = db.User
 			.AsNoTracking()
@@ -51,24 +51,20 @@ public class DataFriendship
 		{
 			string search = query.Trim().ToLower();
 			usersQuery = usersQuery.Where(user =>
-				(user.FirstName != null && user.FirstName.ToLower().Contains(search)) ||
-				(user.LastName != null && user.LastName.ToLower().Contains(search)) ||
-				(user.UserName != null && user.UserName.ToLower().Contains(search)) ||
-				(user.Email != null && user.Email.ToLower().Contains(search)));
+				(user.FirstName + " " + user.LastName).ToLower().Contains(search));
 		}
 
-		List<Users> users = await usersQuery
+		return await usersQuery
 			.OrderBy(user => user.FirstName)
 			.ThenBy(user => user.UserName)
 			.Take(25)
+			.Select(user => new UserSearchResultDto(user.Id, user.FirstName, user.LastName))
 			.ToListAsync();
-
-		return users.Select(ToUserSummaryDto).ToList();
 	}
 
 	public async Task<List<FriendSummaryDto>> GetFriendsForUser(string userId)
 	{
-		using DatabaseContext db = new();
+		await using DatabaseContext db = new();
 
 		List<UserFriendships> friendships = await db.UserFriendship
 			.AsNoTracking()
@@ -106,7 +102,7 @@ public class DataFriendship
 			return null;
 		}
 
-		using DatabaseContext db = new();
+		await using DatabaseContext db = new();
 
 		Users? currentUser = await db.User.FirstOrDefaultAsync(user => user.Id == currentUserId);
 		Users? friendUser = await db.User.FirstOrDefaultAsync(user => user.Id == friendUserId);
@@ -146,7 +142,7 @@ public class DataFriendship
 			return false;
 		}
 
-		using DatabaseContext db = new();
+		await using DatabaseContext db = new();
 		(string userAId, string userBId) = NormalizePair(currentUserId, friendUserId);
 
 		UserFriendships? friendship = await db.UserFriendship

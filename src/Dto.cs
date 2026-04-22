@@ -5,6 +5,7 @@ public record RegisterCredentialsDto(string Email, string Password, string First
 public record PostDto(string Title, string BodyText, string UserId, int OrganizationEventId);
 public record AttachmentDto(string FileName, string FileType, byte[] Content);
 public record UserSummaryDto(string Id, string Email, string FirstName, string LastName, string UserName, DateOnly DateOfBirth);
+public record UserSearchResultDto(string Id, string FirstName, string LastName);
 public record FriendSummaryDto(string Id, string Email, string FirstName, string LastName, string UserName, DateOnly DateOfBirth, DateTime FriendsSince);
 public record AddFriendDto(string FriendUserId);
 public record UpdateEventRequest(string? Description, string? Rules);
