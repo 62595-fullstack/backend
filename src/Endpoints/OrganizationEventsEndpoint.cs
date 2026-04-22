@@ -10,6 +10,8 @@ using System.Security.Claims;
 
 namespace Endpoints;
 
+public record UpdateEventRequest(string? Description);
+
 public static class OrganizationEventsEndpoint
 {
 	public static RouteGroupBuilder MapOrganizationEventsEndpoints(this RouteGroupBuilder group)
@@ -105,6 +107,33 @@ public static class OrganizationEventsEndpoint
 			}
 		})
 		.WithName("DeleteOrganizationEvent");
+
+		group.MapPatch("/{id}", async Task<IResult> (int id, [FromBody] UpdateEventRequest req, ClaimsPrincipal user) =>
+		{
+			try
+			{
+				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null) return Results.Unauthorized();
+
+				DataOrganizationEvents doe = new();
+				OrganizationEvents? ev = await doe.getOrganizationEventById(id);
+				if (ev == null) return Results.NotFound();
+
+				DataUserOrganizationBinding duob = new();
+				UserOrganizationBindings? binding = await duob.getUserOrganizationBindingById(ev.UserOrganizationBindingId);
+				if (binding == null || binding.UserId != int.Parse(userId))
+					return Results.Forbid();
+
+				await doe.updateEvent(id, req);
+				return Results.Ok();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("UpdateEvent");
 
 		group.MapPost("/{UserEventBinding}", async Task<string> (string userEventBinding) =>
 		{
