@@ -232,9 +232,9 @@ class DummyData
 
 			// Posts
 			await Add(db,
-				new Posts { Id = 998, Title = "Fist Event Post", CreatedDate = DateTime.UtcNow, UserId = 1000, OrganizationEventId = 1000 },
-				new Posts { Id = 999, Title = "Bee Movie Trailer Night", CreatedDate = DateTime.UtcNow, UserId = 1000, OrganizationEventId = 1000 },
-				new Posts { Id = 1000, Title = "Hello World", CreatedDate = DateTime.UtcNow, UserId = 1000, OrganizationEventId = 1000 }
+				new Posts { Id = 998, Title = "Fist Event Post", CreatedDate = DateTime.UtcNow, UserId = "1000", OrganizationEventId = 1000 },
+				new Posts { Id = 999, Title = "Bee Movie Trailer Night", CreatedDate = DateTime.UtcNow, UserId = "1000", OrganizationEventId = 1000 },
+				new Posts { Id = 1000, Title = "Hello World", CreatedDate = DateTime.UtcNow, UserId = "1000", OrganizationEventId = 1000 }
 			);
 
 			// OrganizationPosts

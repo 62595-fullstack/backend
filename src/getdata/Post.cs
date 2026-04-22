@@ -23,6 +23,16 @@ namespace backend.getdata
 			}
 		}
 
+		public async Task<List<Posts>> GetPostsByUser(string userId)
+		{
+			using DatabaseContext db = new();
+			return await db.Post
+				.AsNoTracking()
+				.Where(p => p.UserId == userId)
+				.OrderByDescending(p => p.CreatedDate)
+				.ToListAsync();
+		}
+
 		public async Task<List<Posts>?> getPostByOrganization(int id)
 		{
 			try

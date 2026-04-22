@@ -10,14 +10,14 @@ namespace Models.Post
 	public class Posts
 	{
 		public int Id { get; set; }
-
+		
 		public required string Title { get; set; }
 		public string BodyText { get; set; } = "";
 
 		public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
 		public DateTime? LastUpdateDate { get; set; } = null;
-		public required int UserId { get; set; }
+		public required string UserId { get; set; }
 		public required int OrganizationEventId { get; set; }
 
 		public ICollection<Attachments> Attachment { get; set; } = new List<Attachments>();

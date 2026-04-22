@@ -1,6 +1,8 @@
 using backend.getdata;
 using Dto;
+using Models.Post;
 using Models.User;
+using Newtonsoft.Json;
 using System.Security.Claims;
 
 namespace Endpoints;
@@ -85,6 +87,14 @@ public static class UserEndpoint
 			return Results.Ok(friends);
 		})
 		.WithName("GetFriendsByUser");
+
+		group.MapGet("/{userId}/posts", async Task<IResult> (string userId) =>
+		{
+			Post postData = new();
+			List<Posts> posts = await postData.GetPostsByUser(userId);
+			return Results.Ok(JsonConvert.SerializeObject(posts));
+		})
+		.WithName("GetPostsByUser");
 
 		return group;
 	}
