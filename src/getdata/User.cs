@@ -112,6 +112,20 @@ namespace backend.getdata
 			}
 		}
 
+		public async Task<Users?> GetUserById(string userId)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
+				return await db.User.FirstOrDefaultAsync(u => u.Id == userId);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return null;
+			}
+		}
+
 		public async Task<List<Users>?> GetAllUsers()
 		{
 			try
