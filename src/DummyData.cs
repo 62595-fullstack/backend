@@ -227,7 +227,7 @@ class DummyData
 				new UserFriendships { Id = 2, UserAId = "9001", UserBId = "999", CreatedDate = DateTime.UtcNow.AddDays(-7) },
 				new UserFriendships { Id = 3, UserAId = "9002", UserBId = "9003", CreatedDate = DateTime.UtcNow.AddDays(-3) }
 			);
-			
+
 			// Posts
 			await Add(db,
 				new Posts { Id = 998, Title = "Fist Event Post", CreatedDate = DateTime.UtcNow, UserId = 1000, OrganizationEventId = 1000 },
