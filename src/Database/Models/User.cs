@@ -13,7 +13,7 @@ public class Users : IdentityUser
 
 	[MaxLength(128)]
 	public required string LastName { get; set; }
-	
+
 	public required DateOnly DateOfBirth { get; set; }
 
 	[Key]

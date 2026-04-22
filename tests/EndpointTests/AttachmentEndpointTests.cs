@@ -55,5 +55,4 @@ public class AttachmentEndpointTests(HttpClientFixture httpClientFixture)
 		Console.WriteLine("content: " + content.ToString());
 		Assert.NotNull(content);
 	}
-
 }

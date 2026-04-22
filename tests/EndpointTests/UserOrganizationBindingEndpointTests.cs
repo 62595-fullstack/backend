@@ -22,6 +22,4 @@ public class UserOrganizationBindingEndpointTests(HttpClientFixture httpClientFi
 		Assert.NotNull(content);
 		// Assert.NotNull(organizations);
 	}
-
-
 }

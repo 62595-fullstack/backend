@@ -20,5 +20,4 @@ public class OrganizationEndpointTests(HttpClientFixture httpClientFixture)
 		Assert.NotNull(content);
 		// Assert.NotNull(organizations);
 	}
-
 }

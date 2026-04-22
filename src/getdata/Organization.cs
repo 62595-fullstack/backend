@@ -15,7 +15,6 @@ namespace backend.getdata
 
 				await db.SaveChangesAsync();
 
-
 				return await db.Organization.Where(o => o.Id == organizations.Id).FirstAsync();
 			}
 			catch (Exception ex)
@@ -24,7 +23,6 @@ namespace backend.getdata
 				return organizations;
 			}
 		}
-
 
 		public async Task<Organizations?> GetOrganizationByName(string OrganizationName)
 		{
@@ -70,7 +68,6 @@ namespace backend.getdata
 				return null;
 			}
 		}
-
 
 		public async Task<bool> DeleteOrganization(int id)
 		{
