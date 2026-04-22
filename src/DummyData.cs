@@ -88,7 +88,7 @@ class DummyData
 
 			// UserOrganizationBindings
 			await Add(db,
-				new UserOrganizationBindings { Id = 123, UserId = 123, OrganizationId = 123, RoleId = 999 },
+				new UserOrganizationBindings { Id = 123, UserId = 123, OrganizationId = 123, RoleId = 1000 },
 				new UserOrganizationBindings { Id = 999, UserId = 999, OrganizationId = 998, RoleId = 999 },
 				new UserOrganizationBindings { Id = 1000, UserId = 1000, OrganizationId = 1000, RoleId = 999 },
 				new UserOrganizationBindings { Id = 9001, UserId = 9001, OrganizationId = 9001, RoleId = 999 },
