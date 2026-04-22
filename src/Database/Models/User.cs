@@ -8,9 +8,13 @@ namespace Models.User;
 
 public class Users : IdentityUser
 {
+	[MaxLength(128)]
 	public required string FirstName { get; set; }
 
-	public required int Age { get; set; }
+	[MaxLength(128)]
+	public required string LastName { get; set; }
+	
+	public required DateOnly DateOfBirth { get; set; }
 
 	[Key]
 	public override string? Email { get; set; }
