@@ -1,3 +1,4 @@
+using Dto;
 using Microsoft.EntityFrameworkCore;
 using Models.OrganizationEvent;
 using Models.User;
@@ -63,6 +64,25 @@ namespace backend.getdata
 			DatabaseContext db = new DatabaseContext();
 			await db.OrganizationEvent.AddAsync(organizationEvents);
 			await db.SaveChangesAsync();
+		}
+
+		public async Task<bool> updateEvent(int id, UpdateEventRequest req)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
+				OrganizationEvents? ev = await db.OrganizationEvent.FindAsync(id);
+				if (ev == null) return false;
+				if (req.Description != null) ev.Description = req.Description;
+				if (req.Rules != null) ev.Rules = req.Rules;
+				await db.SaveChangesAsync();
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				return false;
+			}
 		}
 
 		public async Task<bool> deleteOrganizationEvent(int id)
