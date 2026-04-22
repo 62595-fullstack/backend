@@ -1,5 +1,4 @@
 ﻿
-
 using Models.UserOrganizationBinding;
 
 namespace Models.Role
@@ -9,7 +8,6 @@ namespace Models.Role
 		public int Id { get; set; }
 
 		public required string Name { get; set; }
-
 
 		public ICollection<UserOrganizationBindings> UserOrganizationBinding { get; set; } = new List<UserOrganizationBindings>();
 	}
