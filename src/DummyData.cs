@@ -221,12 +221,18 @@ class DummyData
 				new UserEventBindings { Id = 1000, UserId = 1000, OrganizationEventsId = 1000 }
 			);
 
-			// UserFriendships
-			await Add(db,
-				new UserFriendships { Id = 1, UserAId = "123", UserBId = "999", CreatedDate = DateTime.UtcNow.AddDays(-14) },
-				new UserFriendships { Id = 2, UserAId = "9001", UserBId = "999", CreatedDate = DateTime.UtcNow.AddDays(-7) },
-				new UserFriendships { Id = 3, UserAId = "9002", UserBId = "9003", CreatedDate = DateTime.UtcNow.AddDays(-3) }
-			);
+			// UserFriendships — no explicit Id so the identity sequence is used correctly
+			foreach (UserFriendships friendship in new[]
+			{
+				new UserFriendships { UserAId = "123", UserBId = "999", CreatedDate = DateTime.UtcNow.AddDays(-14) },
+				new UserFriendships { UserAId = "9001", UserBId = "999", CreatedDate = DateTime.UtcNow.AddDays(-7) },
+				new UserFriendships { UserAId = "9002", UserBId = "9003", CreatedDate = DateTime.UtcNow.AddDays(-3) },
+			})
+			{
+				if (!await db.UserFriendship.AnyAsync(f => f.UserAId == friendship.UserAId && f.UserBId == friendship.UserBId))
+					db.UserFriendship.Add(friendship);
+			}
+			await db.SaveChangesAsync();
 
 			// Posts
 			await Add(db,
