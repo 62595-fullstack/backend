@@ -79,6 +79,28 @@ public static class UserOrganizationBinding
 		})
 		.WithName("setUserToOrganization");
 
+		group.MapPost("/join/{organizationId}", async Task<IResult> (int organizationId, ClaimsPrincipal user) =>
+		{
+			try
+			{
+				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null) return Results.Unauthorized();
+
+				DataUserOrganizationBinding organizationData = new();
+				UserOrganizationBindings? existing = await organizationData.getUserOrganizationBindingForUser(userId, organizationId);
+				if (existing != null) return Results.Conflict("Already a member.");
+
+				bool successful = await organizationData.setUserToOrganization(int.Parse(userId), organizationId, 999);
+				return successful ? Results.Ok() : Results.Problem("Failed to join organization.");
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("joinOrganization");
+
 		return group;
 	}
 }
