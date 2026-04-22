@@ -10,13 +10,13 @@ namespace backend.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.Sql(@"ALTER TABLE ""Post"" ALTER COLUMN ""UserId"" TYPE text USING ""UserId""::text");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.Sql(@"ALTER TABLE ""Post"" ALTER COLUMN ""UserId"" TYPE integer USING ""UserId""::integer");
         }
     }
 }
