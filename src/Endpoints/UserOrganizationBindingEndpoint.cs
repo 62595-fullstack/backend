@@ -95,8 +95,9 @@ public static class UserOrganizationBinding
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.Message);
-				return Results.Problem(ex.Message);
+				string detail = ex.InnerException?.Message ?? ex.Message;
+				Console.WriteLine(detail);
+				return Results.Problem(detail);
 			}
 		})
 		.WithName("joinOrganization");

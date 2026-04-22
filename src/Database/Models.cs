@@ -73,6 +73,10 @@ public class DatabaseContext : DbContext
 			.HasForeignKey(friendship => friendship.UserBId)
 			.HasPrincipalKey(user => user.Id)
 			.OnDelete(DeleteBehavior.Cascade);
+
+		modelBuilder.Entity<UserOrganizationBindings>()
+			.HasIndex(b => new { b.UserId, b.OrganizationId })
+			.IsUnique();
 	}
 }
 

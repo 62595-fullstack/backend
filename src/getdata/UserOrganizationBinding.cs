@@ -85,26 +85,17 @@ namespace backend.getdata
 
 		public async Task<bool> setUserToOrganization(int userId, int organizationId, int roleId)
 		{
-			try
-			{
-				DatabaseContext db = new DatabaseContext();
-				UserOrganizationBindings uob = new UserOrganizationBindings();
+			DatabaseContext db = new DatabaseContext();
+			UserOrganizationBindings uob = new UserOrganizationBindings();
 
-				uob.OrganizationId = organizationId;
-				uob.UserId = userId;
-				uob.RoleId = roleId;
+			uob.OrganizationId = organizationId;
+			uob.UserId = userId;
+			uob.RoleId = roleId;
 
-				await db.UserOrganizationBinding.AddAsync(uob);
-				await db.SaveChangesAsync();
+			await db.UserOrganizationBinding.AddAsync(uob);
+			await db.SaveChangesAsync();
 
-				return true;
-
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.Message);
-				return false;
-			}
+			return true;
 		}
 	}
 }
