@@ -126,6 +126,26 @@ namespace backend.getdata
 			}
 		}
 
+		public async Task<Users?> UpdateProfile(string userId, UpdateProfileDto request)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
+				Users? user = await db.User.FirstOrDefaultAsync(u => u.Id == userId);
+				if (user == null) return null;
+
+				if (request.Bio != null) user.Bio = request.Bio;
+
+				await db.SaveChangesAsync();
+				return user;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return null;
+			}
+		}
+
 		public async Task<List<Users>?> GetAllUsers()
 		{
 			try

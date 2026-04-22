@@ -22,7 +22,8 @@ public class DataFriendship
 			user.FirstName,
 			user.LastName,
 			user.UserName ?? user.FirstName,
-			user.DateOfBirth
+			user.DateOfBirth,
+			user.Bio
 		);
 	}
 

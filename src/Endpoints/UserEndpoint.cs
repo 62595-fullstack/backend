@@ -31,9 +31,22 @@ public static class UserEndpoint
 			Users? u = await userData.GetUserById(currentUserId);
 			if (u == null) return Results.NotFound();
 
-			return Results.Ok(new UserSummaryDto(u.Id, u.Email ?? "", u.FirstName, u.LastName, u.UserName ?? u.FirstName, u.DateOfBirth));
+			return Results.Ok(new UserSummaryDto(u.Id, u.Email ?? "", u.FirstName, u.LastName, u.UserName ?? u.FirstName, u.DateOfBirth, u.Bio));
 		})
 		.WithName("GetMe");
+
+		group.MapPatch("/me", async Task<IResult> (ClaimsPrincipal user, UpdateProfileDto request) =>
+		{
+			string? currentUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (currentUserId == null) return Results.Unauthorized();
+
+			DataUser userData = new();
+			Users? u = await userData.UpdateProfile(currentUserId, request);
+			if (u == null) return Results.NotFound();
+
+			return Results.Ok(new UserSummaryDto(u.Id, u.Email ?? "", u.FirstName, u.LastName, u.UserName ?? u.FirstName, u.DateOfBirth, u.Bio));
+		})
+		.WithName("UpdateMe");
 
 		group.MapGet("/me/friends", async Task<IResult> (ClaimsPrincipal user) =>
 		{
@@ -76,7 +89,7 @@ public static class UserEndpoint
 			Users? u = await userData.GetUserById(userId);
 			if (u == null) return Results.NotFound();
 
-			return Results.Ok(new UserSummaryDto(u.Id, u.Email ?? "", u.FirstName, u.LastName, u.UserName ?? u.FirstName, u.DateOfBirth));
+			return Results.Ok(new UserSummaryDto(u.Id, u.Email ?? "", u.FirstName, u.LastName, u.UserName ?? u.FirstName, u.DateOfBirth, u.Bio));
 		})
 		.WithName("GetUserById");
 
