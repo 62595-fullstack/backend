@@ -101,6 +101,25 @@ public static class UserOrganizationBinding
 		})
 		.WithName("joinOrganization");
 
+		group.MapDelete("/leave/{organizationId}", async Task<IResult> (int organizationId, ClaimsPrincipal user) =>
+		{
+			try
+			{
+				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null) return Results.Unauthorized();
+
+				DataUserOrganizationBinding organizationData = new();
+				bool successful = await organizationData.removeUserFromOrganization(userId, organizationId);
+				return successful ? Results.Ok() : Results.NotFound("Binding not found.");
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("leaveOrganization");
+
 		return group;
 	}
 }

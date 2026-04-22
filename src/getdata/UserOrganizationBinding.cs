@@ -63,6 +63,26 @@ namespace backend.getdata
 			}
 		}
 
+		public async Task<bool> removeUserFromOrganization(string userId, int organizationId)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
+				UserOrganizationBindings? binding = await db.UserOrganizationBinding
+					.FirstOrDefaultAsync(x => x.UserId == int.Parse(userId) && x.OrganizationId == organizationId);
+				if (binding == null) return false;
+
+				db.UserOrganizationBinding.Remove(binding);
+				await db.SaveChangesAsync();
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return false;
+			}
+		}
+
 		public async Task<bool> setUserToOrganization(int userId, int organizationId, int roleId)
 		{
 			try
