@@ -11,3 +11,4 @@ public record FriendSummaryDto(string Id, string Email, string FirstName, string
 public record AddFriendDto(string FriendUserId);
 public record UpdateEventRequest(string? Description, string? Rules);
 public record UpdateOrganizationDto(string? Description);
+public record OrgMemberDto(int BindingId, string UserId, string FirstName, string LastName, int RoleId, string RoleName);
