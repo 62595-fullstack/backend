@@ -1,7 +1,5 @@
 
-
 using Microsoft.EntityFrameworkCore;
-
 
 namespace backend.getdata
 {
@@ -59,6 +57,5 @@ namespace backend.getdata
 				return null;
 			}
 		}
-
 	}
 }

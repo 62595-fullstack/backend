@@ -38,7 +38,6 @@ namespace backend.getdata
 			}
 		}
 
-
 		public async Task<bool> loginUsers(string email, string password)
 		{
 			try
@@ -66,7 +65,6 @@ namespace backend.getdata
 				return false;
 			}
 		}
-
 
 		public async Task<Users?> getUserByEmail(string email)
 		{
