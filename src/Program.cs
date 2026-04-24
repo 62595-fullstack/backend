@@ -20,6 +20,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationO
 
 IConfigurationRoot config = new ConfigurationBuilder()
 					.AddJsonFile("appsettings.json")
+					.AddJsonFile("secrets.json")
 					.AddUserSecrets(Assembly.GetExecutingAssembly())
 					.Build();
 
@@ -46,7 +47,7 @@ builder.Services.AddCors(options =>
 {
 	options.AddDefaultPolicy(policy =>
 	{
-		policy.WithOrigins($"http://{config["host"]}:3000")
+		policy.WithOrigins($"http://{config["host"] ?? config["User-thing:host"]}:3000")
 			  .AllowAnyHeader()
 			  .AllowAnyMethod();
 	});
@@ -55,17 +56,16 @@ builder.Services.AddCors(options =>
 builder.Services
 	.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 	.AddJwtBearer(options =>
-			{
-			
+			{			
 				options.RequireHttpsMetadata = false;
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
 					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
-					ValidIssuer = $"http://{config["host"]}:{config["programPort"]}",
+					ValidIssuer = $"http://{config["host"] ?? config["User-thing:host"]}:{config["programPort"] ?? config["User-thing:programPort"]}",
 					ValidAudience = config["Jwt:Audience"],
 					ClockSkew = TimeSpan.Zero,
 					ValidIssuers = [
-					$"http://{config["host"]}:{config["programPort"]}"
+					$"http://{config["host"] ?? config["User-thing:host"]}:{config["programPort"] ?? config["User-thing:programPort"]}"
 					],
 				};
 			});

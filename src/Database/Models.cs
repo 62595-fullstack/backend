@@ -27,14 +27,15 @@ public class DatabaseContext : DbContext
 		try
 		{
 			IConfigurationRoot config = new ConfigurationBuilder()
+				.AddJsonFile("secrets.json")
 				.AddUserSecrets(Assembly.GetExecutingAssembly())
 				.Build();
 
-			var connString = $@"Host={config["host"]};
-						 Port={config["port"]};
-                         Username={config["username"]};
-                         Password={config["password"]};
-                         Database={config["database"]}";
+			var connString = $@"Host={config["host"] ?? config["User-thing:host"]};
+						 Port={config["port"] ?? config["User-thing:port"]};
+                         Username={config["username"] ?? config["User-thing:username"]};
+                         Password={config["password"] ?? config["User-thing:password"]};
+                         Database={config["database"] ?? config["User-thing:database"]}";
 			optionsBuilder.UseNpgsql(connString);
 		}
 		catch

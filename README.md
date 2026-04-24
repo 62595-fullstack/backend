@@ -13,6 +13,21 @@ dotnet user-secrets set programPort 5000 --project src
 dotnet user-secrets init --project tests
 dotnet user-secrets set host localhost --project tests
 dotnet user-secrets set port 5000 --project tests
+
+
+test server 
+dotnet user-secrets set host localhost --project src --id "test"
+dotnet user-secrets set username postgres --project src --id "test"
+dotnet user-secrets set password facebook --project src --id "test"
+dotnet user-secrets set database BookFace --project src --id "test"
+dotnet user-secrets set port 5432 --project src --id "test"
+dotnet user-secrets set programPort 5000 --project src --id "test"
+
+dotnet user-secrets init --project tests --id "test"
+dotnet user-secrets set host localhost --project tests --id "test"
+dotnet user-secrets set port 5000 --project tests --id "test"
+
+
 ```
 
 2. Optional: Open docker desktop
@@ -44,5 +59,5 @@ dotnet user-secrets set database BookFace --project src
 dotnet user-secrets set port 5432 --project src
 dotnet user-secrets set programPort 5000 --project src
 
-dotnet user-secrets set host testHost --project tests
+dotnet user-secrets set testHost localhost --project tests
 dotnet user-secrets set testPort 5000 --project tests

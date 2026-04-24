@@ -56,6 +56,7 @@ public static class loginEndpoint
 	{
 		IConfigurationRoot config = new ConfigurationBuilder()
 			.AddUserSecrets(Assembly.GetExecutingAssembly())
+			.AddJsonFile("secrets.json")
 			.AddJsonFile("appsettings.json")
 			.Build();
 
@@ -64,8 +65,8 @@ public static class loginEndpoint
 
 		var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-		string host = config["host"] ?? "";
-		string port = config["programPort"] ?? "";
+		string host = config["host"] ?? config["User-thing:host"] ?? "";
+		string port = config["programPort"] ?? config["User-thing:programPort"] ?? "";
 
 		var tokenDescriptor = new SecurityTokenDescriptor
 		{

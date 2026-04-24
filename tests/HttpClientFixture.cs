@@ -13,11 +13,12 @@ public class HttpClientFixture : IAsyncLifetime
 	public HttpClientFixture()
 	{
 		IConfigurationRoot config = new ConfigurationBuilder()
+					.AddJsonFile("secrets.json")
 					.AddUserSecrets(Assembly.GetExecutingAssembly())
 					.Build();
 		client = new HttpClient
 		{
-			BaseAddress = new Uri($"http://{config["testHost"]}:{config["testPort"]}")
+			BaseAddress = new Uri($"http://{config["testHost"] ?? config["User-thing:testHost"]}:{config["testPort"]?? config["User-thing:testPort"]}")
 		};
 	}
 
