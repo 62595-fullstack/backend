@@ -34,4 +34,11 @@
     <ProjectReference Include="../src/backend.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="secrets.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+
 </Project>
