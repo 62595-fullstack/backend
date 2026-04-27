@@ -3,6 +3,7 @@ using Dto;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Models.User;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 
@@ -10,7 +11,7 @@ namespace Endpoints;
 
 public static class loginEndpoint
 {
-	public static RouteGroupBuilder MaploginEndpoint(this RouteGroupBuilder group)
+	public static RouteGroupBuilder MapLoginEndpoint(this RouteGroupBuilder group)
 	{
 		group.MapPost("/register", async Task<IResult> (RegisterCredentialsDto registerDto) =>
 		{
@@ -63,7 +64,8 @@ public static class loginEndpoint
 	static private string CreateToken(Users user)
 	{
 		IConfigurationRoot config = new ConfigurationBuilder()
-			.AddJsonFile("appsettings.json")
+			.AddUserSecrets(Assembly.GetExecutingAssembly())
+			.AddEnvironmentVariables()
 			.Build();
 
 		string secretKey = config["Jwt:Secret"]!;
@@ -71,7 +73,10 @@ public static class loginEndpoint
 
 		var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-		var tokenDiscriptor = new SecurityTokenDescriptor
+		string host = config["host"] ?? "";
+		string port = config["programPort"] ?? "";
+
+		var tokenDescriptor = new SecurityTokenDescriptor
 		{
 			Subject = new ClaimsIdentity([
 					new Claim(JwtRegisteredClaimNames.Sub, user.Id),
@@ -79,13 +84,13 @@ public static class loginEndpoint
 			]),
 			Expires = DateTime.UtcNow.AddMinutes(60),
 			SigningCredentials = credentials,
-			Issuer = config["Jwt:Issuer"],
+			Issuer = "http://" + host + ":" + port,
 			Audience = config["Jwt:Audience"],
 		};
 
 		var handler = new JsonWebTokenHandler();
 
-		string token = handler.CreateToken(tokenDiscriptor);
+		string token = handler.CreateToken(tokenDescriptor);
 
 		return token;
 	}

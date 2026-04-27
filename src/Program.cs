@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System.Reflection;
 using System.Text;
 
 JsonConvert.DefaultSettings = () => new JsonSerializerSettings
@@ -16,6 +17,12 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationO
 	Args = args,
 	WebRootPath = "../wwwroot"
 });
+
+IConfigurationRoot config = new ConfigurationBuilder()
+					.AddJsonFile("appsettings.json")
+					.AddEnvironmentVariables()
+					.AddUserSecrets(Assembly.GetExecutingAssembly())
+					.Build();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -40,7 +47,7 @@ builder.Services.AddCors(options =>
 {
 	options.AddDefaultPolicy(policy =>
 	{
-		policy.WithOrigins("http://localhost:3000")
+		policy.WithOrigins($"http://{config["host"]}:3000")
 			  .AllowAnyHeader()
 			  .AllowAnyMethod();
 	});
@@ -50,18 +57,15 @@ builder.Services
 	.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 	.AddJwtBearer(options =>
 			{
-				IConfigurationRoot config = new ConfigurationBuilder()
-					.AddJsonFile("appsettings.json")
-					.Build();
 				options.RequireHttpsMetadata = false;
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
 					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
-					ValidIssuer = config["Jwt:Issuers"],
+					ValidIssuer = $"http://{config["host"]}:{config["programPort"]}",
 					ValidAudience = config["Jwt:Audience"],
 					ClockSkew = TimeSpan.Zero,
 					ValidIssuers = [
-					"http://localhost:5000"
+					$"http://{config["host"]}:{config["programPort"]}"
 					],
 				};
 			});
@@ -111,5 +115,5 @@ app.MapGroup("/users")
 app.MapGroup("/GDPR")
 	.RequireAuthorization()
 	.MapGDPREndpoints();
-app.MapGroup("").MaploginEndpoint();
+app.MapGroup("").MapLoginEndpoint();
 app.Run();
