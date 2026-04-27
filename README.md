@@ -1,7 +1,7 @@
-
 # Start Database up
 
-1. User-secrets
+1. Secrets
+1.1 DotNET user-secrets
 ```bash
 dotnet user-secrets set host localhost --project src
 dotnet user-secrets set username postgres --project src
@@ -9,23 +9,16 @@ dotnet user-secrets set password facebook --project src
 dotnet user-secrets set database BookFace --project src
 dotnet user-secrets set port 5432 --project src
 dotnet user-secrets set programPort 5000 --project src
+```
 
-dotnet user-secrets init --project tests
-dotnet user-secrets set host localhost --project tests
-dotnet user-secrets set port 5000 --project tests
-
-
-test server 
-dotnet user-secrets set host localhost --project src --id "test"
-dotnet user-secrets set username postgres --project src --id "test"
-dotnet user-secrets set password facebook --project src --id "test"
-dotnet user-secrets set database BookFace --project src --id "test"
-dotnet user-secrets set port 5432 --project src --id "test"
-dotnet user-secrets set programPort 5000 --project src --id "test"
-
-dotnet user-secrets init --project tests --id "test"
-dotnet user-secrets set host localhost --project tests --id "test"
-dotnet user-secrets set port 5000 --project tests --id "test"
+1.2 Environment variables
+Linux
+```bash
+export host=localhost port=5432 username=postgres password=facebook database=BookFace programport=5000
+```
+Windows
+```bash
+set host=localhost port=5432 username=postgres password=facebook database=BookFace programport=5000
 ```
 
 2. Optional: Open docker desktop
@@ -47,20 +40,4 @@ dotnet ef database update
 ```bash
 dotnet run -e ASPNETCORE_ENVIRONMENT=development --project src
 ```
-
-
-Update user secrets
-dotnet user-secrets set host localhost --project src
-dotnet user-secrets set username postgres --project src
-dotnet user-secrets set password facebook --project src
-dotnet user-secrets set database BookFace --project src
-dotnet user-secrets set port 5432 --project src
-dotnet user-secrets set programPort 5000 --project src
-
-dotnet user-secrets set testHost localhost --project tests
-dotnet user-secrets set testPort 5000 --project tests
-
-
-export host=localhost port=5432 username=postgres password=facebook database=BookFace programport=5000
-set host=localhost port=5432 username=postgres password=facebook database=BookFace programport=5000
 
