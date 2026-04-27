@@ -1,4 +1,4 @@
 using tests;
 
-[CollectionDefinition("httpclient collection")]
+[CollectionDefinition("httpClientCollection")]
 public class HttpClientCollection : ICollectionFixture<HttpClientFixture>;

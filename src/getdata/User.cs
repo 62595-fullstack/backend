@@ -15,8 +15,9 @@ namespace backend.getdata
 				Users user = new Users
 				{
 					FirstName = registerDto.FirstName,
+					LastName = registerDto.LastName,
 					Email = registerDto.Email,
-					Age = registerDto.Age,
+					DateOfBirth = registerDto.DateOfBirth,
 					PasswordHash = registerDto.Password,
 				};
 				DatabaseContext db = new DatabaseContext();
@@ -36,7 +37,6 @@ namespace backend.getdata
 				return false;
 			}
 		}
-
 
 		public async Task<bool> loginUsers(string email, string password)
 		{
@@ -65,7 +65,6 @@ namespace backend.getdata
 				return false;
 			}
 		}
-
 
 		public async Task<Users?> getUserByEmail(string email)
 		{

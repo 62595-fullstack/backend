@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20260420070511_FriendsMigration")]
+    partial class FriendsMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,9 +65,6 @@ namespace backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CoverPhotoId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -79,14 +79,7 @@ namespace backend.Migrations
                     b.Property<int>("OrganizationPostId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("ProfilePictureId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("CoverPhotoId");
-
-                    b.HasIndex("ProfilePictureId");
 
                     b.ToTable("Organization");
                 });
@@ -114,10 +107,6 @@ namespace backend.Migrations
 
                     b.Property<int>("OrganizationId")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Rules")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
@@ -230,28 +219,22 @@ namespace backend.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Age")
+                        .HasColumnType("integer");
+
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("text");
-
-                    b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Id")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -383,21 +366,6 @@ namespace backend.Migrations
                         .HasForeignKey("PostId");
 
                     b.Navigation("Post");
-                });
-
-            modelBuilder.Entity("Models.Organization.Organizations", b =>
-                {
-                    b.HasOne("Models.Attachment.Attachments", "CoverPhoto")
-                        .WithMany()
-                        .HasForeignKey("CoverPhotoId");
-
-                    b.HasOne("Models.Attachment.Attachments", "ProfilePicture")
-                        .WithMany()
-                        .HasForeignKey("ProfilePictureId");
-
-                    b.Navigation("CoverPhoto");
-
-                    b.Navigation("ProfilePicture");
                 });
 
             modelBuilder.Entity("Models.OrganizationEvent.OrganizationEvents", b =>

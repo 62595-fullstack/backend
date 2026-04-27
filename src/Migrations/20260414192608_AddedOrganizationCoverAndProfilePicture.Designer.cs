@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20260414192608_AddedOrganizationCoverAndProfilePicture")]
+    partial class AddedOrganizationCoverAndProfilePicture
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -114,10 +117,6 @@ namespace backend.Migrations
 
                     b.Property<int>("OrganizationId")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Rules")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
@@ -230,28 +229,22 @@ namespace backend.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Age")
+                        .HasColumnType("integer");
+
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("text");
-
-                    b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Id")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -313,35 +306,6 @@ namespace backend.Migrations
                     b.HasIndex("UserEmail");
 
                     b.ToTable("UserEventBinding");
-                });
-
-            modelBuilder.Entity("Models.UserFriendship.UserFriendships", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UserAId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserBId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserBId");
-
-                    b.HasIndex("UserAId", "UserBId")
-                        .IsUnique();
-
-                    b.ToTable("UserFriendship");
                 });
 
             modelBuilder.Entity("Models.UserOrganizationBinding.UserOrganizationBindings", b =>
@@ -466,27 +430,6 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Models.UserFriendship.UserFriendships", b =>
-                {
-                    b.HasOne("Models.User.Users", "UserA")
-                        .WithMany("FriendshipsAsUserA")
-                        .HasForeignKey("UserAId")
-                        .HasPrincipalKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.User.Users", "UserB")
-                        .WithMany("FriendshipsAsUserB")
-                        .HasForeignKey("UserBId")
-                        .HasPrincipalKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserA");
-
-                    b.Navigation("UserB");
-                });
-
             modelBuilder.Entity("Models.UserOrganizationBinding.UserOrganizationBindings", b =>
                 {
                     b.HasOne("Models.Organization.Organizations", "Organization")
@@ -539,10 +482,6 @@ namespace backend.Migrations
 
             modelBuilder.Entity("Models.User.Users", b =>
                 {
-                    b.Navigation("FriendshipsAsUserA");
-
-                    b.Navigation("FriendshipsAsUserB");
-
                     b.Navigation("UserEventBindings");
 
                     b.Navigation("UserOrganizationBindings");

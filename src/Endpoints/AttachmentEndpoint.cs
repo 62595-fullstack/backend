@@ -1,7 +1,6 @@
 using backend.getdata;
-using Microsoft.AspNetCore.Mvc;
+using Dto;
 using Models.Attachment;
-using System.Net;
 
 namespace Endpoints;
 
@@ -9,17 +8,26 @@ public static class AttachmentEndpoint
 {
 	public static RouteGroupBuilder MapAttachmentEndpoints(this RouteGroupBuilder group)
 	{
-		group.MapGet("/{attachmentId}", async Task<Attachments> (int attachmentId) =>
+		group.MapGet("/{attachmentId}", async Task<Attachments?> (int attachmentId) =>
 		{
 			try
 			{
 				DataAttachment dam = new DataAttachment();
-				Attachments am = await dam.GetAttachment(attachmentId);
-				return am;
+				Attachments? am = await dam.GetAttachment(attachmentId);
+
+				if (am == null)
+				{
+					throw new Exception("No attachments");
+				}
+				else
+				{
+					return am;
+				}
+
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.Message);
+				Console.Write(ex.Message);
 				return null;
 			}
 		})
@@ -45,22 +53,42 @@ public static class AttachmentEndpoint
 		})
 		.WithName("DeleteAttachment");
 
-		group.MapPost("/{postsId}", async Task<string> (int postId, IFormFile file) =>
+		group.MapPost("/profilepicture/{organizationId}", async Task<IResult> (AttachmentDto attachment, int organizationId) =>
 		{
 			try
 			{
 				DataAttachment dam = new DataAttachment();
-				await dam.SaveFileToPost(file, postId);
+				bool success = await dam.AddOrganizationCoverPhoto(attachment, organizationId);
+				if (success) return Results.InternalServerError();
+				return Results.Ok();
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.Message);
-				return HttpStatusCode.InternalServerError.ToString();
+				return Results.InternalServerError();
 			}
-			return HttpStatusCode.OK.ToString();
 		})
-		.WithName("PostAttachment")
+		.WithName("PostOrganizationProfilepicture")
 		.DisableAntiforgery();
+
+		group.MapPost("/coverphoto/{organizationId}", async Task<IResult> (AttachmentDto attachment, int organizationId) =>
+			{
+				try
+				{
+					DataAttachment dam = new DataAttachment();
+					bool success = await dam.AddOrganizationCoverPhoto(attachment, organizationId);
+					if (success) return Results.InternalServerError();
+					return Results.Ok();
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine(ex.Message);
+					return Results.InternalServerError();
+				}
+			})
+			.WithName("PostOrganizationCoverphoto")
+			.DisableAntiforgery();
+
 		return group;
 	}
 }

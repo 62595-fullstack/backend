@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Models.Attachment;
 using Models.Organization;
 using Models.OrganizationEvent;
@@ -7,7 +8,9 @@ using Models.Post;
 using Models.Role;
 using Models.User;
 using Models.UserEventBinding;
+using Models.UserFriendship;
 using Models.UserOrganizationBinding;
+using System.Text.RegularExpressions;
 
 class DummyData
 {
@@ -32,35 +35,35 @@ class DummyData
 		await db.SaveChangesAsync();
 	}
 
-	public static async void Initialize()
+	public static async Task Initialize()
 	{
 		using (DatabaseContext db = new())
 		{
 			PasswordHasher<Users> hasher = new();
 
 			// Users
-			Users friskFyr = new() { Id = "123", Email = "friskfyr@friskefyre.com", FirstName = "Frisk", UserName = "Frisk Fyr", Age = 25 };
+			Users friskFyr = new() { Id = "123", Email = "friskfyr@friskefyre.com", FirstName = "Frisk", LastName = "Fyr", UserName = "Frisk Fyr", DateOfBirth = new DateOnly(2001, 4, 20) };
 			friskFyr.PasswordHash = hasher.HashPassword(friskFyr, "123");
 
-			Users frog = new() { Id = "999", Email = "crazyfrog@hotmail.com", FirstName = "Crazy", UserName = "Crazy Frog", Age = 2 };
+			Users frog = new() { Id = "999", Email = "crazyfrog@hotmail.com", FirstName = "Crazy", LastName = "Frog", UserName = "Crazy Frog", DateOfBirth = new DateOnly(2024, 4, 20) };
 			frog.PasswordHash = hasher.HashPassword(frog, "bingbing");
 
-			Users benson = new() { Id = "1000", Email = "bbbenson@hotmail.com", FirstName = "Berry B.", UserName = "Berry B. Benson", Age = 2 };
+			Users benson = new() { Id = "1000", Email = "bbbenson@hotmail.com", FirstName = "Berry B.", LastName = "Benson", UserName = "Berry B. Benson", DateOfBirth = new DateOnly(2024, 4, 20) };
 			benson.PasswordHash = hasher.HashPassword(benson, "1234");
 
-			Users johnDoe = new() { Id = "9001", Email = "johndoe@mock.com", FirstName = "John", UserName = "John Doe", Age = 30 };
+			Users johnDoe = new() { Id = "9001", Email = "johndoe@mock.com", FirstName = "John", LastName = "Doe", UserName = "John Doe", DateOfBirth = new DateOnly(1996, 4, 20) };
 			johnDoe.PasswordHash = hasher.HashPassword(johnDoe, "mock");
 
-			Users janeSmith = new() { Id = "9002", Email = "janesmith@mock.com", FirstName = "Jane", UserName = "Jane Smith", Age = 28 };
+			Users janeSmith = new() { Id = "9002", Email = "janesmith@mock.com", FirstName = "Jane", LastName = "Smith", UserName = "Jane Smith", DateOfBirth = new DateOnly(1998, 4, 20) };
 			janeSmith.PasswordHash = hasher.HashPassword(janeSmith, "mock");
 
-			Users chefMarco = new() { Id = "9003", Email = "chefmarco@mock.com", FirstName = "Marco", UserName = "Chef Marco", Age = 35 };
+			Users chefMarco = new() { Id = "9003", Email = "chefmarco@mock.com", FirstName = "Chef", LastName = "Marco", UserName = "Chef Marco", DateOfBirth = new DateOnly(1991, 4, 20) };
 			chefMarco.PasswordHash = hasher.HashPassword(chefMarco, "mock");
 
-			Users lisaGreen = new() { Id = "9004", Email = "lisagreen@mock.com", FirstName = "Lisa", UserName = "Lisa Green", Age = 25 };
+			Users lisaGreen = new() { Id = "9004", Email = "lisagreen@mock.com", FirstName = "Lisa", LastName = "Green", UserName = "Lisa Green", DateOfBirth = new DateOnly(2001, 4, 20) };
 			lisaGreen.PasswordHash = hasher.HashPassword(lisaGreen, "mock");
 
-			Users galleryOne = new() { Id = "9005", Email = "galleryone@mock.com", FirstName = "Gallery", UserName = "Gallery One", Age = 30 };
+			Users galleryOne = new() { Id = "9005", Email = "galleryone@mock.com", FirstName = "Gallery", LastName = "One", UserName = "Gallery One", DateOfBirth = new DateOnly(1996, 4, 20) };
 			galleryOne.PasswordHash = hasher.HashPassword(galleryOne, "mock");
 
 			await Add(db, friskFyr, frog, benson, johnDoe, janeSmith, chefMarco, lisaGreen, galleryOne);
@@ -217,6 +220,15 @@ class DummyData
 				new UserEventBindings { Id = 123, UserId = 123, OrganizationEventsId = 123 },
 				new UserEventBindings { Id = 1000, UserId = 1000, OrganizationEventsId = 1000 }
 			);
+
+			// UserFriendships — clear and re-seed each run to remove test leftovers and keep the sequence healthy
+			await db.UserFriendship.ExecuteDeleteAsync();
+			await db.UserFriendship.AddRangeAsync(
+				new UserFriendships { UserAId = "123", UserBId = "999", CreatedDate = DateTime.UtcNow.AddDays(-14) },
+				new UserFriendships { UserAId = "9001", UserBId = "999", CreatedDate = DateTime.UtcNow.AddDays(-7) },
+				new UserFriendships { UserAId = "9002", UserBId = "9003", CreatedDate = DateTime.UtcNow.AddDays(-3) }
+			);
+			await db.SaveChangesAsync();
 
 			// Posts
 			await Add(db,

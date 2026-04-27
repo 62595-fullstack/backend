@@ -1,5 +1,4 @@
 ﻿
-
 using Models.Attachment;
 using Models.OrganizationEvent;
 using Models.OrganizationPost;
@@ -26,6 +25,7 @@ namespace Models.Post
 		public Users? User { get; set; } = null!;
 		public OrganizationEvents? OrganizationEvent { get; set; } = null!;
 
+		//TODO: public required OrganizationPosts PostId { get; set; }
 		public OrganizationPosts PostId { get; set; }
 	}
 }
