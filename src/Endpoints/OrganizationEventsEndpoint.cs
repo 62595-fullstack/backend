@@ -12,6 +12,8 @@ namespace Endpoints;
 
 public static class OrganizationEventsEndpoint
 {
+	public record UpdateOrganizationEventDto(string? Description, string? Rules, string? BracketResults);
+
 	public static RouteGroupBuilder MapOrganizationEventsEndpoints(this RouteGroupBuilder group)
 	{
 		group.MapGet("/event/{id}", async Task<IResult> (int id) =>
@@ -76,6 +78,29 @@ public static class OrganizationEventsEndpoint
 			}
 		})
 		.WithName("PostOrganizationEvents");
+
+		group.MapPatch("/{id}", async Task<IResult> (int id, [FromBody] UpdateOrganizationEventDto update) =>
+		{
+			try
+			{
+				using DatabaseContext db = new();
+				OrganizationEvents? ev = await db.OrganizationEvent.FindAsync(id);
+				if (ev == null) return Results.NotFound();
+
+				if (update.Description != null) ev.Description = update.Description;
+				if (update.Rules != null) ev.Rules = update.Rules;
+				if (update.BracketResults != null) ev.BracketResults = update.BracketResults;
+
+				await db.SaveChangesAsync();
+				return Results.NoContent();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("UpdateOrganizationEvent");
 
 		group.MapDelete("/{id}", async Task<IResult> (int id, ClaimsPrincipal user) =>
 		{

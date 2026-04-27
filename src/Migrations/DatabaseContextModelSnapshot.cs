@@ -105,6 +105,10 @@ namespace backend.Migrations
                     b.Property<int?>("AttachmentId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("BracketResults")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -114,6 +118,10 @@ namespace backend.Migrations
 
                     b.Property<int>("OrganizationId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Rules")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
