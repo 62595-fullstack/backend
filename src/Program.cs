@@ -24,7 +24,7 @@ IConfigurationRoot config = new ConfigurationBuilder()
 					.AddUserSecrets(Assembly.GetExecutingAssembly())
 					.Build();
 
-builder.WebHost.UseUrls("http://localhost" + config["programPort"] ?? "5000");
+builder.WebHost.UseUrls("http://localhost:" + config["programPort"] ?? "5000");
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
