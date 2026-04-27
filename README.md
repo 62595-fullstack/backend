@@ -62,4 +62,5 @@ dotnet user-secrets set testPort 5000 --project tests
 
 
 export host=localhost port=5432 username=postgres password=facebook database=BookFace programport=5000
+set host=localhost port=5432 username=postgres password=facebook database=BookFace programport=5000
 
