@@ -29,10 +29,12 @@ public class DatabaseContext : DbContext
 		try
 		{
 			IConfigurationRoot config = new ConfigurationBuilder()
+				.AddEnvironmentVariables()
 				.AddUserSecrets(Assembly.GetExecutingAssembly())
 				.Build();
 
 			var connString = $@"Host={config["host"]};
+						 Port={config["port"]};
                          Username={config["username"]};
                          Password={config["password"]};
                          Database={config["database"]}";

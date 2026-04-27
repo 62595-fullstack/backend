@@ -1,7 +1,5 @@
 ﻿
-
 using Models.Post;
-
 
 namespace Models.OrganizationPost
 {
@@ -9,7 +7,6 @@ namespace Models.OrganizationPost
 	{
 
 		public int Id { get; set; }
-
 
 		public required int OrganizationId { get; set; }
 

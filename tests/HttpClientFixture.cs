@@ -1,5 +1,7 @@
+using Microsoft.Extensions.Configuration;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Reflection;
 
 namespace tests;
 
@@ -10,9 +12,13 @@ public class HttpClientFixture : IAsyncLifetime
 
 	public HttpClientFixture()
 	{
+		IConfigurationRoot config = new ConfigurationBuilder()
+					.AddEnvironmentVariables()
+					.AddUserSecrets(Assembly.GetExecutingAssembly())
+					.Build();
 		client = new HttpClient
 		{
-			BaseAddress = new Uri("http://localhost:5000")
+			BaseAddress = new Uri($"http://{config["testHost"]}:{config["testPort"]}")
 		};
 	}
 
@@ -20,7 +26,6 @@ public class HttpClientFixture : IAsyncLifetime
 	public async ValueTask InitializeAsync()
 	{
 		// Arrange
-		// LoginCredentials loginCredentials = new("crazyfrog@hotmail.com", "bingbing");
 		var loginCredentials = new
 		{
 			Email = "crazyfrog@hotmail.com",

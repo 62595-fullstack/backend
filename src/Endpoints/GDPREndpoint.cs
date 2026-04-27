@@ -1,6 +1,4 @@
 using backend.getdata;
-using Newtonsoft.Json;
-
 namespace Endpoints;
 
 public static class GDPREndpoint
@@ -12,7 +10,7 @@ public static class GDPREndpoint
 			try
 			{
 				DataGDPR organizationData = new DataGDPR();
-				int? nrRowsDeleted = await organizationData.DeleteUserAcountByEmail(email);
+				int? nrRowsDeleted = await organizationData.DeleteUserAccountByEmail(email);
 				return Results.Ok(nrRowsDeleted);
 			}
 			catch (Exception ex)

@@ -1,4 +1,4 @@
-﻿using Models.Attachment;
+using Models.Attachment;
 using Models.Organization;
 using Models.UserEventBinding;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,6 +11,7 @@ namespace Models.OrganizationEvent
 		public required int OrganizationId { get; set; }
 		public string Title { get; set; } = string.Empty;
 		public string Description { get; set; } = string.Empty;
+		public string Rules { get; set; } = string.Empty;
 		public string Rules { get; set; } = string.Empty;
 		public string BracketResults { get; set; } = "{}";
 		public int? AttachmentId { get; set; }

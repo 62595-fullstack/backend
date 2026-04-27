@@ -3,3 +3,5 @@ bin/
 backend.sln
 /.vs
 .idea
+.vscode/
+

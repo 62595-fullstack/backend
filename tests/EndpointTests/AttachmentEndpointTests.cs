@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 
 namespace tests.EndpointsTests;
 
-[Collection("httpclient collection")]
+[Collection("httpClientCollection")]
 public class AttachmentEndpointTests(HttpClientFixture httpClientFixture)
 {
 	private readonly HttpClient client = httpClientFixture.client;
@@ -55,5 +55,4 @@ public class AttachmentEndpointTests(HttpClientFixture httpClientFixture)
 		Console.WriteLine("content: " + content.ToString());
 		Assert.NotNull(content);
 	}
-
 }

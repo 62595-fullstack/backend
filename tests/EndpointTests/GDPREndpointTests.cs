@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 
 namespace tests.EndpointsTests;
 
-[Collection("httpclient collection")]
+[Collection("httpClientCollection")]
 public class GDPREndpointTests(HttpClientFixture httpClientFixture)
 {
 	private readonly HttpClient client = httpClientFixture.client;
@@ -12,7 +12,7 @@ public class GDPREndpointTests(HttpClientFixture httpClientFixture)
 	public async Task Delete_MissingUser_ReturnNull()
 	{
 		// Arrange
-		string email = "incorrectemail";
+		string email = "incorrectEmail";
 
 		// Act
 		HttpResponseMessage response = await client.DeleteAsync(
@@ -36,9 +36,10 @@ public class GDPREndpointTests(HttpClientFixture httpClientFixture)
 		RegisterCredentialsDto registerDto = new RegisterCredentialsDto
 		(
 			FirstName: "Bobby",
+			LastName: "Dobby",
 			Email: "bobby@hotmail.com",
 			Password: "123password",
-			Age: 67
+			DateOfBirth: new DateOnly(1959, 4, 20)
 		);
 		HttpResponseMessage response1 = await client.PostAsJsonAsync(
 				"register",
