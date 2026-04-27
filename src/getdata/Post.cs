@@ -14,7 +14,6 @@ namespace backend.getdata
 
 				Task<List<Posts>> posts = db.Post.ToListAsync();
 
-
 				return await posts;
 			}
 			catch (Exception ex)
@@ -40,7 +39,6 @@ namespace backend.getdata
 				return null;
 			}
 		}
-
 
 		public async Task<bool> getPostByOrganization(Posts post)
 		{
@@ -81,6 +79,5 @@ namespace backend.getdata
 				return false;
 			}
 		}
-
 	}
 }

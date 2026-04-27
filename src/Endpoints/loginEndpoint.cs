@@ -15,6 +15,15 @@ public static class loginEndpoint
 	{
 		group.MapPost("/register", async Task<IResult> (RegisterCredentialsDto registerDto) =>
 		{
+			if (string.IsNullOrWhiteSpace(registerDto.Email))
+				return Results.BadRequest("Email is required.");
+			if (string.IsNullOrWhiteSpace(registerDto.Password))
+				return Results.BadRequest("Password is required.");
+			if (string.IsNullOrWhiteSpace(registerDto.FirstName))
+				return Results.BadRequest("First name is required.");
+			if (string.IsNullOrWhiteSpace(registerDto.LastName))
+				return Results.BadRequest("Last name is required.");
+
 			try
 			{
 				DataUser ud = new DataUser();

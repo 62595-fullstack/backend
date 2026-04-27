@@ -80,7 +80,7 @@ app.UseCors();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	DummyData.Initialize();
+	await DummyData.Initialize();
 	app.UseSwagger();
 	// SwaggerUI can be viewed at http://localhost:{port}
 	app.UseSwaggerUI(options =>
@@ -109,6 +109,9 @@ app.MapGroup("/UserOrganizationBinding")
 app.MapGroup("/OrganizationEvents")
 	.RequireAuthorization()
 	.MapOrganizationEventsEndpoints();
+app.MapGroup("/users")
+	.RequireAuthorization()
+	.MapUserEndpoints();
 app.MapGroup("/GDPR")
 	.RequireAuthorization()
 	.MapGDPREndpoints();
