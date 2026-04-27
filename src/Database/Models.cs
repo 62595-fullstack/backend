@@ -55,6 +55,13 @@ public class DatabaseContext : DbContext
 			.HasIndex(friendship => new { friendship.UserAId, friendship.UserBId })
 			.IsUnique();
 
+		modelBuilder.Entity<Posts>()
+			.HasOne(post => post.User)
+			.WithMany()
+			.HasForeignKey(post => post.UserId)
+			.HasPrincipalKey(user => user.Id)
+			.OnDelete(DeleteBehavior.Cascade);
+
 		modelBuilder.Entity<UserFriendships>()
 			.HasOne(friendship => friendship.UserA)
 			.WithMany(user => user.FriendshipsAsUserA)
@@ -68,6 +75,10 @@ public class DatabaseContext : DbContext
 			.HasForeignKey(friendship => friendship.UserBId)
 			.HasPrincipalKey(user => user.Id)
 			.OnDelete(DeleteBehavior.Cascade);
+
+		modelBuilder.Entity<UserOrganizationBindings>()
+			.HasIndex(b => new { b.UserId, b.OrganizationId })
+			.IsUnique();
 	}
 }
 
