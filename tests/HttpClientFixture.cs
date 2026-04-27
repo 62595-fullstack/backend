@@ -18,7 +18,7 @@ public class HttpClientFixture : IAsyncLifetime
 					.Build();
 		client = new HttpClient
 		{
-			BaseAddress = new Uri($"http://{config["testHost"] ?? config["User-thing:testHost"]}:{config["testPort"] ?? config["User-thing:testPort"]}")
+			BaseAddress = new Uri($"http://{config["testHost"]}:{config["testPort"]}")
 		};
 	}
 

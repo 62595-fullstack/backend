@@ -47,7 +47,7 @@ builder.Services.AddCors(options =>
 {
 	options.AddDefaultPolicy(policy =>
 	{
-		policy.WithOrigins($"http://{config["host"] ?? config["User-thing:host"]}:3000")
+		policy.WithOrigins($"http://{config["host"]}:3000")
 			  .AllowAnyHeader()
 			  .AllowAnyMethod();
 	});
@@ -61,11 +61,11 @@ builder.Services
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
 					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
-					ValidIssuer = $"http://{config["host"] ?? config["User-thing:host"]}:{config["programPort"] ?? config["User-thing:programPort"]}",
+					ValidIssuer = $"http://{config["host"]}:{config["programPort"]}",
 					ValidAudience = config["Jwt:Audience"],
 					ClockSkew = TimeSpan.Zero,
 					ValidIssuers = [
-					$"http://{config["host"] ?? config["User-thing:host"]}:{config["programPort"] ?? config["User-thing:programPort"]}"
+					$"http://{config["host"]}:{config["programPort"]}"
 					],
 				};
 			});

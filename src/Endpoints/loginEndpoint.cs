@@ -64,8 +64,8 @@ public static class loginEndpoint
 
 		var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-		string host = config["host"] ?? config["User-thing:host"] ?? "";
-		string port = config["programPort"] ?? config["User-thing:programPort"] ?? "";
+		string host = config["host"] ?? "";
+		string port = config["programPort"] ?? "";
 
 		var tokenDescriptor = new SecurityTokenDescriptor
 		{
