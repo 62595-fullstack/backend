@@ -10,8 +10,14 @@ jobs:
     steps:
     - run: |
         tmux send -t runnerBackend:pane C-c
+        tmux send -t runnerBackend:pane "cd ~/backend_testing" ENTER
+        tmux send -t runnerBackend:pane "git pull" ENTER
+        tmux send -t runnerBackend:pane "cd ~/backend_testing/src" ENTER
+        tmux send -t runnerBackend:pane "dotnet ef database update" ENTER
+        tmux send -t runnerBackend:pane "dotnet run -e ASPNETCORE_ENVIRONMENT=development" ENTER
+        tmux send -t runnerBackend:pane C-c
         tmux send -t runnerBackend:pane "cd ~/backend" ENTER
         tmux send -t runnerBackend:pane "git pull" ENTER
         tmux send -t runnerBackend:pane "cd ~/backend/src" ENTER
         tmux send -t runnerBackend:pane "dotnet ef database update" ENTER
-        tmux send -t runnerBackend:pane "dotnet run -e ASPNETCORE_ENVIRONMENT=development" ENTER
+        tmux send -t runnerBackend:pane "dotnet run" ENTER
