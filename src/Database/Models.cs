@@ -27,7 +27,7 @@ public class DatabaseContext : DbContext
 		try
 		{
 			IConfigurationRoot config = new ConfigurationBuilder()
-				.AddJsonFile("secrets.json")
+				.AddEnvironmentVariables()
 				.AddUserSecrets(Assembly.GetExecutingAssembly())
 				.Build();
 

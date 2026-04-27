@@ -56,8 +56,7 @@ public static class loginEndpoint
 	{
 		IConfigurationRoot config = new ConfigurationBuilder()
 			.AddUserSecrets(Assembly.GetExecutingAssembly())
-			.AddJsonFile("secrets.json")
-			.AddJsonFile("appsettings.json")
+			.AddEnvironmentVariables()
 			.Build();
 
 		string secretKey = config["Jwt:Secret"]!;
@@ -76,7 +75,7 @@ public static class loginEndpoint
 			]),
 			Expires = DateTime.UtcNow.AddMinutes(60),
 			SigningCredentials = credentials,
-			Issuer = "http://"+host+":"+port,
+			Issuer = "http://" + host + ":" + port,
 			Audience = config["Jwt:Audience"],
 		};
 

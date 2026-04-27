@@ -20,7 +20,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationO
 
 IConfigurationRoot config = new ConfigurationBuilder()
 					.AddJsonFile("appsettings.json")
-					.AddJsonFile("secrets.json")
+					.AddEnvironmentVariables()
 					.AddUserSecrets(Assembly.GetExecutingAssembly())
 					.Build();
 
@@ -56,7 +56,7 @@ builder.Services.AddCors(options =>
 builder.Services
 	.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 	.AddJwtBearer(options =>
-			{			
+			{
 				options.RequireHttpsMetadata = false;
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
