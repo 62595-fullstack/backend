@@ -12,13 +12,6 @@ namespace backend.Migrations
 		protected override void Up(MigrationBuilder migrationBuilder)
 		{
 			migrationBuilder.AddColumn<string>(
-				name: "Rules",
-				table: "OrganizationEvent",
-				type: "text",
-				nullable: false,
-				defaultValue: "");
-
-			migrationBuilder.AddColumn<string>(
 				name: "BracketResults",
 				table: "OrganizationEvent",
 				type: "text",
@@ -28,10 +21,6 @@ namespace backend.Migrations
 
 		protected override void Down(MigrationBuilder migrationBuilder)
 		{
-			migrationBuilder.DropColumn(
-				name: "Rules",
-				table: "OrganizationEvent");
-
 			migrationBuilder.DropColumn(
 				name: "BracketResults",
 				table: "OrganizationEvent");

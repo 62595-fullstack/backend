@@ -75,6 +75,7 @@ namespace backend.getdata
 				if (ev == null) return false;
 				if (req.Description != null) ev.Description = req.Description;
 				if (req.Rules != null) ev.Rules = req.Rules;
+				if (req.BracketResults != null) ev.BracketResults = req.BracketResults;
 				await db.SaveChangesAsync();
 				return true;
 			}
