@@ -15,11 +15,12 @@ public static class AttachmentEndpoint
 			{
 				DataAttachment dam = new DataAttachment();
 				Attachments? am = await dam.GetAttachment(attachmentId);
-				
+
 				if (am == null)
 				{
 					throw new Exception("No attachments");
-				} else
+				}
+				else
 				{
 					return am;
 				}
