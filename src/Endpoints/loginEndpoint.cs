@@ -64,6 +64,7 @@ public static class loginEndpoint
 	static private string CreateToken(Users user)
 	{
 		IConfigurationRoot config = new ConfigurationBuilder()
+			.AddJsonFile("appsettings.json")
 			.AddUserSecrets(Assembly.GetExecutingAssembly())
 			.AddEnvironmentVariables()
 			.Build();
