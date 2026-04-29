@@ -74,7 +74,6 @@ public static class loginEndpoint
 	static private string CreateToken(Users user)
 	{
 		IConfigurationRoot config = new ConfigurationBuilder()
-		//AddedJsonFile("appsettings.json") because I could not login without it, idk.
 			.AddJsonFile("appsettings.json")
 			.AddUserSecrets(Assembly.GetExecutingAssembly())
 			.AddEnvironmentVariables()
