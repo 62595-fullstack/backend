@@ -14,7 +14,8 @@ jobs:
         tmux send -t runnerBackendTesting:pane "git pull" ENTER
         tmux send -t runnerBackendTesting:pane "cd ~/backend_testing/src" ENTER
         tmux send -t runnerBackendTesting:pane "dotnet ef database update" ENTER
-        tmux send -t runnerBackendTesting:pane "dotnet run -e ASPNETCORE_ENVIRONMENT=development" ENTER
+        tmux send -t runnerBackendTesting:runTests "cd ~/backend_testing" ENTER
+        tmux send -t runnerBackendTesting:runTests "sleep 5 && dotnet test" ENTER
         tmux send -t runnerBackend:pane C-c
         tmux send -t runnerBackend:pane "cd ~/backend" ENTER
         tmux send -t runnerBackend:pane "git pull" ENTER
