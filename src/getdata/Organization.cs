@@ -9,7 +9,7 @@ namespace backend.getdata
 		{
 			try
 			{
-				DatabaseContext db = new DatabaseContext();
+				DatabaseContext db = new();
 
 				await db.AddAsync(organizations);
 
@@ -28,7 +28,7 @@ namespace backend.getdata
 		{
 			try
 			{
-				DatabaseContext db = new DatabaseContext();
+				DatabaseContext db = new();
 
 				return await db.Organization.Where(o => o.Name == OrganizationName).FirstAsync();
 			}
@@ -43,7 +43,7 @@ namespace backend.getdata
 		{
 			try
 			{
-				DatabaseContext db = new DatabaseContext();
+				DatabaseContext db = new();
 
 				return await db.Organization.ToListAsync();
 			}
@@ -58,9 +58,27 @@ namespace backend.getdata
 		{
 			try
 			{
-				DatabaseContext db = new DatabaseContext();
+				DatabaseContext db = new();
 
 				return await db.Organization.Where(o => o.Id == OrganizationId).FirstAsync();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return null;
+			}
+		}
+
+		public async Task<Organizations?> UpdateDescription(int id, string? description)
+		{
+			try
+			{
+				DatabaseContext db = new();
+				Organizations? org = await db.Organization.FindAsync(id);
+				if (org == null) return null;
+				org.Description = description ?? "";
+				await db.SaveChangesAsync();
+				return org;
 			}
 			catch (Exception ex)
 			{
@@ -73,7 +91,7 @@ namespace backend.getdata
 		{
 			try
 			{
-				DatabaseContext db = new DatabaseContext();
+				DatabaseContext db = new();
 
 				Organizations organizations = await db.Organization.Where(o => o.Id == id).FirstAsync();
 				db.Organization.Remove(organizations);

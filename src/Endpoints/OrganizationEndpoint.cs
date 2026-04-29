@@ -1,7 +1,10 @@
 using backend.getdata;
+using Dto;
 using Models.Organization;
+using Models.UserOrganizationBinding;
 using Newtonsoft.Json;
 using System.Net;
+using System.Security.Claims;
 
 namespace Endpoints;
 
@@ -58,6 +61,32 @@ public static class OrganizationEndpoint
 			}
 		})
 		.WithName("GetOrganizationsById");
+
+		group.MapPatch("/{id}", async Task<IResult> (int id, UpdateOrganizationDto request, ClaimsPrincipal user) =>
+		{
+			try
+			{
+				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null) return Results.Unauthorized();
+
+				DataUserOrganizationBinding duob = new();
+				UserOrganizationBindings? binding = await duob.getUserOrganizationBindingForUser(userId, id);
+				if (binding is not { RoleId: 1000 }) return Results.Forbid();
+
+				DataOrganization organizationData = new();
+				Organizations? updated = await organizationData.UpdateDescription(id, request.Description);
+				if (updated == null) return Results.NotFound();
+				
+				return Results.Ok(JsonConvert.SerializeObject(updated));
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("PatchOrganization")
+		.RequireAuthorization();
 
 		group.MapDelete("/{id}", async Task<string> (int id) =>
 		{
