@@ -1,4 +1,5 @@
 using backend.getdata;
+using Dto;
 using Models.UserOrganizationBinding;
 using Newtonsoft.Json;
 using System.Security.Claims;
@@ -78,6 +79,108 @@ public static class UserOrganizationBinding
 			}
 		})
 		.WithName("setUserToOrganization");
+
+		group.MapPost("/join/{organizationId}", async Task<IResult> (int organizationId, ClaimsPrincipal user) =>
+		{
+			try
+			{
+				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null) return Results.Unauthorized();
+
+				DataUserOrganizationBinding organizationData = new();
+				UserOrganizationBindings? existing = await organizationData.getUserOrganizationBindingForUser(userId, organizationId);
+				if (existing != null) return Results.Conflict("Already a member.");
+
+				bool successful = await organizationData.setUserToOrganization(int.Parse(userId), organizationId, 999);
+				return successful ? Results.Ok() : Results.Problem("Failed to join organization.");
+			}
+			catch (Exception ex)
+			{
+				string detail = ex.InnerException?.Message ?? ex.Message;
+				Console.WriteLine(detail);
+				return Results.Problem(detail);
+			}
+		})
+		.WithName("joinOrganization");
+
+		group.MapDelete("/leave/{organizationId}", async Task<IResult> (int organizationId, ClaimsPrincipal user) =>
+		{
+			try
+			{
+				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null) return Results.Unauthorized();
+
+				DataUserOrganizationBinding organizationData = new();
+				bool successful = await organizationData.removeUserFromOrganization(userId, organizationId);
+				return successful ? Results.Ok() : Results.NotFound("Binding not found.");
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("leaveOrganization");
+
+		group.MapGet("/{organizationId}/members", async Task<IResult> (int organizationId) =>
+		{
+			try
+			{
+				DataUserOrganizationBinding data = new();
+				List<OrgMemberDto> members = await data.getOrganizationMembersWithDetails(organizationId);
+				return Results.Ok(members);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("getOrganizationMembers");
+
+		group.MapDelete("/{organizationId}/member/{userId}", async Task<IResult> (int organizationId, string userId, ClaimsPrincipal user) =>
+		{
+			try
+			{
+				string? adminId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (adminId == null) return Results.Unauthorized();
+
+				DataUserOrganizationBinding data = new();
+				UserOrganizationBindings? adminBinding = await data.getUserOrganizationBindingForUser(adminId, organizationId);
+				if (adminBinding?.RoleId != 1000) return Results.Forbid();
+
+				bool success = await data.removeUserFromOrganization(userId, organizationId);
+				return success ? Results.Ok() : Results.NotFound("Binding not found.");
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("removeOrganizationMember");
+
+		group.MapPatch("/{organizationId}/member/{userId}/role/{roleId}", async Task<IResult> (int organizationId, string userId, int roleId, ClaimsPrincipal user) =>
+		{
+			try
+			{
+				string? adminId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (adminId == null) return Results.Unauthorized();
+
+				DataUserOrganizationBinding data = new();
+				UserOrganizationBindings? adminBinding = await data.getUserOrganizationBindingForUser(adminId, organizationId);
+				if (adminBinding?.RoleId != 1000) return Results.Forbid();
+
+				bool success = await data.updateUserRoleInOrganization(int.Parse(userId), organizationId, roleId);
+				return success ? Results.Ok() : Results.NotFound("Binding not found.");
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("updateOrganizationMemberRole");
 
 		return group;
 	}

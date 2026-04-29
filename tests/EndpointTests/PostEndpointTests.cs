@@ -19,7 +19,7 @@ public class PostEndpointTest(HttpClientFixture httpClientFixture)
 		(
 			Title: "Test Post",
 			BodyText: "Test Bodytext",
-			UserId: 1000,
+			UserId: "1000",
 			OrganizationEventId: 1000
 		);
 		// Act

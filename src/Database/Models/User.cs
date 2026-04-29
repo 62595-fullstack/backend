@@ -16,6 +16,9 @@ public class Users : IdentityUser
 
 	public required DateOnly DateOfBirth { get; set; }
 
+	[MaxLength(512)]
+	public string? Bio { get; set; }
+
 	[Key]
 	public override string? Email { get; set; }
 
