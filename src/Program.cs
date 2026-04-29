@@ -1,5 +1,7 @@
 using Endpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Newtonsoft.Json;
@@ -89,7 +91,7 @@ if (app.Environment.IsDevelopment())
 {
 	using (DatabaseContext db = new())
 	{
-		await db.Database.MigrateAsync();
+		await db.GetService<IMigrator>().MigrateAsync();
 	}
 
 	await DummyData.Initialize();

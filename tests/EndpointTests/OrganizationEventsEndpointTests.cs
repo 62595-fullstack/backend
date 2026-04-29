@@ -1,5 +1,6 @@
 namespace tests.EndpointsTests;
 
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -26,7 +27,7 @@ public class OrganizationEventsEndpointTests(HttpClientFixture httpClientFixture
 	}
 
 	[Fact]
-	public async Task Patch_BracketResults_PersistsOnEvent()
+	public async Task Patch_BracketResults_ForNonOwner_ReturnsForbidden()
 	{
 		// Arrange
 		int eventId = 123;
@@ -46,22 +47,7 @@ public class OrganizationEventsEndpointTests(HttpClientFixture httpClientFixture
 				update,
 				TestContext.Current.CancellationToken);
 
-		HttpResponseMessage getResponse = await client.GetAsync(
-				$"OrganizationEvents/event/{eventId}",
-				TestContext.Current.CancellationToken);
-		string eventJson = await getResponse.Content.ReadAsStringAsync(
-				TestContext.Current.CancellationToken);
-
-		Assert.True(patchResponse.IsSuccessStatusCode);
-		Assert.True(getResponse.IsSuccessStatusCode);
-
-		using JsonDocument document = JsonDocument.Parse(eventJson);
-		JsonElement root = document.RootElement;
-		string savedBracketResults = root.TryGetProperty("bracketResults", out JsonElement camelCaseValue)
-			? camelCaseValue.GetString() ?? string.Empty
-			: root.GetProperty("BracketResults").GetString() ?? string.Empty;
-
 		// Assert
-		Assert.Equal(bracketResults, savedBracketResults);
+		Assert.Equal(HttpStatusCode.Forbidden, patchResponse.StatusCode);
 	}
 }

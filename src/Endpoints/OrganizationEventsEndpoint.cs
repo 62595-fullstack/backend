@@ -13,6 +13,18 @@ namespace Endpoints;
 
 public static class OrganizationEventsEndpoint
 {
+	private static async Task<bool> IsEventOwner(OrganizationEvents ev, string userId)
+	{
+		if (!int.TryParse(userId, out int parsedUserId))
+		{
+			return false;
+		}
+
+		DataUserOrganizationBinding duob = new();
+		UserOrganizationBindings? binding = await duob.getUserOrganizationBindingById(ev.UserOrganizationBindingId);
+		return binding?.UserId == parsedUserId;
+	}
+
 	public static RouteGroupBuilder MapOrganizationEventsEndpoints(this RouteGroupBuilder group)
 	{
 		group.MapGet("/event/{id}", async Task<IResult> (int id) =>
@@ -91,9 +103,7 @@ public static class OrganizationEventsEndpoint
 				OrganizationEvents? ev = await doe.getOrganizationEventById(id);
 				if (ev == null) return Results.NotFound();
 
-				DataUserOrganizationBinding duob = new();
-				UserOrganizationBindings? binding = await duob.getUserOrganizationBindingById(ev.UserOrganizationBindingId);
-				if (binding == null || binding.UserId != int.Parse(userId))
+				if (!await IsEventOwner(ev, userId))
 					return Results.Forbid();
 
 				await doe.deleteOrganizationEvent(id);
@@ -118,14 +128,8 @@ public static class OrganizationEventsEndpoint
 				OrganizationEvents? ev = await doe.getOrganizationEventById(id);
 				if (ev == null) return Results.NotFound();
 
-				bool updatesCreatorOnlyFields = req.Description != null || req.Rules != null;
-				if (updatesCreatorOnlyFields)
-				{
-					DataUserOrganizationBinding duob = new();
-					UserOrganizationBindings? binding = await duob.getUserOrganizationBindingById(ev.UserOrganizationBindingId);
-					if (binding == null || binding.UserId != int.Parse(userId))
-						return Results.Forbid();
-				}
+				if (!await IsEventOwner(ev, userId))
+					return Results.Forbid();
 
 				await doe.updateEvent(id, req);
 				return Results.Ok();
