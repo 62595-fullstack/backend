@@ -24,7 +24,12 @@ IConfigurationRoot config = new ConfigurationBuilder()
 					.AddUserSecrets(Assembly.GetExecutingAssembly())
 					.Build();
 
-builder.WebHost.UseUrls("http://localhost:" + config["programPort"] ?? "5000");
+string programPort = int.TryParse(config["programPort"], out int configuredPort)
+	? configuredPort.ToString()
+	: "5000";
+string host = config["host"] ?? "localhost";
+
+builder.WebHost.UseUrls($"http://localhost:{programPort}");
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -49,7 +54,7 @@ builder.Services.AddCors(options =>
 {
 	options.AddDefaultPolicy(policy =>
 	{
-		policy.WithOrigins($"http://{config["host"]}:3000")
+		policy.WithOrigins($"http://{host}:3000")
 			  .AllowAnyHeader()
 			  .AllowAnyMethod();
 	});
@@ -63,11 +68,11 @@ builder.Services
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
 					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
-					ValidIssuer = $"http://{config["host"]}:{config["programPort"]}",
+					ValidIssuer = $"http://{host}:{programPort}",
 					ValidAudience = config["Jwt:Audience"],
 					ClockSkew = TimeSpan.Zero,
 					ValidIssuers = [
-					$"http://{config["host"]}:{config["programPort"]}"
+					$"http://{host}:{programPort}"
 					],
 				};
 			});
@@ -82,6 +87,11 @@ app.UseCors();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+	using (DatabaseContext db = new())
+	{
+		await db.Database.MigrateAsync();
+	}
+
 	await DummyData.Initialize();
 	app.UseSwagger();
 	// SwaggerUI can be viewed at http://localhost:{port}

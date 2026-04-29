@@ -85,8 +85,10 @@ public static class loginEndpoint
 
 		var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-		string host = config["host"] ?? "";
-		string port = config["programPort"] ?? "";
+		string host = config["host"] ?? "localhost";
+		string port = int.TryParse(config["programPort"], out int configuredPort)
+			? configuredPort.ToString()
+			: "5000";
 
 		var tokenDescriptor = new SecurityTokenDescriptor
 		{
