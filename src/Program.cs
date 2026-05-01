@@ -81,6 +81,7 @@ builder.Services.AddAuthorization();
 WebApplication app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseWebSockets();
 app.UseStaticFiles();
 app.UseCors();
 
@@ -127,5 +128,8 @@ app.MapGroup("/users")
 app.MapGroup("/GDPR")
 	.RequireAuthorization()
 	.MapGDPREndpoints();
+app.MapGroup("/messages")
+	.RequireAuthorization()
+	.MapMessagesEndpoints();
 app.MapGroup("").MapLoginEndpoint();
 app.Run();

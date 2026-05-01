@@ -1,5 +1,7 @@
+using backend.getdata;
 using Microsoft.EntityFrameworkCore;
 using Models.Attachment;
+using Models.Message;
 using Models.Organization;
 using Models.OrganizationEvent;
 using Models.OrganizationPost;
@@ -23,6 +25,7 @@ public class DatabaseContext : DbContext
 	public DbSet<UserFriendships> UserFriendship { get; set; }
 	public DbSet<UserOrganizationBindings> UserOrganizationBinding { get; set; }
 	public DbSet<Attachments> Attachment { get; set; }
+	public DbSet<Messages> Message { get; set; }
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{

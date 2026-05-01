@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20260501113517_messages")]
+    partial class messages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,50 +55,6 @@ namespace backend.Migrations
                     b.HasIndex("PostId");
 
                     b.ToTable("Attachment");
-                });
-
-            modelBuilder.Entity("Models.Message.Messages", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("userReviverEmail")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("userReviverIdEmail")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("userSenderEmail")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("userSenderIdEmail")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("userReviverEmail");
-
-                    b.HasIndex("userReviverIdEmail");
-
-                    b.HasIndex("userSenderEmail");
-
-                    b.HasIndex("userSenderIdEmail");
-
-                    b.ToTable("Message");
                 });
 
             modelBuilder.Entity("Models.Organization.Organizations", b =>
@@ -436,41 +395,6 @@ namespace backend.Migrations
                         .HasForeignKey("PostId");
 
                     b.Navigation("Post");
-                });
-
-            modelBuilder.Entity("Models.Message.Messages", b =>
-                {
-                    b.HasOne("Models.User.Users", "userReviver")
-                        .WithMany()
-                        .HasForeignKey("userReviverEmail")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.User.Users", "userReviverId")
-                        .WithMany()
-                        .HasForeignKey("userReviverIdEmail")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.User.Users", "userSender")
-                        .WithMany()
-                        .HasForeignKey("userSenderEmail")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.User.Users", "userSenderId")
-                        .WithMany()
-                        .HasForeignKey("userSenderIdEmail")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("userReviver");
-
-                    b.Navigation("userReviverId");
-
-                    b.Navigation("userSender");
-
-                    b.Navigation("userSenderId");
                 });
 
             modelBuilder.Entity("Models.Organization.Organizations", b =>
