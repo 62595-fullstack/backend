@@ -17,8 +17,8 @@ public class HttpClientFixture : IAsyncLifetime
 					.AddEnvironmentVariables()
 					.AddUserSecrets(Assembly.GetExecutingAssembly())
 					.Build();
-		string testHost = config["testHost"] ?? "localhost";
-		string testPort = config["testPort"] ?? config["programPort"] ?? "5000";
+		string testHost = config["testHost"] ?? "";
+		string testPort = config["testPort"] ?? config["programPort"] ?? "";
 		client = new HttpClient
 		{
 			BaseAddress = new Uri($"http://{testHost}:{testPort}")

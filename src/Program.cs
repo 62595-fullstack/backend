@@ -26,12 +26,10 @@ IConfigurationRoot config = new ConfigurationBuilder()
 					.AddUserSecrets(Assembly.GetExecutingAssembly())
 					.Build();
 
-string programPort = int.TryParse(config["programPort"], out int configuredPort)
-	? configuredPort.ToString()
-	: "5000";
-string host = config["host"] ?? "localhost";
+string programPort = config["programPort"] ?? "";
+string host = config["host"] ?? "";
 
-builder.WebHost.UseUrls($"http://localhost:{programPort}");
+builder.WebHost.UseUrls($"http://{host}:{programPort}");
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
