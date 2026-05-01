@@ -6,7 +6,7 @@ public static class MessageEndpoint
 {
 	public static RouteGroupBuilder MapMessagesEndpoints(this RouteGroupBuilder group)
 	{
-		group.MapGet("/{UserId}", async Task<int> (WebSocket websocket) =>
+		group.MapGet("/{UserId}", async Task<int> (string UserId) =>
 		{
 			try
 			{
