@@ -46,14 +46,24 @@ public static class loginEndpoint
 			{
 				DataUser ud = new DataUser();
 				Users? u = await ud.getUserByEmail(loginCredentials.Email);
-				if (u == null) return Results.BadRequest();
+				if (u == null)
+				{
+					Console.WriteLine($"[login] user not found: {loginCredentials.Email}");
+					return Results.Unauthorized();
+				}
 				bool correctPassword = await ud.loginUsers(loginCredentials.Email, loginCredentials.Password);
-				return correctPassword ? Results.Ok(CreateToken(u)) : Results.BadRequest();
+				if (!correctPassword)
+				{
+					Console.WriteLine($"[login] bad password for: {loginCredentials.Email}");
+					return Results.Unauthorized();
+				}
+
+				return Results.Ok(CreateToken(u));
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.Message);
-				return Results.BadRequest(ex.Message);
+				Console.WriteLine($"[login] {ex}");
+				return Results.Problem(ex.Message);
 			}
 		})
 			.WithName("Login");
@@ -74,8 +84,10 @@ public static class loginEndpoint
 
 		var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-		string host = config["host"] ?? "";
-		string port = config["programPort"] ?? "";
+		string host = config["host"] ?? "localhost";
+		string port = int.TryParse(config["programPort"], out int configuredPort)
+			? configuredPort.ToString()
+			: "5000";
 
 		var tokenDescriptor = new SecurityTokenDescriptor
 		{

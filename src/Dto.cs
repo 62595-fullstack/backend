@@ -9,6 +9,7 @@ public record UpdateProfileDto(string? Bio);
 public record UserSearchResultDto(string Id, string FirstName, string LastName);
 public record FriendSummaryDto(string Id, string Email, string FirstName, string LastName, string UserName, DateOnly DateOfBirth, DateTime FriendsSince);
 public record AddFriendDto(string FriendUserId);
-public record UpdateEventRequest(string? Description, string? Rules);
+public record UpdateEventRequest(string? Description, string? Rules, string? BracketResults);
+
 public record UpdateOrganizationDto(string? Description);
 public record OrgMemberDto(int BindingId, string UserId, string FirstName, string LastName, int RoleId, string RoleName);
