@@ -8,6 +8,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
 using System.Text;
+using Services.MessageService;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using System.Net;
 
 JsonConvert.DefaultSettings = () => new JsonSerializerSettings
 {
@@ -30,7 +33,17 @@ string programPort = config["programPort"] ?? "";
 string host = config["host"] ?? "";
 
 builder.WebHost.UseUrls($"http://{host}:{programPort}");
+builder.WebHost.ConfigureKestrel(options =>
+{
+	// options.Listen(IPAddress.IPv6Any, 5001, listenOptions =>
+	options.Listen(IPAddress.Loopback, 5001, listenOptions =>
+	{
+		listenOptions.Protocols = HttpProtocols.Http2;
+		listenOptions.UseHttps("../cert.pfx", "testpassword");
+	});
+});
 
+builder.Services.AddGrpc();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -79,11 +92,13 @@ builder.Services
 builder.Services.AddAuthorization();
 
 WebApplication app = builder.Build();
+app.UseWebSockets();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseWebSockets();
 app.UseStaticFiles();
 app.UseCors();
+
+app.MapGrpcService<MessageService>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
