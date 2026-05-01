@@ -8,7 +8,6 @@ public class MessageService : Message.MessageBase
 	{
 		// var httpContext = context.GetHttpContext();
 		// var clientCertificate = httpContext.Connection.ClientCertificate;
-
 		return Task.FromResult(new MessageReply
 		{
 			SenderId = request.ReceiverId,

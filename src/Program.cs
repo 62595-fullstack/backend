@@ -32,16 +32,7 @@ IConfigurationRoot config = new ConfigurationBuilder()
 string programPort = config["programPort"] ?? "";
 string host = config["host"] ?? "";
 
-builder.WebHost.UseUrls($"http://{host}:{programPort}");
-builder.WebHost.ConfigureKestrel(options =>
-{
-	// options.Listen(IPAddress.IPv6Any, 5001, listenOptions =>
-	options.Listen(IPAddress.Loopback, 5001, listenOptions =>
-	{
-		listenOptions.Protocols = HttpProtocols.Http2;
-		listenOptions.UseHttps("../cert.pfx", "testpassword");
-	});
-});
+builder.WebHost.UseUrls($"http://{host}:{programPort}", $"http://{host}:5001");
 
 builder.Services.AddGrpc();
 builder.Services.AddEndpointsApiExplorer();
