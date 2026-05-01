@@ -6,23 +6,29 @@ public static class MessageEndpoint
 {
 	public static RouteGroupBuilder MapMessagesEndpoints(this RouteGroupBuilder group)
 	{
-		group.MapGet("/{UserId}", async Task<int> (string UserId) =>
+		group.MapGet("/", async Task<string> (HttpContext httpcontext) =>
 		{
 			try
 			{
+				if (httpcontext.WebSockets.IsWebSocketRequest)
+				{
+					using var webSocket = await httpcontext.WebSockets.AcceptWebSocketAsync();
+					DataMessages dm = new DataMessages();
+					
 
-                // DatabaseContext db = new DatabaseContext();
-
-                // var message = db.
-
-
-				// websocket.SendAsync()
-				return 0;
+					return await dm.getMessages("1"); 
+				}
+				else
+				{
+					httpcontext.Response.StatusCode = StatusCodes.Status400BadRequest;
+				}
+                
+				return "2";
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.Message);
-				return 404;
+				return "404";
 			}
 		})
 		.WithName("getMessages");

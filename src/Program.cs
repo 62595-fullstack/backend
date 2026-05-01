@@ -129,7 +129,7 @@ app.MapGroup("/GDPR")
 	.RequireAuthorization()
 	.MapGDPREndpoints();
 app.MapGroup("/messages")
-	.RequireAuthorization()
+	// .RequireAuthorization()
 	.MapMessagesEndpoints();
 app.MapGroup("").MapLoginEndpoint();
 app.Run();

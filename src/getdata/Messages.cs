@@ -13,7 +13,7 @@ namespace backend.getdata
 
                 // var messages = db.Message.Where(m )
 
-				return "";
+				return "HEJ Emil";
 			}
 			catch (Exception ex)
 			{
