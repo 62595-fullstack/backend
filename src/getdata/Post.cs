@@ -1,6 +1,9 @@
 using Dto;
 using Microsoft.EntityFrameworkCore;
+using Models.OrganizationEvent;
 using Models.Post;
+using Models.User;
+using Models.UserOrganizationBinding;
 
 namespace backend.getdata
 {
@@ -81,6 +84,28 @@ namespace backend.getdata
 					UserId = post.UserId,
 					OrganizationEventId = post.OrganizationEventId,
 				});
+
+				OrganizationEvents? ev = await db.OrganizationEvent.FindAsync(post.OrganizationEventId);
+				UserOrganizationBindings? creatorBinding = ev != null
+					? await db.UserOrganizationBinding.FindAsync(ev.UserOrganizationBindingId)
+					: null;
+				string? creatorUserId = creatorBinding?.UserId?.ToString();
+
+				if (ev != null && !string.IsNullOrEmpty(creatorUserId) && creatorUserId != post.UserId)
+				{
+					Users? poster = await db.User.FirstOrDefaultAsync(u => u.Id == post.UserId);
+					string posterName = poster != null ? $"{poster.FirstName} {poster.LastName}" : "Someone";
+
+					DataNotification notificationData = new();
+					NotificationDto notification = await notificationData.Create(
+						userId: creatorUserId,
+						type: "event_post",
+						message: $"{posterName} posted on your event '{ev.Title}'.",
+						actorUserId: post.UserId
+					);
+					NotificationStream.Publish(creatorUserId, notification);
+				}
+
 				return true;
 			}
 			catch (Exception ex)

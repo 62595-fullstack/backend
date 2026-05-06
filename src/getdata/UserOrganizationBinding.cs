@@ -1,6 +1,7 @@
 
 using Dto;
 using Microsoft.EntityFrameworkCore;
+using Models.Organization;
 using Models.User;
 using Models.UserOrganizationBinding;
 
@@ -96,6 +97,31 @@ namespace backend.getdata
 
 			await db.UserOrganizationBinding.AddAsync(uob);
 			await db.SaveChangesAsync();
+
+			string joinerUserId = userId.ToString();
+			Users? joiner = await db.User.FirstOrDefaultAsync(u => u.Id == joinerUserId);
+			Organizations? org = await db.Organization.FindAsync(organizationId);
+			List<string> adminUserIds = await db.UserOrganizationBinding
+				.Where(b => b.OrganizationId == organizationId && b.RoleId == 1000 && b.UserId != null)
+				.Select(b => b.UserId!.Value.ToString())
+				.ToListAsync();
+
+			if (joiner != null && org != null && adminUserIds.Count > 0)
+			{
+				string joinerName = $"{joiner.FirstName} {joiner.LastName}";
+				DataNotification notificationData = new();
+				foreach (string adminUserId in adminUserIds)
+				{
+					if (adminUserId == joinerUserId) continue;
+					NotificationDto notification = await notificationData.Create(
+						userId: adminUserId,
+						type: "organization_join",
+						message: $"{joinerName} joined your organization '{org.Name}'.",
+						actorUserId: joinerUserId
+					);
+					NotificationStream.Publish(adminUserId, notification);
+				}
+			}
 
 			return true;
 		}

@@ -118,6 +118,28 @@ namespace backend.getdata
 				await db.UserEventBinding.AddAsync(ueb);
 				await db.SaveChangesAsync();
 
+				OrganizationEvents? ev = await db.OrganizationEvent.FindAsync(organizationId);
+				UserOrganizationBindings? creatorBinding = ev != null
+					? await db.UserOrganizationBinding.FindAsync(ev.UserOrganizationBindingId)
+					: null;
+				string? creatorUserId = creatorBinding?.UserId?.ToString();
+				string joinerUserId = userId.ToString();
+
+				if (ev != null && !string.IsNullOrEmpty(creatorUserId) && creatorUserId != joinerUserId)
+				{
+					Users? joiner = await db.User.FirstOrDefaultAsync(u => u.Id == joinerUserId);
+					string joinerName = joiner != null ? $"{joiner.FirstName} {joiner.LastName}" : "Someone";
+
+					DataNotification notificationData = new();
+					NotificationDto notification = await notificationData.Create(
+						userId: creatorUserId,
+						type: "event_join",
+						message: $"{joinerName} joined your event '{ev.Title}'.",
+						actorUserId: joinerUserId
+					);
+					NotificationStream.Publish(creatorUserId, notification);
+				}
+
 				return true;
 			}
 			catch (Exception ex)
