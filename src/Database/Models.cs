@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Models.Attachment;
+using Models.FriendRequest;
 using Models.Notification;
 using Models.Organization;
 using Models.OrganizationEvent;
@@ -25,6 +26,7 @@ public class DatabaseContext : DbContext
 	public DbSet<UserOrganizationBindings> UserOrganizationBinding { get; set; }
 	public DbSet<Attachments> Attachment { get; set; }
 	public DbSet<Notifications> Notification { get; set; }
+	public DbSet<FriendRequests> FriendRequest { get; set; }
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
@@ -95,6 +97,10 @@ public class DatabaseContext : DbContext
 
 		modelBuilder.Entity<Notifications>()
 			.HasIndex(notification => new { notification.UserId, notification.Read });
+
+		modelBuilder.Entity<FriendRequests>()
+			.HasIndex(req => new { req.RequesterId, req.RecipientId })
+			.IsUnique();
 	}
 }
 
