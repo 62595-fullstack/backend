@@ -3,12 +3,17 @@
 1. Secrets
 1.1 DotNET user-secrets
 ```bash
+dotnet user-secrets init --project src
 dotnet user-secrets set host localhost --project src
 dotnet user-secrets set username postgres --project src
 dotnet user-secrets set password facebook --project src
 dotnet user-secrets set database BookFace --project src
 dotnet user-secrets set port 5432 --project src
 dotnet user-secrets set programPort 5000 --project src
+
+dotnet user-secrets init --project tests
+dotnet user-secrets set testHost localhost --project tests
+dotnet user-secrets set testPort 5000 --project tests
 ```
 
 1.2 Environment variables

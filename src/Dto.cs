@@ -13,3 +13,4 @@ public record UpdateEventRequest(string? Description, string? Rules, string? Bra
 
 public record UpdateOrganizationDto(string? Description);
 public record OrgMemberDto(int BindingId, string UserId, string FirstName, string LastName, int RoleId, string RoleName);
+public record EventParticipantDto(int BindingId, string UserId, string FirstName, string LastName);
