@@ -232,12 +232,18 @@ namespace backend.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("AvatarId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Bio")
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("text");
+
+                    b.Property<int?>("CoverId")
+                        .HasColumnType("integer");
 
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date");
@@ -290,6 +296,10 @@ namespace backend.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Email");
+
+                    b.HasIndex("AvatarId");
+
+                    b.HasIndex("CoverId");
 
                     b.ToTable("User");
                 });
@@ -459,6 +469,21 @@ namespace backend.Migrations
                     b.Navigation("OrganizationEvent");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Models.User.Users", b =>
+                {
+                    b.HasOne("Models.Attachment.Attachments", "Avatar")
+                        .WithMany()
+                        .HasForeignKey("AvatarId");
+
+                    b.HasOne("Models.Attachment.Attachments", "Cover")
+                        .WithMany()
+                        .HasForeignKey("CoverId");
+
+                    b.Navigation("Avatar");
+
+                    b.Navigation("Cover");
                 });
 
             modelBuilder.Entity("Models.UserEventBinding.UserEventBindings", b =>
