@@ -69,4 +69,15 @@ public class DataNotification
 			.Where(n => n.UserId == userId && !n.Read)
 			.ExecuteUpdateAsync(setters => setters.SetProperty(n => n.Read, true));
 	}
+
+	public async Task<bool> Delete(string userId, int notificationId)
+	{
+		await using DatabaseContext db = new();
+		Notifications? notification = await db.Notification
+			.FirstOrDefaultAsync(n => n.Id == notificationId && n.UserId == userId);
+		if (notification == null) return false;
+		db.Notification.Remove(notification);
+		await db.SaveChangesAsync();
+		return true;
+	}
 }

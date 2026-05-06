@@ -44,6 +44,17 @@ public static class NotificationsEndpoint
 		})
 		.WithName("MarkAllNotificationsRead");
 
+		group.MapDelete("/{notificationId:int}", async Task<IResult> (ClaimsPrincipal user, int notificationId) =>
+		{
+			string? currentUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (currentUserId == null) return Results.Unauthorized();
+
+			DataNotification notificationData = new();
+			bool ok = await notificationData.Delete(currentUserId, notificationId);
+			return ok ? Results.Ok() : Results.NotFound();
+		})
+		.WithName("DeleteNotification");
+
 		group.MapGet("/stream", async (HttpContext http, ClaimsPrincipal user, CancellationToken ct) =>
 		{
 			string? currentUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
