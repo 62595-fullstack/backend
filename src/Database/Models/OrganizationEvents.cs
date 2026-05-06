@@ -23,7 +23,7 @@ namespace Models.OrganizationEvent
 		[NotMapped]
 		public string CreatorName { get; set; } = string.Empty;
 
-		public UserEventBindings? UserEventBinding { get; set; } = null!;
+		public ICollection<UserEventBindings> UserEventBindings { get; set; } = new List<UserEventBindings>();
 		public Organizations? Organization { get; set; } = null!;
 
 	}
