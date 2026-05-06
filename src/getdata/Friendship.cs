@@ -140,6 +140,15 @@ public class DataFriendship
 		db.UserFriendship.Add(friendship);
 		await db.SaveChangesAsync();
 
+		DataNotification notificationData = new();
+		NotificationDto notification = await notificationData.Create(
+			userId: friendUserId,
+			type: "friend_added",
+			message: $"{currentUser.FirstName} {currentUser.LastName} added you as a friend.",
+			actorUserId: currentUserId
+		);
+		NotificationStream.Publish(friendUserId, notification);
+
 		return ToFriendSummaryDto(friendUser, friendship.CreatedDate);
 	}
 

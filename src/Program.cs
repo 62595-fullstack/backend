@@ -127,5 +127,8 @@ app.MapGroup("/users")
 app.MapGroup("/GDPR")
 	.RequireAuthorization()
 	.MapGDPREndpoints();
+app.MapGroup("/notifications")
+	.RequireAuthorization()
+	.MapNotificationsEndpoints();
 app.MapGroup("").MapLoginEndpoint();
 app.Run();

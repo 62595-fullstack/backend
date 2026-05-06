@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Models.Attachment;
+using Models.Notification;
 using Models.Organization;
 using Models.OrganizationEvent;
 using Models.OrganizationPost;
@@ -23,6 +24,7 @@ public class DatabaseContext : DbContext
 	public DbSet<UserFriendships> UserFriendship { get; set; }
 	public DbSet<UserOrganizationBindings> UserOrganizationBinding { get; set; }
 	public DbSet<Attachments> Attachment { get; set; }
+	public DbSet<Notifications> Notification { get; set; }
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
@@ -83,6 +85,16 @@ public class DatabaseContext : DbContext
 		modelBuilder.Entity<UserEventBindings>()
 			.HasIndex(b => new { b.UserId, b.OrganizationEventsId })
 			.IsUnique();
+
+		modelBuilder.Entity<Notifications>()
+			.HasOne<Users>()
+			.WithMany()
+			.HasForeignKey(notification => notification.UserId)
+			.HasPrincipalKey(user => user.Id)
+			.OnDelete(DeleteBehavior.Cascade);
+
+		modelBuilder.Entity<Notifications>()
+			.HasIndex(notification => new { notification.UserId, notification.Read });
 	}
 }
 
