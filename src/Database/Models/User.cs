@@ -23,11 +23,11 @@ public class Users : IdentityUser
 	[Key]
 	public override string? Email { get; set; }
 
-	public Attachments? Avatar { get; set; } = null!;
 	public int? AvatarId { get; set; } = 12345;
+	public Attachments? Avatar { get; set; }
 
-	public Attachments? Cover { get; set; } = null!;
 	public int? CoverId { get; set; } = 123456;
+	public Attachments? Cover { get; set; }
 
 	public ICollection<UserOrganizationBindings> UserOrganizationBindings { get; set; } = new List<UserOrganizationBindings>();
 
