@@ -33,7 +33,7 @@ docker start BookFace
 
 4. Update the database tables:
 ```bash
-dotnet ef database update
+dotnet ef database update --project src
 ```
 
 5. To run in development set the ASPNETCORE_ENVIRONMENT environment variable to Development or set it for the duration of the program running like so:
