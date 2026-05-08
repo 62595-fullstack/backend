@@ -1,10 +1,9 @@
-
 using Dto;
 using Microsoft.EntityFrameworkCore;
 using Models.User;
 using Models.UserOrganizationBinding;
 
-namespace backend.getdata;
+namespace Services;
 
 public class DataUserOrganizationBinding(DatabaseContext db)
 {

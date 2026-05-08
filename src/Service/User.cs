@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Models.User;
 
-namespace backend.getdata;
+namespace Services;
 
 public class DataUser(DatabaseContext db)
 {

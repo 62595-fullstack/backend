@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace backend.getdata;
+namespace Services;
 
 public sealed class DataGDPR(DatabaseContext db)
 {

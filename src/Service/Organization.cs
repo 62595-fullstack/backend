@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Models.Organization;
 
-namespace backend.getdata;
+namespace Services;
 
 public class DataOrganization(DatabaseContext db)
 {

@@ -11,6 +11,8 @@ using Models.UserEventBinding;
 using Models.UserFriendship;
 using Models.UserOrganizationBinding;
 
+namespace Services;
+
 public static class DummyData
 {
 	private static async Task Add<T>(DatabaseContext db, params T[] entities) where T : class

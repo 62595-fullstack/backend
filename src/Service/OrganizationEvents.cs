@@ -5,7 +5,7 @@ using Models.User;
 using Models.UserEventBinding;
 using Models.UserOrganizationBinding;
 
-namespace backend.getdata;
+namespace Services;
 
 public class DataOrganizationEvents(DatabaseContext db)
 {

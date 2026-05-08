@@ -2,7 +2,7 @@ using Dto;
 using Microsoft.EntityFrameworkCore;
 using Models.Post;
 
-namespace backend.getdata;
+namespace Services;
 
 public class DataPost(DatabaseContext db)
 {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Models.User;
 using Models.UserFriendship;
 
-namespace backend.getdata;
+namespace Services;
 
 public class DataFriendship(DatabaseContext db)
 {

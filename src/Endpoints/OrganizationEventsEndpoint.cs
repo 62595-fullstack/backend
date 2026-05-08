@@ -1,4 +1,3 @@
-using backend.getdata;
 using Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +5,7 @@ using Models.OrganizationEvent;
 using Models.UserEventBinding;
 using Models.UserOrganizationBinding;
 using Newtonsoft.Json;
+using Services;
 using System.Net;
 using System.Security.Claims;
 
