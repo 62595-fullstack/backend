@@ -26,8 +26,9 @@ builder.Configuration
 	.AddUserSecrets(Assembly.GetExecutingAssembly())
 	.Build();
 
-string programPort = builder.Configuration.GetValue<string>("programPort") ?? "";
-string host = builder.Configuration.GetValue<string>("host") ?? "";
+// builder.Configuration
+string programPort = builder.Configuration["programPort"] ?? "";
+string host = builder.Configuration["host"] ?? "";
 
 builder.WebHost.UseUrls($"http://{host}:{programPort}");
 
@@ -69,9 +70,9 @@ builder.Services
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
 					IssuerSigningKey = new SymmetricSecurityKey(
-							Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("Jwt:Secret")!)),
+							Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!)),
 					ValidIssuer = $"http://{host}:{programPort}",
-					ValidAudience = builder.Configuration.GetValue<string>("Jwt:Audience"),
+					ValidAudience = builder.Configuration["Jwt:Audience"],
 					ClockSkew = TimeSpan.Zero,
 					ValidIssuers = [
 					$"http://{host}:{programPort}"
