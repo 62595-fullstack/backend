@@ -1,11 +1,6 @@
 using backend.getdata;
 using Dto;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Tokens;
 using Models.User;
-using System.Reflection;
-using System.Security.Claims;
-using System.Text;
 
 namespace Endpoints;
 
@@ -40,7 +35,7 @@ public static class loginEndpoint
 		})
 		.WithName("CreateUser");
 
-		group.MapPost("/login", async Task<IResult> (LoginCredentialsDto loginCredentials) =>
+		group.MapPost("/login", async Task<IResult> (LoginCredentialsDto loginCredentials, TokenService tokenService) =>
 		{
 			try
 			{
@@ -58,7 +53,7 @@ public static class loginEndpoint
 					return Results.Unauthorized();
 				}
 
-				return Results.Ok(CreateToken(u));
+				return Results.Ok(tokenService.CreateToken(u));
 			}
 			catch (Exception ex)
 			{
@@ -69,42 +64,5 @@ public static class loginEndpoint
 			.WithName("Login");
 
 		return group;
-	}
-
-	static private string CreateToken(Users user)
-	{
-		IConfigurationRoot config = new ConfigurationBuilder()
-			.AddJsonFile("appsettings.json")
-			.AddUserSecrets(Assembly.GetExecutingAssembly())
-			.AddEnvironmentVariables()
-			.Build();
-
-		string secretKey = config["Jwt:Secret"]!;
-		SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-
-		var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-		string host = config["host"] ?? "localhost";
-		string port = int.TryParse(config["programPort"], out int configuredPort)
-			? configuredPort.ToString()
-			: "5000";
-
-		var tokenDescriptor = new SecurityTokenDescriptor
-		{
-			Subject = new ClaimsIdentity([
-					new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-					new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-			]),
-			Expires = DateTime.UtcNow.AddMinutes(60),
-			SigningCredentials = credentials,
-			Issuer = "http://" + host + ":" + port,
-			Audience = config["Jwt:Audience"],
-		};
-
-		var handler = new JsonWebTokenHandler();
-
-		string token = handler.CreateToken(tokenDescriptor);
-
-		return token;
 	}
 }

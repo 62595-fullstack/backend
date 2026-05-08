@@ -20,17 +20,18 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationO
 	WebRootPath = "../wwwroot"
 });
 
-IConfigurationRoot config = new ConfigurationBuilder()
-					.AddJsonFile("appsettings.json")
-					.AddEnvironmentVariables()
-					.AddUserSecrets(Assembly.GetExecutingAssembly())
-					.Build();
+builder.Configuration
+	.AddJsonFile("appsettings.json")
+	.AddEnvironmentVariables()
+	.AddUserSecrets(Assembly.GetExecutingAssembly())
+	.Build();
 
-string programPort = config["programPort"] ?? "";
-string host = config["host"] ?? "";
+string programPort = builder.Configuration.GetValue<string>("programPort") ?? "";
+string host = builder.Configuration.GetValue<string>("host") ?? "";
 
 builder.WebHost.UseUrls($"http://{host}:{programPort}");
 
+builder.Services.AddSingleton<TokenService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -67,9 +68,10 @@ builder.Services
 				options.RequireHttpsMetadata = false;
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
-					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
+					IssuerSigningKey = new SymmetricSecurityKey(
+							Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("Jwt:Secret")!)),
 					ValidIssuer = $"http://{host}:{programPort}",
-					ValidAudience = config["Jwt:Audience"],
+					ValidAudience = builder.Configuration.GetValue<string>("Jwt:Audience"),
 					ClockSkew = TimeSpan.Zero,
 					ValidIssuers = [
 					$"http://{host}:{programPort}"
@@ -128,4 +130,5 @@ app.MapGroup("/GDPR")
 	.RequireAuthorization()
 	.MapGDPREndpoints();
 app.MapGroup("").MapLoginEndpoint();
+
 app.Run();
