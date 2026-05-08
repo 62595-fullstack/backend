@@ -1,61 +1,57 @@
-
 using Microsoft.EntityFrameworkCore;
 
-namespace backend.getdata
+namespace backend.getdata;
+
+public sealed class DataGDPR(DatabaseContext db)
 {
-	public class DataGDPR
+	private readonly DatabaseContext db = db;
+
+	public async Task<int?> DeleteUserAccount(string userId)
 	{
-		public async Task<int?> DeleteUserAccount(string userId)
+		try
 		{
-			try
+			var user = await db.User.Where(x => x.Id == userId).ExecuteDeleteAsync();
+
+			if (user == 0)
 			{
-				DatabaseContext db = new DatabaseContext();
+				return 0;
+			}
 
-				var user = await db.User.Where(x => x.Id == userId).ExecuteDeleteAsync();
+			await db.SaveChangesAsync();
+			return 1;
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			return null;
+		}
+	}
+	public async Task<int?> DeleteUserAccountByEmail(string email)
+	{
+		try
+		{
+			var user = await db.User.Where(x => x.Email == email).ExecuteDeleteAsync();
 
-				if (user == 0)
-				{
-					return 0;
-				}
-
+			if (user == 0)
+			{
+				return 0;
+			}
+			else if (user == 1)
+			{
 				await db.SaveChangesAsync();
 				return 1;
 			}
-			catch (Exception ex)
+			else
 			{
-				Console.WriteLine(ex.Message);
-				return null;
+				// Don't save changes since email is unique, only one user 
+				// should be able to be deleted at most
+				return user;
 			}
 		}
-		public async Task<int?> DeleteUserAccountByEmail(string email)
+		catch (Exception ex)
 		{
-			try
-			{
-				DatabaseContext db = new DatabaseContext();
-
-				var user = await db.User.Where(x => x.Email == email).ExecuteDeleteAsync();
-
-				if (user == 0)
-				{
-					return 0;
-				}
-				else if (user == 1)
-				{
-					await db.SaveChangesAsync();
-					return 1;
-				}
-				else
-				{
-					// Don't save changes since email is unique, only one user 
-					// should be able to be deleted at most
-					return user;
-				}
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.Message);
-				return null;
-			}
+			Console.WriteLine(ex.Message);
+			return null;
 		}
 	}
 }

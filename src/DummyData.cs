@@ -10,9 +10,8 @@ using Models.User;
 using Models.UserEventBinding;
 using Models.UserFriendship;
 using Models.UserOrganizationBinding;
-using System.Text.RegularExpressions;
 
-class DummyData
+public static class DummyData
 {
 	private static async Task Add<T>(DatabaseContext db, params T[] entities) where T : class
 	{
@@ -35,9 +34,11 @@ class DummyData
 		await db.SaveChangesAsync();
 	}
 
-	public static async Task Initialize()
+	// public async Task Initialize()
+	public static async Task<IApplicationBuilder> UseDummyData(this IApplicationBuilder app)
 	{
-		using (DatabaseContext db = new())
+		using IServiceScope serviceScope = app.ApplicationServices.CreateScope();
+		using (DatabaseContext db = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>())
 		{
 			PasswordHasher<Users> hasher = new();
 
@@ -242,5 +243,6 @@ class DummyData
 				new OrganizationPosts { Id = 1000, OrganizationId = 1000, PostId = 1000 }
 			);
 		}
+		return app;
 	}
 }

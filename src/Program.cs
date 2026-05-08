@@ -1,5 +1,7 @@
+using backend.getdata;
 using Endpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.IdentityModel.Tokens;
@@ -32,7 +34,23 @@ string host = builder.Configuration["host"] ?? "";
 
 builder.WebHost.UseUrls($"http://{host}:{programPort}");
 
+string connectionString = $@"Host={builder.Configuration["host"]};
+	Username={builder.Configuration["username"]};
+	Password={builder.Configuration["password"]};
+	Database={builder.Configuration["database"]}";
+
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddSingleton<TokenService>();
+
+builder.Services.AddScoped<DataGDPR>();
+builder.Services.AddScoped<DataAttachment>();
+builder.Services.AddScoped<DataFriendship>();
+builder.Services.AddScoped<DataOrganization>();
+builder.Services.AddScoped<DataOrganizationEvents>();
+builder.Services.AddScoped<DataUserOrganizationBinding>();
+builder.Services.AddScoped<DataUser>();
+builder.Services.AddScoped<DataPost>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -90,12 +108,12 @@ app.UseCors();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	using (DatabaseContext db = new())
-	{
-		await db.GetService<IMigrator>().MigrateAsync();
-	}
+	using IServiceScope scope = app.Services.CreateScope();
+	DatabaseContext db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+	await db.GetService<IMigrator>().MigrateAsync();
 
-	await DummyData.Initialize();
+	await app.UseDummyData();
+
 	app.UseSwagger();
 	// SwaggerUI can be viewed at http://localhost:{port}
 	app.UseSwaggerUI(options =>

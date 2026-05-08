@@ -4,161 +4,155 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Models.User;
 
-namespace backend.getdata
+namespace backend.getdata;
+
+public class DataUser(DatabaseContext db)
 {
-	public class DataUser
+	private readonly DatabaseContext db = db;
+
+	public async Task<bool> AddUsers(RegisterCredentialsDto registerDto)
 	{
-		public async Task<bool> AddUsers(RegisterCredentialsDto registerDto)
+		try
 		{
-			try
+			Users user = new Users
 			{
-				Users user = new Users
-				{
-					FirstName = registerDto.FirstName,
-					LastName = registerDto.LastName,
-					Email = registerDto.Email,
-					DateOfBirth = registerDto.DateOfBirth,
-					PasswordHash = registerDto.Password,
-				};
-				DatabaseContext db = new DatabaseContext();
-				PasswordHasher<Users> ph = new PasswordHasher<Users>();
+				FirstName = registerDto.FirstName,
+				LastName = registerDto.LastName,
+				Email = registerDto.Email,
+				DateOfBirth = registerDto.DateOfBirth,
+				PasswordHash = registerDto.Password,
+			};
+			PasswordHasher<Users> ph = new PasswordHasher<Users>();
 
-				user.PasswordHash = ph.HashPassword(user, user.PasswordHash!);
-				await db.SaveChangesAsync();
+			user.PasswordHash = ph.HashPassword(user, user.PasswordHash!);
+			await db.SaveChangesAsync();
 
-				UserStore us = new UserStore(db);
-				await us.CreateAsync(user);
+			UserStore us = new UserStore(db);
+			await us.CreateAsync(user);
 
-				return true;
-			}
-			catch (Exception ex)
+			return true;
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			return false;
+		}
+	}
+
+	public async Task<bool> loginUsers(string email, string password)
+	{
+		try
+		{
+			PasswordHasher<Users> ph = new PasswordHasher<Users>();
+
+			Users? user = await getUserByEmail(email);
+			if (user == null) return false;
+			PasswordVerificationResult verificationResult = ph.VerifyHashedPassword(user, user.PasswordHash!, password);
+
+			switch (verificationResult)
 			{
-				Console.WriteLine(ex.Message);
-				return false;
+				case PasswordVerificationResult.Success:
+					return true;
+				case PasswordVerificationResult.Failed:
+					return false;
+				default:
+					return false;
 			}
 		}
-
-		public async Task<bool> loginUsers(string email, string password)
+		catch (Exception ex)
 		{
-			try
-			{
-				DatabaseContext db = new DatabaseContext();
-				PasswordHasher<Users> ph = new PasswordHasher<Users>();
-
-				Users? user = await getUserByEmail(email);
-				if (user == null) return false;
-				PasswordVerificationResult verificationResult = ph.VerifyHashedPassword(user, user.PasswordHash!, password);
-
-				switch (verificationResult)
-				{
-					case PasswordVerificationResult.Success:
-						return true;
-					case PasswordVerificationResult.Failed:
-						return false;
-					default:
-						return false;
-				}
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.Message);
-				return false;
-			}
+			Console.WriteLine(ex.Message);
+			return false;
 		}
+	}
 
-		public async Task<Users?> getUserByEmail(string email)
+	public async Task<Users?> getUserByEmail(string email)
+	{
+		try
 		{
-			try
-			{
-				DatabaseContext db = new DatabaseContext();
-				Users? user = await db.User.FirstOrDefaultAsync(u => u.Email == email);
+			Users? user = await db.User.FirstOrDefaultAsync(u => u.Email == email);
 
-				if (user != null)
-				{
-					return user;
-				}
-				else
-				{
-					throw new Exception("No User with Email");
-				}
-			}
-			catch (Exception ex)
+			if (user != null)
 			{
-				Console.WriteLine(ex.Message);
-				return null;
-			}
-		}
-
-		public async Task<Users?> getUserByUserName(string userName)
-		{
-			try
-			{
-				DatabaseContext db = new DatabaseContext();
-				Users? user = await db.User.FirstOrDefaultAsync(u => u.UserName == userName);
-
-				if (user != null)
-				{
-					return user;
-				}
-				else
-				{
-					throw new Exception("No User with Username");
-				}
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.Message);
-				return null;
-			}
-		}
-
-		public async Task<Users?> GetUserById(string userId)
-		{
-			try
-			{
-				DatabaseContext db = new DatabaseContext();
-				return await db.User.FirstOrDefaultAsync(u => u.Id == userId);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.Message);
-				return null;
-			}
-		}
-
-		public async Task<Users?> UpdateProfile(string userId, UpdateProfileDto request)
-		{
-			try
-			{
-				DatabaseContext db = new DatabaseContext();
-				Users? user = await db.User.FirstOrDefaultAsync(u => u.Id == userId);
-				if (user == null) return null;
-
-				if (request.Bio != null) user.Bio = request.Bio;
-
-				await db.SaveChangesAsync();
 				return user;
 			}
-			catch (Exception ex)
+			else
 			{
-				Console.WriteLine(ex.Message);
-				return null;
+				throw new Exception("No User with Email");
 			}
 		}
-
-		public async Task<List<Users>?> GetAllUsers()
+		catch (Exception ex)
 		{
-			try
+			Console.WriteLine(ex.Message);
+			return null;
+		}
+	}
+
+	public async Task<Users?> getUserByUserName(string userName)
+	{
+		try
+		{
+			Users? user = await db.User.FirstOrDefaultAsync(u => u.UserName == userName);
+
+			if (user != null)
 			{
-				DatabaseContext db = new DatabaseContext();
-				List<Users> users = await db.User.ToListAsync();
-				return users;
+				return user;
 			}
-			catch (Exception ex)
+			else
 			{
-				Console.WriteLine(ex.Message);
-				return null;
+				throw new Exception("No User with Username");
 			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			return null;
+		}
+	}
+
+	public async Task<Users?> GetUserById(string userId)
+	{
+		try
+		{
+			return await db.User.FirstOrDefaultAsync(u => u.Id == userId);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			return null;
+		}
+	}
+
+	public async Task<Users?> UpdateProfile(string userId, UpdateProfileDto request)
+	{
+		try
+		{
+			Users? user = await db.User.FirstOrDefaultAsync(u => u.Id == userId);
+			if (user == null) return null;
+
+			if (request.Bio != null) user.Bio = request.Bio;
+
+			await db.SaveChangesAsync();
+			return user;
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			return null;
+		}
+	}
+
+	public async Task<List<Users>?> GetAllUsers()
+	{
+		try
+		{
+			List<Users> users = await db.User.ToListAsync();
+			return users;
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			return null;
 		}
 	}
 }

@@ -13,25 +13,23 @@ namespace Endpoints;
 
 public static class OrganizationEventsEndpoint
 {
-	private static async Task<bool> IsEventOwner(OrganizationEvents ev, string userId)
+	private static async Task<bool> IsEventOwner(OrganizationEvents ev, string userId, DataUserOrganizationBinding duob)
 	{
 		if (!int.TryParse(userId, out int parsedUserId))
 		{
 			return false;
 		}
 
-		DataUserOrganizationBinding duob = new();
 		UserOrganizationBindings? binding = await duob.getUserOrganizationBindingById(ev.UserOrganizationBindingId);
 		return binding?.UserId == parsedUserId;
 	}
 
 	public static RouteGroupBuilder MapOrganizationEventsEndpoints(this RouteGroupBuilder group)
 	{
-		group.MapGet("/event/{id}", async Task<IResult> (int id) =>
+		group.MapGet("/event/{id}", async Task<IResult> (int id, DataOrganizationEvents doe) =>
 		{
 			try
 			{
-				DataOrganizationEvents doe = new();
 				OrganizationEvents? ev = await doe.getOrganizationEventById(id);
 				return ev == null ? Results.NotFound() : Results.Ok(ev);
 			}
@@ -43,11 +41,10 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("getOrganizationEventById");
 
-		group.MapGet("/{organizationId}", async Task<string> (int organizationId) =>
+		group.MapGet("/{organizationId}", async Task<string> (int organizationId, DataOrganizationEvents organizationData) =>
 		{
 			try
 			{
-				DataOrganizationEvents organizationData = new();
 				List<OrganizationEvents> allOrganizations = await organizationData.getOrganizationEvents(organizationId);
 				return JsonConvert.SerializeObject(allOrganizations);
 			}
@@ -59,14 +56,16 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("getOrganizationEvents");
 
-		group.MapPost("/", async Task<IResult> ([FromBody] OrganizationEvents oe, ClaimsPrincipal user) =>
+		group.MapPost("/", async Task<IResult> ([FromBody] OrganizationEvents oe,
+					ClaimsPrincipal user,
+					DataUserOrganizationBinding duob,
+					DataOrganizationEvents doe) =>
 		{
 			try
 			{
 				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 				if (userId == null) return Results.Unauthorized();
 
-				DataUserOrganizationBinding duob = new();
 				UserOrganizationBindings? binding = await duob.getUserOrganizationBindingForUser(userId, oe.OrganizationId);
 				if (binding == null) return Results.Forbid();
 
@@ -74,7 +73,6 @@ public static class OrganizationEventsEndpoint
 				oe.CreatedDate = DateTime.SpecifyKind(oe.CreatedDate, DateTimeKind.Utc);
 				oe.StartDate = DateTime.SpecifyKind(oe.StartDate, DateTimeKind.Utc);
 
-				DataOrganizationEvents doe = new();
 				await doe.createOrganizationEvents(oe);
 				return Results.Ok();
 			}
@@ -92,18 +90,20 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("PostOrganizationEvents");
 
-		group.MapDelete("/{id}", async Task<IResult> (int id, ClaimsPrincipal user) =>
+		group.MapDelete("/{id}", async Task<IResult> (int id,
+					DataOrganizationEvents doe,
+					DataUserOrganizationBinding duob,
+					ClaimsPrincipal user) =>
 		{
 			try
 			{
 				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 				if (userId == null) return Results.Unauthorized();
 
-				DataOrganizationEvents doe = new();
 				OrganizationEvents? ev = await doe.getOrganizationEventById(id);
 				if (ev == null) return Results.NotFound();
 
-				if (!await IsEventOwner(ev, userId))
+				if (!await IsEventOwner(ev, userId, duob))
 					return Results.Forbid();
 
 				await doe.deleteOrganizationEvent(id);
@@ -117,18 +117,21 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("DeleteOrganizationEvent");
 
-		group.MapPatch("/{id}", async Task<IResult> (int id, [FromBody] UpdateEventRequest req, ClaimsPrincipal user) =>
+		group.MapPatch("/{id}", async Task<IResult> (int id,
+					[FromBody] UpdateEventRequest req,
+					DataOrganizationEvents doe,
+					DataUserOrganizationBinding duob,
+					ClaimsPrincipal user) =>
 		{
 			try
 			{
 				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 				if (userId == null) return Results.Unauthorized();
 
-				DataOrganizationEvents doe = new();
 				OrganizationEvents? ev = await doe.getOrganizationEventById(id);
 				if (ev == null) return Results.NotFound();
 
-				if (!await IsEventOwner(ev, userId))
+				if (!await IsEventOwner(ev, userId, duob))
 					return Results.Forbid();
 
 				await doe.updateEvent(id, req);
@@ -142,12 +145,11 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("UpdateEvent");
 
-		group.MapPost("/{UserEventBinding}", async Task<string> (string userEventBinding) =>
+		group.MapPost("/{UserEventBinding}", async Task<string> (string userEventBinding, DataOrganizationEvents doe) =>
 		{
 			try
 			{
 				UserEventBindings? ueb = JsonConvert.DeserializeObject<UserEventBindings>(userEventBinding);
-				DataOrganizationEvents doe = new DataOrganizationEvents();
 
 				if (ueb != null)
 				{
@@ -168,7 +170,7 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("UserJoinEvent");
 
-		group.MapPost("/{eventId}/join", async Task<IResult> (int eventId, ClaimsPrincipal user) =>
+		group.MapPost("/{eventId}/join", async Task<IResult> (int eventId, ClaimsPrincipal user, DataOrganizationEvents doe) =>
 		{
 			try
 			{
@@ -176,7 +178,6 @@ public static class OrganizationEventsEndpoint
 				if (userId == null || !int.TryParse(userId, out int parsedUserId))
 					return Results.Unauthorized();
 
-				DataOrganizationEvents doe = new();
 				if (await doe.isUserRegistered(parsedUserId, eventId))
 					return Results.Conflict("Already registered for this event.");
 
@@ -191,7 +192,7 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("JoinEvent");
 
-		group.MapDelete("/{eventId}/join", async Task<IResult> (int eventId, ClaimsPrincipal user) =>
+		group.MapDelete("/{eventId}/join", async Task<IResult> (int eventId, ClaimsPrincipal user, DataOrganizationEvents doe) =>
 		{
 			try
 			{
@@ -199,7 +200,6 @@ public static class OrganizationEventsEndpoint
 				if (userId == null || !int.TryParse(userId, out int parsedUserId))
 					return Results.Unauthorized();
 
-				DataOrganizationEvents doe = new();
 				bool success = await doe.userLeaveEvent(parsedUserId, eventId);
 				return success ? Results.Ok() : Results.NotFound();
 			}
@@ -211,11 +211,10 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("LeaveEvent");
 
-		group.MapGet("/{eventId}/participants", async Task<IResult> (int eventId) =>
+		group.MapGet("/{eventId}/participants", async Task<IResult> (int eventId, DataOrganizationEvents doe) =>
 		{
 			try
 			{
-				DataOrganizationEvents doe = new();
 				var participants = await doe.getEventParticipants(eventId);
 				return Results.Ok(participants);
 			}
@@ -227,7 +226,7 @@ public static class OrganizationEventsEndpoint
 		})
 		.WithName("GetEventParticipants");
 
-		group.MapGet("/{eventId}/is-registered", async Task<IResult> (int eventId, ClaimsPrincipal user) =>
+		group.MapGet("/{eventId}/is-registered", async Task<IResult> (int eventId, ClaimsPrincipal user, DataOrganizationEvents doe) =>
 		{
 			try
 			{
@@ -235,7 +234,6 @@ public static class OrganizationEventsEndpoint
 				if (userId == null || !int.TryParse(userId, out int parsedUserId))
 					return Results.Unauthorized();
 
-				DataOrganizationEvents doe = new();
 				bool registered = await doe.isUserRegistered(parsedUserId, eventId);
 				return Results.Ok(registered);
 			}

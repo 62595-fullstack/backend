@@ -2,92 +2,84 @@ using Dto;
 using Microsoft.EntityFrameworkCore;
 using Models.Post;
 
-namespace backend.getdata
+namespace backend.getdata;
+
+public class DataPost(DatabaseContext db)
 {
-	public class Post
+	private readonly DatabaseContext db = db;
+
+	public async Task<List<Posts>?> getAllPost()
 	{
-		public async Task<List<Posts>?> getAllPost()
+		try
 		{
-			try
-			{
-				DatabaseContext db = new DatabaseContext();
+			Task<List<Posts>> posts = db.Post.ToListAsync();
 
-				Task<List<Posts>> posts = db.Post.ToListAsync();
-
-				return await posts;
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.Message);
-				return null;
-			}
+			return await posts;
 		}
-
-		public async Task<List<Posts>> GetPostsByUser(string userId)
+		catch (Exception ex)
 		{
-			using DatabaseContext db = new();
-			return await db.Post
-				.AsNoTracking()
-				.Where(p => p.UserId == userId)
-				.OrderByDescending(p => p.CreatedDate)
-				.ToListAsync();
+			Console.WriteLine(ex.Message);
+			return null;
 		}
+	}
 
-		public async Task<List<Posts>?> getPostByOrganization(int id)
+	public async Task<List<Posts>> GetPostsByUser(string userId)
+	{
+		return await db.Post
+			.AsNoTracking()
+			.Where(p => p.UserId == userId)
+			.OrderByDescending(p => p.CreatedDate)
+			.ToListAsync();
+	}
+
+	public async Task<List<Posts>?> getPostByOrganization(int id)
+	{
+		try
 		{
-			try
-			{
-				DatabaseContext db = new DatabaseContext();
+			Task<List<Posts>> posts = db.Post.Include(p => p.OrganizationEvent).Where(p => p.OrganizationEvent != null && p.OrganizationEvent.OrganizationId == id).ToListAsync();
 
-				Task<List<Posts>> posts = db.Post.Include(p => p.OrganizationEvent).Where(p => p.OrganizationEvent != null && p.OrganizationEvent.OrganizationId == id).ToListAsync();
-
-				return await posts;
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.Message);
-				return null;
-			}
+			return await posts;
 		}
-
-		public async Task<bool> getPostByOrganization(Posts post)
+		catch (Exception ex)
 		{
-			try
-			{
-				DatabaseContext db = new DatabaseContext();
-
-				await db.Post.AddAsync(post);
-				await db.SaveChangesAsync();
-
-				return true;
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.Message);
-				return false;
-			}
+			Console.WriteLine(ex.Message);
+			return null;
 		}
+	}
 
-		public async Task<bool> AddPost(PostDto post)
+	public async Task<bool> getPostByOrganization(Posts post)
+	{
+		try
 		{
-			try
-			{
-				DatabaseContext db = new DatabaseContext();
+			await db.Post.AddAsync(post);
+			await db.SaveChangesAsync();
 
-				await db.Post.AddAsync(new Posts
-				{
-					Title = post.Title,
-					BodyText = post.BodyText,
-					UserId = post.UserId,
-					OrganizationEventId = post.OrganizationEventId,
-				});
-				return true;
-			}
-			catch (Exception ex)
+			return true;
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			return false;
+		}
+	}
+
+	public async Task<bool> AddPost(PostDto post)
+	{
+		try
+		{
+			await db.Post.AddAsync(new Posts
 			{
-				Console.WriteLine(ex.Message);
-				return false;
-			}
+				Title = post.Title,
+				BodyText = post.BodyText,
+				UserId = post.UserId,
+				OrganizationEventId = post.OrganizationEventId,
+			});
+			return true;
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			return false;
 		}
 	}
 }

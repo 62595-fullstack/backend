@@ -8,11 +8,10 @@ public static class AttachmentEndpoint
 {
 	public static RouteGroupBuilder MapAttachmentEndpoints(this RouteGroupBuilder group)
 	{
-		group.MapGet("/{attachmentId}", async Task<Attachments?> (int attachmentId) =>
+		group.MapGet("/{attachmentId}", async Task<Attachments?> (int attachmentId, DataAttachment dam) =>
 		{
 			try
 			{
-				DataAttachment dam = new DataAttachment();
 				Attachments? am = await dam.GetAttachment(attachmentId);
 
 				if (am == null)
@@ -23,7 +22,6 @@ public static class AttachmentEndpoint
 				{
 					return am;
 				}
-
 			}
 			catch (Exception ex)
 			{
@@ -33,11 +31,10 @@ public static class AttachmentEndpoint
 		})
 		.WithName("GetAttachment");
 
-		group.MapDelete("/{attachmentId}", async (int attachmentId) =>
+		group.MapDelete("/{attachmentId}", async (int attachmentId, DataAttachment dam) =>
 		{
 			try
 			{
-				DataAttachment dam = new DataAttachment();
 				bool success = await dam.DeleteAttachment(attachmentId);
 				if (!success)
 				{
@@ -53,11 +50,12 @@ public static class AttachmentEndpoint
 		})
 		.WithName("DeleteAttachment");
 
-		group.MapPost("/profilepicture/{organizationId}", async Task<IResult> (AttachmentDto attachment, int organizationId) =>
+		group.MapPost("/profilepicture/{organizationId}", async Task<IResult> (AttachmentDto attachment,
+					int organizationId,
+					DataAttachment dam) =>
 		{
 			try
 			{
-				DataAttachment dam = new DataAttachment();
 				bool success = await dam.AddOrganizationCoverPhoto(attachment, organizationId);
 				if (success) return Results.InternalServerError();
 				return Results.Ok();
@@ -71,11 +69,12 @@ public static class AttachmentEndpoint
 		.WithName("PostOrganizationProfilepicture")
 		.DisableAntiforgery();
 
-		group.MapPost("/coverphoto/{organizationId}", async Task<IResult> (AttachmentDto attachment, int organizationId) =>
+		group.MapPost("/coverphoto/{organizationId}", async Task<IResult> (AttachmentDto attachment,
+					int organizationId,
+					DataAttachment dam) =>
 			{
 				try
 				{
-					DataAttachment dam = new DataAttachment();
 					bool success = await dam.AddOrganizationCoverPhoto(attachment, organizationId);
 					if (success) return Results.InternalServerError();
 					return Results.Ok();

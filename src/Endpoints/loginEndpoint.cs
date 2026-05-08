@@ -8,7 +8,7 @@ public static class loginEndpoint
 {
 	public static RouteGroupBuilder MapLoginEndpoint(this RouteGroupBuilder group)
 	{
-		group.MapPost("/register", async Task<IResult> (RegisterCredentialsDto registerDto) =>
+		group.MapPost("/register", async Task<IResult> (RegisterCredentialsDto registerDto, DataUser ud) =>
 		{
 			if (string.IsNullOrWhiteSpace(registerDto.Email))
 				return Results.BadRequest("Email is required.");
@@ -21,7 +21,6 @@ public static class loginEndpoint
 
 			try
 			{
-				DataUser ud = new DataUser();
 				bool success = await ud.AddUsers(registerDto);
 				return success ?
 					Results.Ok() :
@@ -35,11 +34,10 @@ public static class loginEndpoint
 		})
 		.WithName("CreateUser");
 
-		group.MapPost("/login", async Task<IResult> (LoginCredentialsDto loginCredentials, TokenService tokenService) =>
+		group.MapPost("/login", async Task<IResult> (LoginCredentialsDto loginCredentials, TokenService tokenService, DataUser ud) =>
 		{
 			try
 			{
-				DataUser ud = new DataUser();
 				Users? u = await ud.getUserByEmail(loginCredentials.Email);
 				if (u == null)
 				{

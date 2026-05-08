@@ -5,8 +5,10 @@ using Models.UserFriendship;
 
 namespace backend.getdata;
 
-public class DataFriendship
+public class DataFriendship(DatabaseContext db)
 {
+	private readonly DatabaseContext db = db;
+
 	private static (string userAId, string userBId) NormalizePair(string firstUserId, string secondUserId)
 	{
 		return string.CompareOrdinal(firstUserId, secondUserId) <= 0
@@ -42,8 +44,6 @@ public class DataFriendship
 
 	public async Task<List<UserSummaryDto>> SearchUsers(string currentUserId, string? query)
 	{
-		await using DatabaseContext db = new();
-
 		IQueryable<Users> usersQuery = db.User
 			.AsNoTracking()
 			.Where(user => user.Id != currentUserId);
@@ -72,8 +72,6 @@ public class DataFriendship
 
 	public async Task<List<FriendSummaryDto>> GetFriendsForUser(string userId)
 	{
-		await using DatabaseContext db = new();
-
 		List<UserFriendships> friendships = await db.UserFriendship
 			.AsNoTracking()
 			.Where(friendship => friendship.UserAId == userId || friendship.UserBId == userId)
@@ -109,8 +107,6 @@ public class DataFriendship
 		{
 			return null;
 		}
-
-		await using DatabaseContext db = new();
 
 		Users? currentUser = await db.User.FirstOrDefaultAsync(user => user.Id == currentUserId);
 		Users? friendUser = await db.User.FirstOrDefaultAsync(user => user.Id == friendUserId);
@@ -150,7 +146,6 @@ public class DataFriendship
 			return false;
 		}
 
-		await using DatabaseContext db = new();
 		(string userAId, string userBId) = NormalizePair(currentUserId, friendUserId);
 
 		UserFriendships? friendship = await db.UserFriendship

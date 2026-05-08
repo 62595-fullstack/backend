@@ -9,12 +9,11 @@ public static class PostEndpoint
 {
 	public static RouteGroupBuilder MapPostEndpoints(this RouteGroupBuilder group)
 	{
-		group.MapGet("/", async Task<IResult> () =>
+		group.MapGet("/", async Task<IResult> (DataPost dataPost) =>
 		{
 			try
 			{
-				Post p = new Post();
-				List<Posts>? allPost = await p.getAllPost();
+				List<Posts>? allPost = await dataPost.getAllPost();
 				string allPostsJson = JsonConvert.SerializeObject(allPost);
 				return Results.Ok(allPostsJson);
 			}
@@ -26,12 +25,11 @@ public static class PostEndpoint
 		})
 		.WithName("GetPosts");
 
-		group.MapGet("/{organizationsId}", async Task<IResult> (int organizationsId) =>
+		group.MapGet("/{organizationsId}", async Task<IResult> (int organizationsId, DataPost dataPost) =>
 		{
 			try
 			{
-				Post p = new Post();
-				List<Posts>? posts = await p.getPostByOrganization(organizationsId);
+				List<Posts>? posts = await dataPost.getPostByOrganization(organizationsId);
 				string jsonPosts = JsonConvert.SerializeObject(posts);
 				return Results.Ok(jsonPosts);
 			}
@@ -43,14 +41,13 @@ public static class PostEndpoint
 		})
 		.WithName("GetPostsFromOrganizationsId");
 
-		group.MapPost("/", async Task<IResult> (PostDto p) =>
+		group.MapPost("/", async Task<IResult> (PostDto p, DataPost dataPost) =>
 		{
 			try
 			{
 				if (p != null)
 				{
-					Post pd = new Post();
-					bool success = await pd.AddPost(p);
+					bool success = await dataPost.AddPost(p);
 					if (!success)
 					{
 						return Results.BadRequest();

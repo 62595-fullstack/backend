@@ -9,9 +9,8 @@ using Models.User;
 using Models.UserEventBinding;
 using Models.UserFriendship;
 using Models.UserOrganizationBinding;
-using System.Reflection;
 
-public class DatabaseContext : DbContext
+public class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbContext(options)
 {
 	public DbSet<Users> User { get; set; }
 	public DbSet<Organizations> Organization { get; set; }
@@ -23,28 +22,6 @@ public class DatabaseContext : DbContext
 	public DbSet<UserFriendships> UserFriendship { get; set; }
 	public DbSet<UserOrganizationBindings> UserOrganizationBinding { get; set; }
 	public DbSet<Attachments> Attachment { get; set; }
-
-	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-	{
-		try
-		{
-			IConfigurationRoot config = new ConfigurationBuilder()
-				.AddEnvironmentVariables()
-				.AddUserSecrets(Assembly.GetExecutingAssembly())
-				.Build();
-
-			var connString = $@"Host={config["host"]};
-						 Port={config["port"]};
-                         Username={config["username"]};
-                         Password={config["password"]};
-                         Database={config["database"]}";
-			optionsBuilder.UseNpgsql(connString);
-		}
-		catch
-		{
-			System.Console.WriteLine("No connections");
-		}
-	}
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
@@ -85,6 +62,3 @@ public class DatabaseContext : DbContext
 			.IsUnique();
 	}
 }
-
-// dotnet ef migrations add [nameofmigrations]
-// dotnet ef database update
