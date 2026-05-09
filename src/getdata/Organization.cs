@@ -106,5 +106,60 @@ namespace backend.getdata
 				return false;
 			}
 		}
+
+		public async Task<bool> DeleteOrganizationIfEmpty(int organizationId)
+		{
+			try
+			{
+				DatabaseContext db = new();
+
+				bool hasMembers = await db.UserOrganizationBinding
+					.AnyAsync(b => b.OrganizationId == organizationId && b.UserId != null);
+				if (hasMembers) return false;
+
+				Organizations? org = await db.Organization.FindAsync(organizationId);
+				if (org == null) return false;
+
+				await db.UserOrganizationBinding
+					.Where(b => b.OrganizationId == organizationId)
+					.ExecuteDeleteAsync();
+				await db.OrganizationPost
+					.Where(p => p.OrganizationId == organizationId)
+					.ExecuteDeleteAsync();
+
+				db.Organization.Remove(org);
+				await db.SaveChangesAsync();
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return false;
+			}
+		}
+
+		public async Task<int> DeleteAllEmptyOrganizations()
+		{
+			try
+			{
+				DatabaseContext db = new();
+				int[] emptyOrgIds = await db.Organization
+					.Where(o => !db.UserOrganizationBinding.Any(b => b.OrganizationId == o.Id && b.UserId != null))
+					.Select(o => o.Id)
+					.ToArrayAsync();
+
+				int deleted = 0;
+				foreach (int id in emptyOrgIds)
+				{
+					if (await DeleteOrganizationIfEmpty(id)) deleted++;
+				}
+				return deleted;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return 0;
+			}
+		}
 	}
 }

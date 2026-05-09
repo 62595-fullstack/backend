@@ -128,6 +128,8 @@ else
 	app.UseHttpsRedirection();
 }
 
+await new backend.getdata.DataOrganization().DeleteAllEmptyOrganizations();
+
 app.MapGroup("/posts")
 	.RequireAuthorization()
 	.MapPostEndpoints();
