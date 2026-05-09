@@ -1,9 +1,11 @@
 using Endpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Models.Role;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
@@ -91,7 +93,27 @@ if (app.Environment.IsDevelopment())
 	{
 		await db.GetService<IMigrator>().MigrateAsync();
 	}
+}
 
+// Reference roles are required by UserOrganizationBinding (RoleId FK) regardless
+// of environment. Production runs migrations via the deploy workflow but never
+// invokes DummyData.Initialize, so seed them unconditionally here.
+using (DatabaseContext db = new())
+{
+	Roles[] required = [
+		new Roles { Id = 999, Name = "Employee" },
+		new Roles { Id = 1000, Name = "Admin" },
+	];
+	foreach (Roles role in required)
+	{
+		if (!await db.Role.AnyAsync(r => r.Id == role.Id))
+			await db.Role.AddAsync(role);
+	}
+	await db.SaveChangesAsync();
+}
+
+if (app.Environment.IsDevelopment())
+{
 	await DummyData.Initialize();
 	app.UseSwagger();
 	// SwaggerUI can be viewed at http://localhost:{port}
