@@ -34,13 +34,13 @@ public static class OrganizationEndpoint
 			try
 			{
 				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (userId == null || !int.TryParse(userId, out int userIdInt)) return Results.Unauthorized();
+				if (userId == null) return Results.Unauthorized();
 
 				DataOrganization DO = new();
 				Organizations created = await DO.CreateOrganization(o);
 
 				DataUserOrganizationBinding duob = new();
-				await duob.setUserToOrganization(userIdInt, created.Id, 1000);
+				await duob.setUserToOrganization(userId, created.Id, 1000);
 
 				return Results.Ok(JsonConvert.SerializeObject(created));
 			}

@@ -15,14 +15,9 @@ public static class OrganizationEventsEndpoint
 {
 	private static async Task<bool> IsEventOwner(OrganizationEvents ev, string userId)
 	{
-		if (!int.TryParse(userId, out int parsedUserId))
-		{
-			return false;
-		}
-
 		DataUserOrganizationBinding duob = new();
 		UserOrganizationBindings? binding = await duob.getUserOrganizationBindingById(ev.UserOrganizationBindingId);
-		return binding?.UserId == parsedUserId;
+		return binding?.UserId == userId;
 	}
 
 	public static RouteGroupBuilder MapOrganizationEventsEndpoints(this RouteGroupBuilder group)

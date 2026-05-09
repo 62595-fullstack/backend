@@ -64,7 +64,7 @@ public static class UserOrganizationBinding
 		})
 		.WithName("getUserOrganizationBinding");
 
-		group.MapPost("/{userId}/{organizationId}/{roleId}", async Task<string> (int userId, int organizationId, int roleId) =>
+		group.MapPost("/{userId}/{organizationId}/{roleId}", async Task<string> (string userId, int organizationId, int roleId) =>
 		{
 			try
 			{
@@ -91,7 +91,7 @@ public static class UserOrganizationBinding
 				UserOrganizationBindings? existing = await organizationData.getUserOrganizationBindingForUser(userId, organizationId);
 				if (existing != null) return Results.Conflict("Already a member.");
 
-				bool successful = await organizationData.setUserToOrganization(int.Parse(userId), organizationId, 999);
+				bool successful = await organizationData.setUserToOrganization(userId, organizationId, 999);
 				return successful ? Results.Ok() : Results.Problem("Failed to join organization.");
 			}
 			catch (Exception ex)
@@ -171,7 +171,7 @@ public static class UserOrganizationBinding
 				UserOrganizationBindings? adminBinding = await data.getUserOrganizationBindingForUser(adminId, organizationId);
 				if (adminBinding?.RoleId != 1000) return Results.Forbid();
 
-				bool success = await data.updateUserRoleInOrganization(int.Parse(userId), organizationId, roleId);
+				bool success = await data.updateUserRoleInOrganization(userId, organizationId, roleId);
 				return success ? Results.Ok() : Results.NotFound("Binding not found.");
 			}
 			catch (Exception ex)
