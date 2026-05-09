@@ -79,6 +79,10 @@ public class DatabaseContext : DbContext
 		modelBuilder.Entity<UserOrganizationBindings>()
 			.HasIndex(b => new { b.UserId, b.OrganizationId })
 			.IsUnique();
+
+		modelBuilder.Entity<UserEventBindings>()
+			.HasIndex(b => new { b.UserId, b.OrganizationEventsId })
+			.IsUnique();
 	}
 }
 

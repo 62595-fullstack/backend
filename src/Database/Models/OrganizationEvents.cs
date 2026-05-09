@@ -1,4 +1,4 @@
-﻿using Models.Attachment;
+using Models.Attachment;
 using Models.Organization;
 using Models.UserEventBinding;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,6 +12,7 @@ namespace Models.OrganizationEvent
 		public string Title { get; set; } = string.Empty;
 		public string Description { get; set; } = string.Empty;
 		public string Rules { get; set; } = string.Empty;
+		public string BracketResults { get; set; } = "{}";
 		public int? AttachmentId { get; set; }
 		public Attachments? Attachment { get; set; }
 		public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
@@ -22,7 +23,7 @@ namespace Models.OrganizationEvent
 		[NotMapped]
 		public string CreatorName { get; set; } = string.Empty;
 
-		public UserEventBindings? UserEventBinding { get; set; } = null!;
+		public ICollection<UserEventBindings> UserEventBindings { get; set; } = new List<UserEventBindings>();
 		public Organizations? Organization { get; set; } = null!;
 
 	}

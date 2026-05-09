@@ -40,7 +40,7 @@ public class DataFriendship
 		);
 	}
 
-	public async Task<List<UserSearchResultDto>> SearchUsers(string currentUserId, string? query)
+	public async Task<List<UserSummaryDto>> SearchUsers(string currentUserId, string? query)
 	{
 		await using DatabaseContext db = new();
 
@@ -59,7 +59,14 @@ public class DataFriendship
 			.OrderBy(user => user.FirstName)
 			.ThenBy(user => user.UserName)
 			.Take(25)
-			.Select(user => new UserSearchResultDto(user.Id, user.FirstName, user.LastName))
+			.Select(user => new UserSummaryDto(
+				user.Id,
+				user.Email ?? string.Empty,
+				user.FirstName,
+				user.LastName,
+				user.UserName ?? user.FirstName,
+				user.DateOfBirth,
+				user.Bio))
 			.ToListAsync();
 	}
 

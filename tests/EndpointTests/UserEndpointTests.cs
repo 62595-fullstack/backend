@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace tests.EndpointsTests;
 
-[Collection("httpclient collection")]
+[Collection("httpClientCollection")]
 public class UserEndpointTests(HttpClientFixture httpClientFixture)
 {
 	private readonly HttpClient client = httpClientFixture.client;
@@ -16,12 +16,12 @@ public class UserEndpointTests(HttpClientFixture httpClientFixture)
 		HttpResponseMessage response = await client.GetAsync(
 			"users?query=frisk",
 			TestContext.Current.CancellationToken);
-		List<UserSummaryDto>? users = await response.Content.ReadFromJsonAsync<List<UserSummaryDto>>(
+		List<UserSearchResultDto>? users = await response.Content.ReadFromJsonAsync<List<UserSearchResultDto>>(
 			cancellationToken: TestContext.Current.CancellationToken);
 
 		Assert.True(response.IsSuccessStatusCode);
 		Assert.NotNull(users);
-		Assert.Contains(users, user => user.Email == "friskfyr@friskefyre.com");
+		Assert.Contains(users, user => user.FirstName == "Frisk");
 	}
 
 	[Fact]

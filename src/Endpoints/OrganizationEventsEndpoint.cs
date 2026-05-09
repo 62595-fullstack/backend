@@ -13,6 +13,18 @@ namespace Endpoints;
 
 public static class OrganizationEventsEndpoint
 {
+	private static async Task<bool> IsEventOwner(OrganizationEvents ev, string userId)
+	{
+		if (!int.TryParse(userId, out int parsedUserId))
+		{
+			return false;
+		}
+
+		DataUserOrganizationBinding duob = new();
+		UserOrganizationBindings? binding = await duob.getUserOrganizationBindingById(ev.UserOrganizationBindingId);
+		return binding?.UserId == parsedUserId;
+	}
+
 	public static RouteGroupBuilder MapOrganizationEventsEndpoints(this RouteGroupBuilder group)
 	{
 		group.MapGet("/event/{id}", async Task<IResult> (int id) =>
@@ -91,9 +103,7 @@ public static class OrganizationEventsEndpoint
 				OrganizationEvents? ev = await doe.getOrganizationEventById(id);
 				if (ev == null) return Results.NotFound();
 
-				DataUserOrganizationBinding duob = new();
-				UserOrganizationBindings? binding = await duob.getUserOrganizationBindingById(ev.UserOrganizationBindingId);
-				if (binding == null || binding.UserId != int.Parse(userId))
+				if (!await IsEventOwner(ev, userId))
 					return Results.Forbid();
 
 				await doe.deleteOrganizationEvent(id);
@@ -118,9 +128,7 @@ public static class OrganizationEventsEndpoint
 				OrganizationEvents? ev = await doe.getOrganizationEventById(id);
 				if (ev == null) return Results.NotFound();
 
-				DataUserOrganizationBinding duob = new();
-				UserOrganizationBindings? binding = await duob.getUserOrganizationBindingById(ev.UserOrganizationBindingId);
-				if (binding == null || binding.UserId != int.Parse(userId))
+				if (!await IsEventOwner(ev, userId))
 					return Results.Forbid();
 
 				await doe.updateEvent(id, req);
@@ -159,6 +167,85 @@ public static class OrganizationEventsEndpoint
 			}
 		})
 		.WithName("UserJoinEvent");
+
+		group.MapPost("/{eventId}/join", async Task<IResult> (int eventId, ClaimsPrincipal user) =>
+		{
+			try
+			{
+				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null || !int.TryParse(userId, out int parsedUserId))
+					return Results.Unauthorized();
+
+				DataOrganizationEvents doe = new();
+				if (await doe.isUserRegistered(parsedUserId, eventId))
+					return Results.Conflict("Already registered for this event.");
+
+				bool success = await doe.userJoinEvent(parsedUserId, eventId);
+				return success ? Results.Ok() : Results.Problem("Failed to register.");
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("JoinEvent");
+
+		group.MapDelete("/{eventId}/join", async Task<IResult> (int eventId, ClaimsPrincipal user) =>
+		{
+			try
+			{
+				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null || !int.TryParse(userId, out int parsedUserId))
+					return Results.Unauthorized();
+
+				DataOrganizationEvents doe = new();
+				bool success = await doe.userLeaveEvent(parsedUserId, eventId);
+				return success ? Results.Ok() : Results.NotFound();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("LeaveEvent");
+
+		group.MapGet("/{eventId}/participants", async Task<IResult> (int eventId) =>
+		{
+			try
+			{
+				DataOrganizationEvents doe = new();
+				var participants = await doe.getEventParticipants(eventId);
+				return Results.Ok(participants);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("GetEventParticipants");
+
+		group.MapGet("/{eventId}/is-registered", async Task<IResult> (int eventId, ClaimsPrincipal user) =>
+		{
+			try
+			{
+				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null || !int.TryParse(userId, out int parsedUserId))
+					return Results.Unauthorized();
+
+				DataOrganizationEvents doe = new();
+				bool registered = await doe.isUserRegistered(parsedUserId, eventId);
+				return Results.Ok(registered);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				return Results.Problem(ex.Message);
+			}
+		})
+		.WithName("IsRegisteredForEvent");
 
 		return group;
 	}

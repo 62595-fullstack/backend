@@ -75,6 +75,7 @@ namespace backend.getdata
 				if (ev == null) return false;
 				if (req.Description != null) ev.Description = req.Description;
 				if (req.Rules != null) ev.Rules = req.Rules;
+				if (req.BracketResults != null) ev.BracketResults = req.BracketResults;
 				await db.SaveChangesAsync();
 				return true;
 			}
@@ -124,6 +125,48 @@ namespace backend.getdata
 				Console.WriteLine(ex.ToString());
 				return false;
 			}
+		}
+
+		public async Task<bool> isUserRegistered(int userId, int eventId)
+		{
+			DatabaseContext db = new DatabaseContext();
+			return await db.UserEventBinding.AnyAsync(b => b.UserId == userId && b.OrganizationEventsId == eventId);
+		}
+
+		public async Task<bool> userLeaveEvent(int userId, int eventId)
+		{
+			try
+			{
+				DatabaseContext db = new DatabaseContext();
+				UserEventBindings? binding = await db.UserEventBinding
+					.FirstOrDefaultAsync(b => b.UserId == userId && b.OrganizationEventsId == eventId);
+				if (binding == null) return false;
+				db.UserEventBinding.Remove(binding);
+				await db.SaveChangesAsync();
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				return false;
+			}
+		}
+
+		public async Task<List<Dto.EventParticipantDto>> getEventParticipants(int eventId)
+		{
+			DatabaseContext db = new DatabaseContext();
+			List<UserEventBindings> bindings = await db.UserEventBinding
+				.Where(b => b.OrganizationEventsId == eventId)
+				.ToListAsync();
+
+			List<Dto.EventParticipantDto> result = new();
+			foreach (UserEventBindings binding in bindings)
+			{
+				Users? user = await db.User.FirstOrDefaultAsync(u => u.Id == binding.UserId.ToString());
+				if (user != null)
+					result.Add(new Dto.EventParticipantDto(binding.Id, user.Id ?? "", user.FirstName, user.LastName));
+			}
+			return result;
 		}
 	}
 }
