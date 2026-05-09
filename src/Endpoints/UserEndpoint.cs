@@ -59,19 +59,6 @@ public static class UserEndpoint
 		})
 		.WithName("GetMyFriends");
 
-		group.MapPost("/me/friends", async Task<IResult> (ClaimsPrincipal user, AddFriendDto request) =>
-		{
-			string? currentUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-			if (currentUserId == null) return Results.Unauthorized();
-
-			DataFriendship friendshipData = new();
-			FriendSummaryDto? friend = await friendshipData.AddFriend(currentUserId, request.FriendUserId);
-			return friend == null
-				? Results.BadRequest("Unable to create friendship.")
-				: Results.Ok(friend);
-		})
-		.WithName("AddFriend");
-
 		group.MapDelete("/me/friends/{friendUserId}", async Task<IResult> (ClaimsPrincipal user, string friendUserId) =>
 		{
 			string? currentUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -82,6 +69,74 @@ public static class UserEndpoint
 			return removed ? Results.Ok() : Results.NotFound();
 		})
 		.WithName("RemoveFriend");
+
+		group.MapGet("/me/friend-requests", async Task<IResult> (ClaimsPrincipal user) =>
+		{
+			string? currentUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (currentUserId == null) return Results.Unauthorized();
+
+			DataFriendship friendshipData = new();
+			List<FriendRequestDto> requests = await friendshipData.GetIncomingRequests(currentUserId);
+			return Results.Ok(requests);
+		})
+		.WithName("GetMyIncomingFriendRequests");
+
+		group.MapPost("/me/friend-requests", async Task<IResult> (ClaimsPrincipal user, AddFriendDto request) =>
+		{
+			string? currentUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (currentUserId == null) return Results.Unauthorized();
+
+			DataFriendship friendshipData = new();
+			DataFriendship.FriendshipStatus status = await friendshipData.SendFriendRequest(currentUserId, request.FriendUserId);
+			if (status == DataFriendship.FriendshipStatus.None)
+				return Results.BadRequest("Unable to send friend request.");
+			return Results.Ok(new FriendshipStatusDto(status.ToString()));
+		})
+		.WithName("SendFriendRequest");
+
+		group.MapPost("/me/friend-requests/{requesterUserId}/accept", async Task<IResult> (ClaimsPrincipal user, string requesterUserId) =>
+		{
+			string? currentUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (currentUserId == null) return Results.Unauthorized();
+
+			DataFriendship friendshipData = new();
+			bool ok = await friendshipData.AcceptFriendRequest(currentUserId, requesterUserId);
+			return ok ? Results.Ok() : Results.NotFound();
+		})
+		.WithName("AcceptFriendRequest");
+
+		group.MapPost("/me/friend-requests/{requesterUserId}/decline", async Task<IResult> (ClaimsPrincipal user, string requesterUserId) =>
+		{
+			string? currentUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (currentUserId == null) return Results.Unauthorized();
+
+			DataFriendship friendshipData = new();
+			bool ok = await friendshipData.DeclineFriendRequest(currentUserId, requesterUserId);
+			return ok ? Results.Ok() : Results.NotFound();
+		})
+		.WithName("DeclineFriendRequest");
+
+		group.MapDelete("/me/friend-requests/{recipientUserId}", async Task<IResult> (ClaimsPrincipal user, string recipientUserId) =>
+		{
+			string? currentUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (currentUserId == null) return Results.Unauthorized();
+
+			DataFriendship friendshipData = new();
+			bool ok = await friendshipData.CancelFriendRequest(currentUserId, recipientUserId);
+			return ok ? Results.Ok() : Results.NotFound();
+		})
+		.WithName("CancelFriendRequest");
+
+		group.MapGet("/{userId}/friend-status", async Task<IResult> (ClaimsPrincipal user, string userId) =>
+		{
+			string? currentUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (currentUserId == null) return Results.Unauthorized();
+
+			DataFriendship friendshipData = new();
+			DataFriendship.FriendshipStatus status = await friendshipData.GetStatusBetween(currentUserId, userId);
+			return Results.Ok(new FriendshipStatusDto(status.ToString()));
+		})
+		.WithName("GetFriendshipStatus");
 
 		group.MapGet("/{userId}", async Task<IResult> (string userId) =>
 		{
