@@ -13,7 +13,7 @@ namespace backend.getdata
 		{
 			UserOrganizationBindings? binding = await db.UserOrganizationBinding.FindAsync(userOrganizationBindingId);
 			if (binding?.UserId == null) return string.Empty;
-			Users? user = await db.User.FirstOrDefaultAsync(u => u.Id == binding.UserId.Value.ToString());
+			Users? user = await db.User.FirstOrDefaultAsync(u => u.Id == binding.UserId);
 			return user?.UserName ?? string.Empty;
 		}
 

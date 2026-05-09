@@ -28,7 +28,7 @@ namespace backend.getdata
 			try
 			{
 				DatabaseContext db = new DatabaseContext();
-				return await db.UserOrganizationBinding.Where(x => x.UserId == int.Parse(userId)).ToListAsync();
+				return await db.UserOrganizationBinding.Where(x => x.UserId == userId).ToListAsync();
 			}
 			catch (Exception ex)
 			{
@@ -43,7 +43,7 @@ namespace backend.getdata
 			{
 				DatabaseContext db = new DatabaseContext();
 				return await db.UserOrganizationBinding
-					.FirstOrDefaultAsync(x => x.UserId == int.Parse(userId) && x.OrganizationId == organizationId);
+					.FirstOrDefaultAsync(x => x.UserId == userId && x.OrganizationId == organizationId);
 			}
 			catch (Exception ex)
 			{
@@ -72,7 +72,7 @@ namespace backend.getdata
 			{
 				DatabaseContext db = new DatabaseContext();
 				UserOrganizationBindings? binding = await db.UserOrganizationBinding
-					.FirstOrDefaultAsync(x => x.UserId == int.Parse(userId) && x.OrganizationId == organizationId);
+					.FirstOrDefaultAsync(x => x.UserId == userId && x.OrganizationId == organizationId);
 				if (binding == null) return false;
 
 				db.UserOrganizationBinding.Remove(binding);
@@ -86,7 +86,7 @@ namespace backend.getdata
 			}
 		}
 
-		public async Task<bool> setUserToOrganization(int userId, int organizationId, int roleId)
+		public async Task<bool> setUserToOrganization(string userId, int organizationId, int roleId)
 		{
 			DatabaseContext db = new DatabaseContext();
 			UserOrganizationBindings uob = new UserOrganizationBindings();
@@ -98,12 +98,11 @@ namespace backend.getdata
 			await db.UserOrganizationBinding.AddAsync(uob);
 			await db.SaveChangesAsync();
 
-			string joinerUserId = userId.ToString();
-			Users? joiner = await db.User.FirstOrDefaultAsync(u => u.Id == joinerUserId);
+			Users? joiner = await db.User.FirstOrDefaultAsync(u => u.Id == userId);
 			Organizations? org = await db.Organization.FindAsync(organizationId);
 			List<string> adminUserIds = await db.UserOrganizationBinding
 				.Where(b => b.OrganizationId == organizationId && b.RoleId == 1000 && b.UserId != null)
-				.Select(b => b.UserId!.Value.ToString())
+				.Select(b => b.UserId!)
 				.ToListAsync();
 
 			if (joiner != null && org != null && adminUserIds.Count > 0)
@@ -112,12 +111,12 @@ namespace backend.getdata
 				DataNotification notificationData = new();
 				foreach (string adminUserId in adminUserIds)
 				{
-					if (adminUserId == joinerUserId) continue;
+					if (adminUserId == userId) continue;
 					NotificationDto notification = await notificationData.Create(
 						userId: adminUserId,
 						type: "organization_join",
 						message: $"{joinerName} joined your organization '{org.Name}'.",
-						actorUserId: joinerUserId
+						actorUserId: userId
 					);
 					NotificationStream.Publish(adminUserId, notification);
 				}
@@ -135,14 +134,14 @@ namespace backend.getdata
 					.Where(b => b.OrganizationId == organizationId && b.UserId != null)
 					.ToListAsync();
 
-				List<string> userIds = bindings.Select(b => b.UserId!.Value.ToString()).Distinct().ToList();
+				List<string> userIds = bindings.Select(b => b.UserId!).Distinct().ToList();
 				List<Users> users = await db.User.Where(u => userIds.Contains(u.Id)).ToListAsync();
 				Dictionary<string, Users> userMap = users.ToDictionary(u => u.Id);
 
 				return bindings
 					.Select(b =>
 					{
-						string uid = b.UserId!.Value.ToString();
+						string uid = b.UserId!;
 						if (!userMap.TryGetValue(uid, out Users? user)) return null;
 						string roleName = b.RoleId == 1000 ? "Admin" : "Member";
 						return new OrgMemberDto(b.Id, uid, user.FirstName, user.LastName, b.RoleId, roleName);
@@ -158,7 +157,7 @@ namespace backend.getdata
 			}
 		}
 
-		public async Task<bool> updateUserRoleInOrganization(int userId, int organizationId, int roleId)
+		public async Task<bool> updateUserRoleInOrganization(string userId, int organizationId, int roleId)
 		{
 			try
 			{

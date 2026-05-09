@@ -81,6 +81,14 @@ public class DatabaseContext : DbContext
 			.OnDelete(DeleteBehavior.Cascade);
 
 		modelBuilder.Entity<UserOrganizationBindings>()
+			.HasOne<Users>()
+			.WithMany(u => u.UserOrganizationBindings)
+			.HasForeignKey(b => b.UserId)
+			.HasPrincipalKey(u => u.Id)
+			.IsRequired(false)
+			.OnDelete(DeleteBehavior.SetNull);
+
+		modelBuilder.Entity<UserOrganizationBindings>()
 			.HasIndex(b => new { b.UserId, b.OrganizationId })
 			.IsUnique();
 
