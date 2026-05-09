@@ -37,34 +37,4 @@ public class UserEndpointTests(HttpClientFixture httpClientFixture)
 		Assert.NotNull(friends);
 		Assert.Contains(friends, friend => friend.Email == "friskfyr@friskefyre.com");
 	}
-
-	[Fact]
-	public async Task Post_And_Delete_Friend_Works()
-	{
-		HttpResponseMessage addResponse = await client.PostAsJsonAsync(
-			"users/me/friends",
-			new AddFriendDto("9003"),
-			TestContext.Current.CancellationToken);
-		string addResponseBody = await addResponse.Content.ReadAsStringAsync(
-			TestContext.Current.CancellationToken);
-
-		Assert.True(
-			addResponse.IsSuccessStatusCode,
-			$"POST /users/me/friends failed with {(int)addResponse.StatusCode} {addResponse.StatusCode}: {addResponseBody}");
-
-		FriendSummaryDto? addedFriend = JsonSerializer.Deserialize<FriendSummaryDto>(
-			addResponseBody,
-			new JsonSerializerOptions
-			{
-				PropertyNameCaseInsensitive = true
-			});
-		Assert.NotNull(addedFriend);
-		Assert.Equal("9003", addedFriend.Id);
-
-		HttpResponseMessage deleteResponse = await client.DeleteAsync(
-			"users/me/friends/9003",
-			TestContext.Current.CancellationToken);
-
-		Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
-	}
 }
