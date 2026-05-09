@@ -144,7 +144,7 @@ public static class OrganizationEventsEndpoint
 				UserEventBindings? ueb = JsonConvert.DeserializeObject<UserEventBindings>(userEventBinding);
 				DataOrganizationEvents doe = new DataOrganizationEvents();
 
-				if (ueb != null)
+				if (ueb != null && ueb.UserId != null)
 				{
 					await doe.userJoinEvent(ueb.UserId, ueb.OrganizationEventsId);
 				}
@@ -168,14 +168,13 @@ public static class OrganizationEventsEndpoint
 			try
 			{
 				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (userId == null || !int.TryParse(userId, out int parsedUserId))
-					return Results.Unauthorized();
+				if (userId == null) return Results.Unauthorized();
 
 				DataOrganizationEvents doe = new();
-				if (await doe.isUserRegistered(parsedUserId, eventId))
+				if (await doe.isUserRegistered(userId, eventId))
 					return Results.Conflict("Already registered for this event.");
 
-				bool success = await doe.userJoinEvent(parsedUserId, eventId);
+				bool success = await doe.userJoinEvent(userId, eventId);
 				return success ? Results.Ok() : Results.Problem("Failed to register.");
 			}
 			catch (Exception ex)
@@ -191,11 +190,10 @@ public static class OrganizationEventsEndpoint
 			try
 			{
 				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (userId == null || !int.TryParse(userId, out int parsedUserId))
-					return Results.Unauthorized();
+				if (userId == null) return Results.Unauthorized();
 
 				DataOrganizationEvents doe = new();
-				bool success = await doe.userLeaveEvent(parsedUserId, eventId);
+				bool success = await doe.userLeaveEvent(userId, eventId);
 				return success ? Results.Ok() : Results.NotFound();
 			}
 			catch (Exception ex)
@@ -227,11 +225,10 @@ public static class OrganizationEventsEndpoint
 			try
 			{
 				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (userId == null || !int.TryParse(userId, out int parsedUserId))
-					return Results.Unauthorized();
+				if (userId == null) return Results.Unauthorized();
 
 				DataOrganizationEvents doe = new();
-				bool registered = await doe.isUserRegistered(parsedUserId, eventId);
+				bool registered = await doe.isUserRegistered(userId, eventId);
 				return Results.Ok(registered);
 			}
 			catch (Exception ex)
