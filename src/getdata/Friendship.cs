@@ -1,5 +1,6 @@
 using Dto;
 using Microsoft.EntityFrameworkCore;
+using Models.FriendRequest;
 using Models.User;
 using Models.UserFriendship;
 
@@ -103,44 +104,188 @@ public class DataFriendship
 			.ToList();
 	}
 
-	public async Task<FriendSummaryDto?> AddFriend(string currentUserId, string friendUserId)
+	public enum FriendshipStatus { None, Friends, OutgoingPending, IncomingPending }
+
+	public async Task<FriendshipStatus> GetStatusBetween(string userAId, string userBId)
 	{
-		if (string.IsNullOrWhiteSpace(friendUserId) || currentUserId == friendUserId)
+		if (string.IsNullOrWhiteSpace(userAId) || string.IsNullOrWhiteSpace(userBId) || userAId == userBId)
 		{
-			return null;
+			return FriendshipStatus.None;
+		}
+
+		await using DatabaseContext db = new();
+		(string lo, string hi) = NormalizePair(userAId, userBId);
+
+		bool friends = await db.UserFriendship
+			.AsNoTracking()
+			.AnyAsync(f => f.UserAId == lo && f.UserBId == hi);
+		if (friends) return FriendshipStatus.Friends;
+
+		bool outgoing = await db.FriendRequest
+			.AsNoTracking()
+			.AnyAsync(r => r.RequesterId == userAId && r.RecipientId == userBId);
+		if (outgoing) return FriendshipStatus.OutgoingPending;
+
+		bool incoming = await db.FriendRequest
+			.AsNoTracking()
+			.AnyAsync(r => r.RequesterId == userBId && r.RecipientId == userAId);
+		if (incoming) return FriendshipStatus.IncomingPending;
+
+		return FriendshipStatus.None;
+	}
+
+	public async Task<List<FriendRequestDto>> GetIncomingRequests(string userId)
+	{
+		await using DatabaseContext db = new();
+		List<FriendRequests> requests = await db.FriendRequest
+			.AsNoTracking()
+			.Where(r => r.RecipientId == userId)
+			.OrderByDescending(r => r.CreatedDate)
+			.ToListAsync();
+
+		List<string> requesterIds = requests.Select(r => r.RequesterId).Distinct().ToList();
+		Dictionary<string, Users> usersById = await db.User
+			.AsNoTracking()
+			.Where(u => requesterIds.Contains(u.Id))
+			.ToDictionaryAsync(u => u.Id);
+
+		return requests
+			.Select(r => usersById.TryGetValue(r.RequesterId, out Users? requester)
+				? new FriendRequestDto(r.Id, r.RequesterId, requester.FirstName, requester.LastName, r.CreatedDate)
+				: null)
+			.Where(dto => dto != null)
+			.Cast<FriendRequestDto>()
+			.ToList();
+	}
+
+	/// <summary>
+	/// Sends a friend request, or returns "Friends" if a reverse-request was auto-accepted.
+	/// </summary>
+	public async Task<FriendshipStatus> SendFriendRequest(string requesterId, string recipientId)
+	{
+		if (string.IsNullOrWhiteSpace(recipientId) || requesterId == recipientId)
+		{
+			return FriendshipStatus.None;
 		}
 
 		await using DatabaseContext db = new();
 
-		Users? currentUser = await db.User.FirstOrDefaultAsync(user => user.Id == currentUserId);
-		Users? friendUser = await db.User.FirstOrDefaultAsync(user => user.Id == friendUserId);
+		Users? requester = await db.User.FirstOrDefaultAsync(user => user.Id == requesterId);
+		Users? recipient = await db.User.FirstOrDefaultAsync(user => user.Id == recipientId);
+		if (requester == null || recipient == null) return FriendshipStatus.None;
 
-		if (currentUser == null || friendUser == null)
-		{
-			return null;
-		}
-
-		(string userAId, string userBId) = NormalizePair(currentUserId, friendUserId);
-		UserFriendships? existingFriendship = await db.UserFriendship
+		(string lo, string hi) = NormalizePair(requesterId, recipientId);
+		bool alreadyFriends = await db.UserFriendship
 			.AsNoTracking()
-			.FirstOrDefaultAsync(friendship => friendship.UserAId == userAId && friendship.UserBId == userBId);
+			.AnyAsync(f => f.UserAId == lo && f.UserBId == hi);
+		if (alreadyFriends) return FriendshipStatus.Friends;
 
-		if (existingFriendship != null)
+		FriendRequests? reverseRequest = await db.FriendRequest
+			.FirstOrDefaultAsync(r => r.RequesterId == recipientId && r.RecipientId == requesterId);
+		if (reverseRequest != null)
 		{
-			return ToFriendSummaryDto(friendUser, existingFriendship.CreatedDate);
+			await CompleteFriendship(db, reverseRequest.RequesterId, reverseRequest.RecipientId);
+			return FriendshipStatus.Friends;
 		}
+
+		FriendRequests? existingForward = await db.FriendRequest
+			.AsNoTracking()
+			.FirstOrDefaultAsync(r => r.RequesterId == requesterId && r.RecipientId == recipientId);
+		if (existingForward != null) return FriendshipStatus.OutgoingPending;
+
+		FriendRequests request = new()
+		{
+			RequesterId = requesterId,
+			RecipientId = recipientId,
+			CreatedDate = DateTime.UtcNow,
+		};
+		db.FriendRequest.Add(request);
+		await db.SaveChangesAsync();
+
+		DataNotification notificationData = new();
+		NotificationDto notification = await notificationData.Create(
+			userId: recipientId,
+			type: "friend_request",
+			message: $"{requester.FirstName} {requester.LastName} sent you a friend request.",
+			actorUserId: requesterId
+		);
+		NotificationStream.Publish(recipientId, notification);
+
+		return FriendshipStatus.OutgoingPending;
+	}
+
+	public async Task<bool> AcceptFriendRequest(string recipientId, string requesterId)
+	{
+		await using DatabaseContext db = new();
+
+		FriendRequests? request = await db.FriendRequest
+			.FirstOrDefaultAsync(r => r.RequesterId == requesterId && r.RecipientId == recipientId);
+		if (request == null) return false;
+
+		await CompleteFriendship(db, requesterId, recipientId);
+		return true;
+	}
+
+	public async Task<bool> DeclineFriendRequest(string recipientId, string requesterId)
+	{
+		await using DatabaseContext db = new();
+
+		FriendRequests? request = await db.FriendRequest
+			.FirstOrDefaultAsync(r => r.RequesterId == requesterId && r.RecipientId == recipientId);
+		if (request == null) return false;
+
+		db.FriendRequest.Remove(request);
+		await db.SaveChangesAsync();
+		return true;
+	}
+
+	public async Task<bool> CancelFriendRequest(string requesterId, string recipientId)
+	{
+		await using DatabaseContext db = new();
+
+		FriendRequests? request = await db.FriendRequest
+			.FirstOrDefaultAsync(r => r.RequesterId == requesterId && r.RecipientId == recipientId);
+		if (request == null) return false;
+
+		db.FriendRequest.Remove(request);
+		await db.SaveChangesAsync();
+		return true;
+	}
+
+	/// <summary>
+	/// Creates the friendship row, deletes any pending requests between the pair, and notifies the original requester.
+	/// Caller is responsible for confirming the request exists.
+	/// </summary>
+	private async Task CompleteFriendship(DatabaseContext db, string requesterId, string recipientId)
+	{
+		(string lo, string hi) = NormalizePair(requesterId, recipientId);
+
+		List<FriendRequests> openRequests = await db.FriendRequest
+			.Where(r => (r.RequesterId == requesterId && r.RecipientId == recipientId)
+					 || (r.RequesterId == recipientId && r.RecipientId == requesterId))
+			.ToListAsync();
+		db.FriendRequest.RemoveRange(openRequests);
 
 		UserFriendships friendship = new()
 		{
-			UserAId = userAId,
-			UserBId = userBId,
-			CreatedDate = DateTime.UtcNow
+			UserAId = lo,
+			UserBId = hi,
+			CreatedDate = DateTime.UtcNow,
 		};
-
 		db.UserFriendship.Add(friendship);
 		await db.SaveChangesAsync();
 
-		return ToFriendSummaryDto(friendUser, friendship.CreatedDate);
+		Users? recipient = await db.User.AsNoTracking().FirstOrDefaultAsync(u => u.Id == recipientId);
+		string recipientName = recipient != null ? $"{recipient.FirstName} {recipient.LastName}" : "Someone";
+
+		DataNotification notificationData = new();
+		NotificationDto notification = await notificationData.Create(
+			userId: requesterId,
+			type: "friend_added",
+			message: $"{recipientName} accepted your friend request.",
+			actorUserId: recipientId
+		);
+		NotificationStream.Publish(requesterId, notification);
 	}
 
 	public async Task<bool> RemoveFriend(string currentUserId, string friendUserId)
