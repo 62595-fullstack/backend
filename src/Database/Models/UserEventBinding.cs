@@ -7,7 +7,7 @@ namespace Models.UserEventBinding
 	{
 		public int Id { get; set; }
 
-		public required int UserId { get; set; }
+		public string? UserId { get; set; }
 
 		public required int OrganizationEventsId { get; set; }
 

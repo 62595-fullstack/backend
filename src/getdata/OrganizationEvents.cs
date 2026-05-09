@@ -104,7 +104,7 @@ namespace backend.getdata
 			}
 		}
 
-		public async Task<bool> userJoinEvent(int userId, int organizationId)
+		public async Task<bool> userJoinEvent(string userId, int organizationId)
 		{
 			try
 			{
@@ -122,23 +122,23 @@ namespace backend.getdata
 				UserOrganizationBindings? creatorBinding = ev != null
 					? await db.UserOrganizationBinding.FindAsync(ev.UserOrganizationBindingId)
 					: null;
-				string? creatorUserId = creatorBinding?.UserId?.ToString();
-				string joinerUserId = userId.ToString();
+				string? creatorUserId = creatorBinding?.UserId;
 
-				if (ev != null && !string.IsNullOrEmpty(creatorUserId) && creatorUserId != joinerUserId)
+				if (ev == null || string.IsNullOrEmpty(creatorUserId) || creatorUserId == userId)
 				{
-					Users? joiner = await db.User.FirstOrDefaultAsync(u => u.Id == joinerUserId);
-					string joinerName = joiner != null ? $"{joiner.FirstName} {joiner.LastName}" : "Someone";
-
-					DataNotification notificationData = new();
-					NotificationDto notification = await notificationData.Create(
-						userId: creatorUserId,
-						type: "event_join",
-						message: $"{joinerName} joined your event '{ev.Title}'.",
-						actorUserId: joinerUserId
-					);
-					NotificationStream.Publish(creatorUserId, notification);
+					return true;
 				}
+				Users? joiner = await db.User.FirstOrDefaultAsync(u => u.Id == userId);
+				string joinerName = joiner != null ? $"{joiner.FirstName} {joiner.LastName}" : "Someone";
+
+				DataNotification notificationData = new();
+				NotificationDto notification = await notificationData.Create(
+					userId: creatorUserId,
+					type: "event_join",
+					message: $"{joinerName} joined your event '{ev.Title}'.",
+					actorUserId: userId
+				);
+				NotificationStream.Publish(creatorUserId, notification);
 
 				return true;
 			}
@@ -149,13 +149,13 @@ namespace backend.getdata
 			}
 		}
 
-		public async Task<bool> isUserRegistered(int userId, int eventId)
+		public async Task<bool> isUserRegistered(string userId, int eventId)
 		{
 			DatabaseContext db = new DatabaseContext();
 			return await db.UserEventBinding.AnyAsync(b => b.UserId == userId && b.OrganizationEventsId == eventId);
 		}
 
-		public async Task<bool> userLeaveEvent(int userId, int eventId)
+		public async Task<bool> userLeaveEvent(string userId, int eventId)
 		{
 			try
 			{
@@ -184,7 +184,8 @@ namespace backend.getdata
 			List<Dto.EventParticipantDto> result = new();
 			foreach (UserEventBindings binding in bindings)
 			{
-				Users? user = await db.User.FirstOrDefaultAsync(u => u.Id == binding.UserId.ToString());
+				if (binding.UserId == null) continue;
+				Users? user = await db.User.FirstOrDefaultAsync(u => u.Id == binding.UserId);
 				if (user != null)
 					result.Add(new Dto.EventParticipantDto(binding.Id, user.Id ?? "", user.FirstName, user.LastName));
 			}

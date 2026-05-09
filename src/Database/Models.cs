@@ -93,6 +93,14 @@ public class DatabaseContext : DbContext
 			.IsUnique();
 
 		modelBuilder.Entity<UserEventBindings>()
+			.HasOne<Users>()
+			.WithMany(u => u.UserEventBindings)
+			.HasForeignKey(b => b.UserId)
+			.HasPrincipalKey(u => u.Id)
+			.IsRequired(false)
+			.OnDelete(DeleteBehavior.SetNull);
+
+		modelBuilder.Entity<UserEventBindings>()
 			.HasIndex(b => new { b.UserId, b.OrganizationEventsId })
 			.IsUnique();
 

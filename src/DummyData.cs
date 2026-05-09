@@ -217,8 +217,8 @@ class DummyData
 
 			// UserEventBindings
 			await Add(db,
-				new UserEventBindings { Id = 123, UserId = 123, OrganizationEventsId = 123 },
-				new UserEventBindings { Id = 1000, UserId = 1000, OrganizationEventsId = 1000 }
+				new UserEventBindings { Id = 123, UserId = "123", OrganizationEventsId = 123 },
+				new UserEventBindings { Id = 1000, UserId = "1000", OrganizationEventsId = 1000 }
 			);
 
 			// UserFriendships — clear and re-seed each run to remove test leftovers and keep the sequence healthy
