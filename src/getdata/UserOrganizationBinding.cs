@@ -13,7 +13,7 @@ namespace backend.getdata
 		{
 			try
 			{
-				DatabaseContext db = new DatabaseContext();
+				DatabaseContext db = new();
 				return await db.UserOrganizationBinding.Where(x => x.OrganizationId == organizationId).ToListAsync();
 			}
 			catch (Exception ex)
@@ -27,7 +27,7 @@ namespace backend.getdata
 		{
 			try
 			{
-				DatabaseContext db = new DatabaseContext();
+				DatabaseContext db = new();
 				return await db.UserOrganizationBinding.Where(x => x.UserId == userId).ToListAsync();
 			}
 			catch (Exception ex)
@@ -41,7 +41,7 @@ namespace backend.getdata
 		{
 			try
 			{
-				DatabaseContext db = new DatabaseContext();
+				DatabaseContext db = new();
 				return await db.UserOrganizationBinding
 					.FirstOrDefaultAsync(x => x.UserId == userId && x.OrganizationId == organizationId);
 			}
@@ -56,7 +56,7 @@ namespace backend.getdata
 		{
 			try
 			{
-				DatabaseContext db = new DatabaseContext();
+				DatabaseContext db = new();
 				return await db.UserOrganizationBinding.FindAsync(id);
 			}
 			catch (Exception ex)
@@ -70,13 +70,15 @@ namespace backend.getdata
 		{
 			try
 			{
-				DatabaseContext db = new DatabaseContext();
+				DatabaseContext db = new();
 				UserOrganizationBindings? binding = await db.UserOrganizationBinding
 					.FirstOrDefaultAsync(x => x.UserId == userId && x.OrganizationId == organizationId);
 				if (binding == null) return false;
 
 				db.UserOrganizationBinding.Remove(binding);
 				await db.SaveChangesAsync();
+
+				await new DataOrganization().DeleteOrganizationIfEmpty(organizationId);
 				return true;
 			}
 			catch (Exception ex)
@@ -88,12 +90,11 @@ namespace backend.getdata
 
 		public async Task<bool> setUserToOrganization(string userId, int organizationId, int roleId)
 		{
-			DatabaseContext db = new DatabaseContext();
-			UserOrganizationBindings uob = new UserOrganizationBindings();
-
-			uob.OrganizationId = organizationId;
-			uob.UserId = userId;
-			uob.RoleId = roleId;
+			DatabaseContext db = new();
+			UserOrganizationBindings uob = new()
+			{
+				OrganizationId = organizationId, UserId = userId, RoleId = roleId
+			};
 
 			await db.UserOrganizationBinding.AddAsync(uob);
 			await db.SaveChangesAsync();
