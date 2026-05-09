@@ -29,21 +29,29 @@ public static class OrganizationEndpoint
 		})
 		.WithName("GetOrganizations");
 
-		group.MapPost("/", async Task<string> ([Microsoft.AspNetCore.Mvc.FromBody] Organizations o) =>
+		group.MapPost("/", async Task<IResult> ([Microsoft.AspNetCore.Mvc.FromBody] Organizations o, ClaimsPrincipal user) =>
 		{
 			try
 			{
-				DataOrganization DO = new DataOrganization();
-				await DO.CreateOrganization(o);
-				return HttpStatusCode.OK.ToString();
+				string? userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userId == null || !int.TryParse(userId, out int userIdInt)) return Results.Unauthorized();
+
+				DataOrganization DO = new();
+				Organizations created = await DO.CreateOrganization(o);
+
+				DataUserOrganizationBinding duob = new();
+				await duob.setUserToOrganization(userIdInt, created.Id, 1000);
+
+				return Results.Ok(JsonConvert.SerializeObject(created));
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.Message);
-				return HttpStatusCode.InternalServerError.ToString();
+				return Results.Problem(ex.Message);
 			}
 		})
-		.WithName("PostOrganizations");
+		.WithName("PostOrganizations")
+		.RequireAuthorization();
 
 		group.MapGet("/{id}", async Task<string> (int id) =>
 		{
